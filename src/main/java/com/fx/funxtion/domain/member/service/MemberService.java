@@ -4,11 +4,18 @@ import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
 import com.fx.funxtion.global.RsData.RsData;
 import com.fx.funxtion.global.jwt.JwtProvider;
+import com.fx.funxtion.global.security.SecurityUser;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +32,16 @@ public class MemberService {
         memberRepository.save(member);
 
         return member;
+    }
+
+    public SecurityUser getUserFromAccessToken(String accessToken) {
+        Map<String, Object> payloadBody = jwtProvider.getClaims(accessToken);
+
+        long id = (int) payloadBody.get("id");
+        String email = (String) payloadBody.get("email");
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        return new SecurityUser(id, email, "", authorities);
     }
 
     @AllArgsConstructor
