@@ -3,6 +3,7 @@ package com.fx.funxtion.domain.member.controller;
 import com.fx.funxtion.domain.member.dto.MemberDto;
 import com.fx.funxtion.domain.member.service.MemberService;
 import com.fx.funxtion.global.RsData.RsData;
+import com.fx.funxtion.global.rq.Rq;
 import com.fx.funxtion.global.security.JwtAuthorizationFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -19,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ApiV1memberController {
     private final MemberService memberService;
+    private final Rq rq;
 
-    private final HttpServletResponse resp;
 
     @Getter
     public static class LoginRequestBody {
@@ -43,25 +44,20 @@ public class ApiV1memberController {
         RsData<MemberService.AuthAndMakeTokensResponseBody> authAndMakeTokensRs = memberService.authAndMakeTokens(loginRequestBody.getEmail(), loginRequestBody.getPassword());
 
         // 쿠키에 accessToken, refreshToken 넣기
-        _addHeaderCookie("accessToken", authAndMakeTokensRs.getData().getAccessToken());
-        _addHeaderCookie("refreshToken", authAndMakeTokensRs.getData().getRefreshToken());
+        rq.setCrossDomainCookie("accessToken", authAndMakeTokensRs.getData().getAccessToken());
+        rq.setCrossDomainCookie("refreshToken", authAndMakeTokensRs.getData().getRefreshToken());
 
         return RsData.of(authAndMakeTokensRs.getResultCode(),authAndMakeTokensRs.getMsg(), new LoginResponseBody(new MemberDto(authAndMakeTokensRs.getData().getMember())));
+    }
+
+    @PostMapping("/logout")
+    public RsData<Void> logout() {
+        rq.logout();
+        return RsData.of("200", "로그아웃 성공");
     }
 
     @GetMapping("/me")
     public String me() {
         return "accessToken 있어서 내 정보 get OK!";
-    }
-
-    private void _addHeaderCookie(String tokenName, String token) {
-        ResponseCookie cookie = ResponseCookie.from(tokenName, token)
-                .path("/")
-                .sameSite("None")
-                .secure(true)
-                .httpOnly(true)
-                .build();
-
-        resp.addHeader("Set-Cookie", cookie.toString());
     }
 }
