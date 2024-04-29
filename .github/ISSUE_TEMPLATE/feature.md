@@ -1,7 +1,7 @@
 ---
 name: Feature
 about: 새 기능 구현 이슈 템플릿
-title: ''
+title: "[Feat] "
 labels: "✨ Feat"
 assignees: ''
 
