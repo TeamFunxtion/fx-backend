@@ -25,7 +25,7 @@ public class ApiV1memberController {
     @Getter
     public static class LoginRequestBody {
         @NotBlank
-        private String username;
+        private String email;
         @NotBlank
         private String password;
     }
@@ -40,7 +40,7 @@ public class ApiV1memberController {
     public RsData<LoginResponseBody> login (@Valid @RequestBody LoginRequestBody loginRequestBody) {
 
         // username, password => accessToken
-        RsData<MemberService.AuthAndMakeTokensResponseBody> authAndMakeTokensRs = memberService.authAndMakeTokens(loginRequestBody.getUsername(), loginRequestBody.getPassword());
+        RsData<MemberService.AuthAndMakeTokensResponseBody> authAndMakeTokensRs = memberService.authAndMakeTokens(loginRequestBody.getEmail(), loginRequestBody.getPassword());
 
         // 쿠키에 accessToken, refreshToken 넣기
         _addHeaderCookie("accessToken", authAndMakeTokensRs.getData().getAccessToken());
