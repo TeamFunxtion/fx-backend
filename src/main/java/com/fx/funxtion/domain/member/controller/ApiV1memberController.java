@@ -1,6 +1,7 @@
 package com.fx.funxtion.domain.member.controller;
 
 import com.fx.funxtion.domain.member.dto.MemberDto;
+import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.service.MemberService;
 import com.fx.funxtion.global.RsData.RsData;
 import com.fx.funxtion.global.rq.Rq;
@@ -56,8 +57,18 @@ public class ApiV1memberController {
         return RsData.of("200", "로그아웃 성공");
     }
 
+    @Getter
+    @AllArgsConstructor
+    private static class MeResponseBody {
+        private final MemberDto memberDto;
+    }
+
     @GetMapping("/me")
-    public String me() {
-        return "accessToken 있어서 내 정보 get OK!";
+    public RsData<MeResponseBody> me() {
+        Member member = rq.getMember();
+        return RsData.of(
+                "200",
+                "내 정보 조회 성공",
+                new MeResponseBody(new MemberDto(member)));
     }
 }
