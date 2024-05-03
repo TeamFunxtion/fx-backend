@@ -27,6 +27,7 @@ public class ApiSecurityConfig {
                                 .requestMatchers("/api/*/articles/*").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/*/members/login").permitAll() // 로그인은 누구나 가능, post요청만 허용
                                 .requestMatchers(HttpMethod.POST, "/api/*/members/logout").permitAll() // 로그아웃 누구나 가능, post요청만 허용
+                                .requestMatchers(HttpMethod.POST, "/api/*/members/join").permitAll() // 회원가입 누구나 가능, post요청만 허용
                                 .anyRequest().authenticated()
                 )
                 .csrf(

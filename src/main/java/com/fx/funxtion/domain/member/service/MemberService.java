@@ -10,23 +10,25 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
+    private final PasswordEncoder passwordEncoder;
 
     public Member join(String email, String password) {
         Member member = Member.builder()
                 .email(email)
-                .password(password)
+                .password(passwordEncoder.encode(password))
                 .build();
 
         String refreshToken = jwtProvider.genRefreshToken(member);
@@ -70,15 +72,20 @@ public class MemberService {
 
     @Transactional
     public RsData<AuthAndMakeTokensResponseBody> authAndMakeTokens(String email, String password) {
-        Member member = this.memberRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
+        Optional<Member> member = this.memberRepository.findByEmail(email);
+//                .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
+
+        if(member.isEmpty()) {
+            return RsData.of("500", "로그인 실패", null);
+        }
 
         // Access Token 생성
-        String accessToken = jwtProvider.genAccessToken(member);
+        String accessToken = jwtProvider.genAccessToken(member.get());
         // Refresh Token 생성
-        String refreshToken = jwtProvider.genRefreshToken(member);
+        String refreshToken = jwtProvider.genRefreshToken(member.get());
 
         System.out.println("accessToken : " + accessToken);
 
-        return RsData.of("200-1", "로그인 성공", new AuthAndMakeTokensResponseBody(member, accessToken, refreshToken));
+        return RsData.of("200", "로그인 성공", new AuthAndMakeTokensResponseBody(member.get(), accessToken, refreshToken));
     }
 }
