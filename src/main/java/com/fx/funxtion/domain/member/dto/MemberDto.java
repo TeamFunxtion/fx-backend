@@ -11,13 +11,21 @@ import java.time.LocalDateTime;
 public class MemberDto {
     private long id;
     private String email;
+    private Long roleId;
+    private String profileImageUrl;
+    private String nickname;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
 
     public MemberDto(Member member) {
         this.id = member.getId();
         this.email = member.getEmail();
+        this.roleId = member.getRoleId();
+        this.profileImageUrl = member.getProfileImageUrl();
+        this.nickname = member.getNickname();
         this.createDate = member.getCreateDate();
         this.updateDate = member.getUpdateDate();
     }
+
+
 }

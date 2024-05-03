@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +25,22 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    enum Roles {
+        NOTHING,
+        ROLE_USER,
+        ROLE_ADMIN
+    }
+
 
     public Member join(String email, String password) {
         Member member = Member.builder()
                 .email(email)
                 .password(passwordEncoder.encode(password))
+                .roleId(Long.valueOf(Roles.ROLE_USER.ordinal()))
+                .point(0)
+                .deleteYn("N")
                 .build();
 
         String refreshToken = jwtProvider.genRefreshToken(member);
@@ -75,7 +87,7 @@ public class MemberService {
         Optional<Member> member = this.memberRepository.findByEmail(email);
 //                .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
 
-        if(member.isEmpty()) {
+        if(!member.isPresent() || !bCryptPasswordEncoder.matches(password, member.get().getPassword())) {
             return RsData.of("500", "로그인 실패", null);
         }
 

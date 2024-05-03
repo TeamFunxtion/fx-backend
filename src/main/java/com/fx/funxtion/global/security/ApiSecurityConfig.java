@@ -20,7 +20,7 @@ public class ApiSecurityConfig {
     @Bean
     SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/api/**")
+                .securityMatcher("/api/**") // 이 url과 일치할때 검사하겠다는 의미
                 .authorizeHttpRequests(
                         authorizeRequests -> authorizeRequests
                                 .requestMatchers("/api/*/articles").permitAll()
@@ -32,7 +32,7 @@ public class ApiSecurityConfig {
                 )
                 .csrf(
                         csrf -> csrf.disable()
-                ) // csrf 토큰 끄기
+                ) // csrf 토큰 끄기 (csrf 토큰 검사하는걸 끄겠다)
                 .httpBasic(
                         httpBasic -> httpBasic.disable()
                 ) // httpBasic 로그인 방식 끄기
