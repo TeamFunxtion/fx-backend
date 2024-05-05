@@ -12,11 +12,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Profile({"dev", "test"})
 public class NotProd {
 
-    @Bean
-    CommandLineRunner initData(MemberService memberService, PasswordEncoder passwordEncoder) {
-        String password = passwordEncoder.encode("1234");
-        return args -> {
-            Member m1 = memberService.join("admin@test.com", password);
-        };
-    }
+//    @Bean
+//    CommandLineRunner initData(MemberService memberService, PasswordEncoder passwordEncoder) {
+//        String password = passwordEncoder.encode("1234");
+//        return args -> {
+//            Member m1 = memberService.join("admin@test.com", password);
+//        };
+//    }
 }
