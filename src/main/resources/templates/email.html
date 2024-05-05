@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        #verifyBtn {
+            display: inline-block;
+            padding: 15px 25px;
+            background-color: dodgerblue;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration:none;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+<div style="margin: 30px auto;
+    border: 1px solid grey;
+    border-radius: 12px;
+    text-align: center;
+    width: fit-content;
+    padding: 30px 25px; ">
+    <h1 style="color:black;"> Welcome Funxtion!</h1>
+    <br>
+    <p style="font-size:16px;"> 아래 [Verify] 버튼을 클릭하여 인증을 완료해주시기 바랍니다.</p>
+    <div style="margin-top: 20px;">
+        <a id="verifyBtn" th:href="@{http://localhost:8090/api/v1/members/auth(email = ${email}, code = ${code})}" >Verify</a>
+    </div>
+    <br>
+</div>
+
+</body>
+</html>

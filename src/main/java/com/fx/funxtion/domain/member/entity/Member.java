@@ -31,4 +31,6 @@ public class Member extends BaseEntity {
     private String socialProvider;
     private String deleteYn;
     private String refreshToken;
+    private String verifiedYn;
+    private String authCode;
 }

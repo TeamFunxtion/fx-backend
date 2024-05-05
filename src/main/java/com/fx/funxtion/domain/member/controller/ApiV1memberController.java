@@ -5,6 +5,7 @@ import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.service.MemberService;
 import com.fx.funxtion.global.RsData.RsData;
 import com.fx.funxtion.global.rq.Rq;
+import groovy.util.logging.Slf4j;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -15,10 +16,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/members")
 @RequiredArgsConstructor
+@Slf4j
 public class ApiV1memberController {
     private final MemberService memberService;
     private final Rq rq;
-
 
     @Getter
     public static class LoginRequestBody {
@@ -93,6 +94,19 @@ public class ApiV1memberController {
         }
 
         Member member = memberService.join(joinRequestBody.getEmail(), joinRequestBody.getPassword());
+
         return RsData.of("200", "회원가입 성공!");
+    }
+
+
+    @GetMapping("/auth")
+    public String auth(@RequestParam(value="email") String email, @RequestParam(value="code") String code) {
+        System.out.println(email);
+        System.out.println(code);
+
+        String verifiedYn = memberService.verifyEmail(email, code);
+        System.out.println(verifiedYn);
+
+        return "이메일 인증이 완료되었습니다.";
     }
 }
