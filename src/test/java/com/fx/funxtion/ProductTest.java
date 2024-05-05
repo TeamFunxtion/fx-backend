@@ -28,7 +28,9 @@ public class ProductTest {
         productDto.setSalesTypeId("SA01");
         productDto.setLocation("서울시 강남구");
 
-        productService.registerProduct(productDto);
+        ProductDto p = productService.registerProduct(productDto);
+
+        assertThat(productDto.getStoreId()).isEqualTo(p.getStoreId());
     }
 
     @Test
@@ -65,7 +67,9 @@ public class ProductTest {
         productDto.setSalesTypeId("SA03");
         productDto.setLocation("서울시 강남구222 Edit");
 
-        productService.editProduct(productDto);
+        ProductDto p = productService.editProduct(productDto);
+
+        assertThat(productDto.getProductTitle()).isEqualTo(p.getProductTitle());
     }
 
     @Test
@@ -75,6 +79,8 @@ public class ProductTest {
         productDto.setId(5L);
         productDto.setStatusTypeId("ST05"); // 삭제코드
 
-        productService.changeStatus(productDto);
+        ProductDto p = productService.changeStatus(productDto);
+
+        assertThat(productDto.getStatusTypeId()).isEqualTo(p.getStatusTypeId());
     }
 }

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class ProductService {
     private final ProductRepository productRepository;
 
-    public void registerProduct(ProductDto productDto) {
+    public ProductDto registerProduct(ProductDto productDto) {
         Product product = Product.builder()
                 .storeId(productDto.getStoreId())
                 .categoryId(productDto.getCategoryId())
@@ -29,7 +29,9 @@ public class ProductService {
                 .location(productDto.getLocation())
                 .build();
 
-        productRepository.save(product);
+        Product p = productRepository.save(product);
+
+        return new ProductDto(p);
     }
 
     public List<ProductDto> getProductList() {
@@ -47,7 +49,7 @@ public class ProductService {
         return productDto;
     }
 
-    public void editProduct(ProductDto productDto) {
+    public ProductDto editProduct(ProductDto productDto) {
 
         Product p = productRepository.findById(productDto.getId()).get();
 
@@ -60,14 +62,18 @@ public class ProductService {
         p.setSalesTypeId(productDto.getSalesTypeId());
 
         productRepository.save(p);
+
+        return new ProductDto(p);
     }
 
-    public void changeStatus(ProductDto productDto) {
+    public ProductDto changeStatus(ProductDto productDto) {
 
         Product p = productRepository.findById(productDto.getId()).get();
 
         p.setStatusTypeId(productDto.getStatusTypeId());
 
         productRepository.save(p);
+
+        return new ProductDto(p);
     }
 }
