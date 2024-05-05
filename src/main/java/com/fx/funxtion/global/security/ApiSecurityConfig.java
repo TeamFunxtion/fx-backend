@@ -15,22 +15,25 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class ApiSecurityConfig {
 
-    private JwtAuthorizationFilter jwtAuthorizationFilter;
+    private final JwtAuthorizationFilter jwtAuthorizationFilter;
 
     @Bean
     SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/api/**")
+                .securityMatcher("/api/**") // 이 url과 일치할때 검사하겠다는 의미
                 .authorizeHttpRequests(
                         authorizeRequests -> authorizeRequests
-                                .requestMatchers("/api/*/articles").permitAll()
-                                .requestMatchers("/api/*/articles/*").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/*/members/login").permitAll()
+//                                .requestMatchers("/api/*/articles").permitAll()
+//                                .requestMatchers("/api/*/articles/*").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/*/members/login").permitAll() // 로그인은 누구나 가능, post요청만 허용
+                                .requestMatchers(HttpMethod.POST, "/api/*/members/logout").permitAll() // 로그아웃 누구나 가능, post요청만 허용
+                                .requestMatchers(HttpMethod.POST, "/api/*/members/join").permitAll() // 회원가입 누구나 가능, post요청만 허용
+                                .requestMatchers(HttpMethod.GET, "/api/*/members/auth").permitAll() // 이메일 인증 누구나 가능, get요청 허용
                                 .anyRequest().authenticated()
                 )
                 .csrf(
                         csrf -> csrf.disable()
-                ) // csrf 토큰 끄기
+                ) // csrf 토큰 끄기 (csrf 토큰 검사하는걸 끄겠다)
                 .httpBasic(
                         httpBasic -> httpBasic.disable()
                 ) // httpBasic 로그인 방식 끄기
