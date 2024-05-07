@@ -2,6 +2,7 @@ package com.fx.funxtion;
 
 import com.fx.funxtion.domain.product.dto.ProductDto;
 import com.fx.funxtion.domain.product.service.ProductService;
+import com.fx.funxtion.global.RsData.RsData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,9 @@ public class ProductTest {
         productDto.setSalesTypeId("SA01");
         productDto.setLocation("서울시 강남구");
 
-        ProductDto p = productService.registerProduct(productDto);
+        RsData<ProductDto> createRs = productService.createProduct(productDto);
 
-        assertThat(productDto.getStoreId()).isEqualTo(p.getStoreId());
+        assertThat(productDto.getStoreId()).isEqualTo(createRs.getData().getStoreId());
     }
 
     @Test
@@ -45,20 +46,18 @@ public class ProductTest {
     @Test
     @DisplayName("상품 데이터 1개 조회")
     public void getOne() {
-        long productId = 5L;
+        Long id = 1L;
+        RsData<ProductDto> getRs = productService.getProduct(id);
+        System.out.println(getRs.getData());
 
-        ProductDto productDto = productService.getProduct(productId);
-        System.out.println(productDto);
-
-        assertThat(productId).isEqualTo(productDto.getId());
+        assertThat(id).isEqualTo(getRs.getData().getId());
     }
 
     @Test
     @DisplayName("상품 데이터 수정")
     public void update() {
+        Long id = 1L;
         ProductDto productDto = new ProductDto();
-        productDto.setId(5L);
-        productDto.setStoreId(1);
         productDto.setCategoryId("CA01");
         productDto.setProductTitle("상품타이틀22 Edit");
         productDto.setProductDesc("상품에 대한 설명입니다.222 Edit");
@@ -67,20 +66,20 @@ public class ProductTest {
         productDto.setSalesTypeId("SA03");
         productDto.setLocation("서울시 강남구222 Edit");
 
-        ProductDto p = productService.editProduct(productDto);
+        RsData<ProductDto> updateRs = productService.updateProduct(id, productDto);
 
-        assertThat(productDto.getProductTitle()).isEqualTo(p.getProductTitle());
+        assertThat(productDto.getProductTitle()).isEqualTo(updateRs.getData().getProductTitle());
     }
 
     @Test
     @DisplayName("상품 데이터 상태 변경")
     public void changeStatus() {
+        Long id = 1L;
         ProductDto productDto = new ProductDto();
-        productDto.setId(5L);
         productDto.setStatusTypeId("ST05"); // 삭제코드
 
-        ProductDto p = productService.changeStatus(productDto);
+        RsData<ProductDto> updateRs = productService.updateProduct(id, productDto);
 
-        assertThat(productDto.getStatusTypeId()).isEqualTo(p.getStatusTypeId());
+        assertThat(productDto.getStatusTypeId()).isEqualTo(updateRs.getData().getStatusTypeId());
     }
 }
