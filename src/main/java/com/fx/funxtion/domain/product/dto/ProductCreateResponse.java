@@ -1,8 +1,8 @@
 package com.fx.funxtion.domain.product.dto;
 
 import com.fx.funxtion.domain.product.entity.Product;
+import com.fx.funxtion.global.jpa.BaseEntity;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -10,9 +10,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @ToString
-public class ProductDto {
+public class ProductCreateResponse {
     private Long id;
     private Long storeId;
     private String categoryId;
@@ -23,14 +22,14 @@ public class ProductDto {
     private String qualityTypeId;
     private String statusTypeId;
     private String location;
-    private Long currentPrice;
     private Long coolPrice;
+    private Long currentPrice;
     private LocalDateTime endTime;
     private int views;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
 
-    public ProductDto(Product p) {
+    public ProductCreateResponse(Product p) {
         this.id = p.getId();
         this.storeId = p.getStoreId();
         this.categoryId = p.getCategoryId();
@@ -41,8 +40,8 @@ public class ProductDto {
         this.qualityTypeId = p.getQualityTypeId();
         this.statusTypeId = p.getStatusTypeId();
         this.location = p.getLocation();
-        this.currentPrice = p.getCurrentPrice();
         this.coolPrice = p.getCoolPrice();
+        this.currentPrice = p.getCurrentPrice();
         this.endTime = p.getEndTime();
         this.views = p.getViews();
         this.createDate = p.getCreateDate();

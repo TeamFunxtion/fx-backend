@@ -1,5 +1,7 @@
 package com.fx.funxtion.domain.product.service;
 
+import com.fx.funxtion.domain.product.dto.ProductCreateRequest;
+import com.fx.funxtion.domain.product.dto.ProductCreateResponse;
 import com.fx.funxtion.domain.product.dto.ProductDto;
 import com.fx.funxtion.domain.product.entity.Product;
 import com.fx.funxtion.domain.product.entity.ProductStatusType;
@@ -9,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,22 +21,27 @@ import java.util.stream.Collectors;
 public class ProductService {
     private final ProductRepository productRepository;
 
-    public RsData<ProductDto> createProduct(ProductDto productDto) {
+    public RsData<ProductCreateResponse> createProduct(ProductCreateRequest productCreateRequest) {
         Product product = Product.builder()
-                .storeId(productDto.getStoreId())
-                .categoryId(productDto.getCategoryId())
-                .productTitle(productDto.getProductTitle())
-                .productDesc(productDto.getProductDesc())
-                .productPrice(productDto.getProductPrice())
-                .qualityTypeId(productDto.getQualityTypeId())
-                .salesTypeId(productDto.getSalesTypeId())
+                .storeId(productCreateRequest.getStoreId())
+                .categoryId(productCreateRequest.getCategoryId())
+                .productTitle(productCreateRequest.getProductTitle())
+                .productDesc(productCreateRequest.getProductDesc())
+                .productPrice(productCreateRequest.getProductPrice())
+                .qualityTypeId(productCreateRequest.getQualityTypeId())
+                .salesTypeId(productCreateRequest.getSalesTypeId())
                 .statusTypeId(ProductStatusType.ST01.name())
-                .location(productDto.getLocation())
+                .location(productCreateRequest.getLocation())
+                .currentPrice(productCreateRequest.getProductPrice())
+                .coolPrice(productCreateRequest.getCoolPrice())
+                .endTime(LocalDateTime.now().plusDays(productCreateRequest.getEndDays()))
                 .build();
+
         productRepository.save(product);
 
         Optional<Product> optionalProduct = productRepository.findById(product.getId());
-        return optionalProduct.map(p -> RsData.of("200", "상품 등록 성공!", new ProductDto(p)))
+
+        return optionalProduct.map(p -> RsData.of("200", "상품 등록 성공!", new ProductCreateResponse(p)))
                 .orElseGet(() -> RsData.of("500", "상품 등록 실패!"));
     }
 
@@ -47,9 +55,10 @@ public class ProductService {
 
     public RsData<ProductDto> getProduct(long productId) {
         Optional<Product> optionalProduct = productRepository.findById(productId);
+        System.out.println("getProduct!");
+        System.out.println(optionalProduct.get());
         return optionalProduct.map(product -> RsData.of("200", "상품 조회 성공!", new ProductDto(product)))
                 .orElseGet(() -> RsData.of("500", "상품 조회 실패!"));
-
     }
 
     public RsData<ProductDto> updateProduct(Long id, ProductDto productDto) {
@@ -71,7 +80,7 @@ public class ProductService {
             p.setProductDesc(productDto.getProductDesc());
         }
         if(productDto.getProductPrice() > 0) {
-            p.setProductPrice(productDto.getProductPrice());
+//            p.setProductPrice(productDto.getProductPrice());
         }
         if(productDto.getLocation() != null && !productDto.getLocation().equals("")) {
             p.setLocation(productDto.getLocation());

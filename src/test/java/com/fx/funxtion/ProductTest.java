@@ -1,5 +1,7 @@
 package com.fx.funxtion;
 
+import com.fx.funxtion.domain.product.dto.ProductCreateRequest;
+import com.fx.funxtion.domain.product.dto.ProductCreateResponse;
 import com.fx.funxtion.domain.product.dto.ProductDto;
 import com.fx.funxtion.domain.product.service.ProductService;
 import com.fx.funxtion.global.RsData.RsData;
@@ -17,21 +19,39 @@ public class ProductTest {
     private ProductService productService;
 
     @Test
-    @DisplayName("상품 데이터 등록")
-    public void register() {
-        ProductDto productDto = new ProductDto();
-        productDto.setStoreId(1);
-        productDto.setCategoryId("CA01");
-        productDto.setProductTitle("상품타이틀");
-        productDto.setProductDesc("상품에 대한 설명입니다.");
-        productDto.setProductPrice(13000);
-        productDto.setQualityTypeId("QU01");
-        productDto.setSalesTypeId("SA01");
-        productDto.setLocation("서울시 강남구");
+    public void 상품_데이터_등록_오픈형경매V2() {
+        ProductCreateRequest productCreateRequest = new ProductCreateRequest();
+        productCreateRequest.setStoreId(1L);
+        productCreateRequest.setCategoryId("CA01");
+        productCreateRequest.setProductTitle("[오픈형경매]상품타이틀");
+        productCreateRequest.setProductDesc("상품에 대한 설명입니다.");
+        productCreateRequest.setProductPrice(13000L);
+        productCreateRequest.setQualityTypeId("QU01");
+        productCreateRequest.setSalesTypeId("SA01");
+        productCreateRequest.setLocation("서울시 강남구");
+        productCreateRequest.setCoolPrice(20000L);
+        productCreateRequest.setEndDays(3);
 
-        RsData<ProductDto> createRs = productService.createProduct(productDto);
+        RsData<ProductCreateResponse> productCreateResponse = productService.createProduct(productCreateRequest);
 
-        assertThat(productDto.getStoreId()).isEqualTo(createRs.getData().getStoreId());
+        assertThat(productCreateRequest.getStoreId()).isEqualTo(productCreateResponse.getData().getStoreId());
+    }
+
+    @Test
+    public void 상품_데이터_등록_일반판매() {
+        ProductCreateRequest productCreateRequest = new ProductCreateRequest();
+        productCreateRequest.setStoreId(1L);
+        productCreateRequest.setCategoryId("CA01");
+        productCreateRequest.setProductTitle("[일반판매]상품타이틀");
+        productCreateRequest.setProductDesc("상품에 대한 설명입니다.");
+        productCreateRequest.setProductPrice(13000L);
+        productCreateRequest.setQualityTypeId("QU01");
+        productCreateRequest.setSalesTypeId("SA01");
+        productCreateRequest.setLocation("서울시 강남구");
+
+        RsData<ProductCreateResponse> productCreateResponse = productService.createProduct(productCreateRequest);
+
+        assertThat(productCreateRequest.getStoreId()).isEqualTo(productCreateResponse.getData().getStoreId());
     }
 
     @Test
@@ -46,7 +66,7 @@ public class ProductTest {
     @Test
     @DisplayName("상품 데이터 1개 조회")
     public void getOne() {
-        Long id = 1L;
+        Long id = 5L;
         RsData<ProductDto> getRs = productService.getProduct(id);
         System.out.println(getRs.getData());
 
@@ -61,7 +81,7 @@ public class ProductTest {
         productDto.setCategoryId("CA01");
         productDto.setProductTitle("상품타이틀22 Edit");
         productDto.setProductDesc("상품에 대한 설명입니다.222 Edit");
-        productDto.setProductPrice(13000);
+        productDto.setProductPrice(13000L);
         productDto.setQualityTypeId("QU02");
         productDto.setSalesTypeId("SA03");
         productDto.setLocation("서울시 강남구222 Edit");

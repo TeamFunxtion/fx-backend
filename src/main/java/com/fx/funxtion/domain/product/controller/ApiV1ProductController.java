@@ -1,5 +1,7 @@
 package com.fx.funxtion.domain.product.controller;
 
+import com.fx.funxtion.domain.product.dto.ProductCreateRequest;
+import com.fx.funxtion.domain.product.dto.ProductCreateResponse;
 import com.fx.funxtion.domain.product.dto.ProductDto;
 import com.fx.funxtion.domain.product.service.ProductService;
 import com.fx.funxtion.global.RsData.RsData;
@@ -22,18 +24,18 @@ public class ApiV1ProductController {
     /**
      * 상품 등록
      *
-     * @param productDto
+     * @param productCreateRequest
      * @return RsData<ProductDto>
      */
     @PostMapping("")
-    public RsData<ProductDto> createProduct(@RequestBody ProductDto productDto) {
-        System.out.println(productDto);
+    public RsData<ProductCreateResponse> createProduct(@RequestBody ProductCreateRequest productCreateRequest) {
+        System.out.println(productCreateRequest);
 
-        RsData<ProductDto> registerRs = productService.createProduct(productDto);
+        RsData<ProductCreateResponse> productCreateResponse = productService.createProduct(productCreateRequest);
 
         // todo. 파일 업로드...
 
-        return RsData.of(registerRs.getResultCode(), registerRs.getMsg(), registerRs.getData());
+        return RsData.of(productCreateResponse.getResultCode(), productCreateResponse.getMsg(), productCreateResponse.getData());
     }
 
     /**

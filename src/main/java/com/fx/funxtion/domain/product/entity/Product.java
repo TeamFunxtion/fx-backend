@@ -1,11 +1,11 @@
 package com.fx.funxtion.domain.product.entity;
 
 import com.fx.funxtion.global.jpa.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -16,7 +16,7 @@ import lombok.experimental.SuperBuilder;
 @ToString(callSuper = true)
 @Table(name="products")
 public class Product extends BaseEntity {
-    private int storeId;
+    private Long storeId;
 
     private String categoryId;
 
@@ -24,7 +24,7 @@ public class Product extends BaseEntity {
 
     private String productDesc;
 
-    private int productPrice;
+    private Long productPrice;
 
     @Column(name="sales_type_id")
     private String salesTypeId;
@@ -36,6 +36,14 @@ public class Product extends BaseEntity {
     private String statusTypeId;
 
     private String location;
+
+    private Long auctionWinnerId;
+
+    private Long currentPrice;
+
+    private Long coolPrice;
+
+    private LocalDateTime endTime;
 
     private int views;
 }
