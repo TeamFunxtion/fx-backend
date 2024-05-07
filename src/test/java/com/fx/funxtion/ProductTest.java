@@ -1,8 +1,6 @@
 package com.fx.funxtion;
 
-import com.fx.funxtion.domain.product.dto.ProductCreateRequest;
-import com.fx.funxtion.domain.product.dto.ProductCreateResponse;
-import com.fx.funxtion.domain.product.dto.ProductDto;
+import com.fx.funxtion.domain.product.dto.*;
 import com.fx.funxtion.domain.product.service.ProductService;
 import com.fx.funxtion.global.RsData.RsData;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +17,7 @@ public class ProductTest {
     private ProductService productService;
 
     @Test
-    public void 상품_데이터_등록_오픈형경매V2() {
+    public void 상품_데이터_등록_오픈형경매() {
         ProductCreateRequest productCreateRequest = new ProductCreateRequest();
         productCreateRequest.setStoreId(1L);
         productCreateRequest.setCategoryId("CA01");
@@ -34,7 +32,8 @@ public class ProductTest {
 
         RsData<ProductCreateResponse> productCreateResponse = productService.createProduct(productCreateRequest);
 
-        assertThat(productCreateRequest.getStoreId()).isEqualTo(productCreateResponse.getData().getStoreId());
+        assertThat(productCreateRequest.getStoreId())
+                .isEqualTo(productCreateResponse.getData().getStoreId());
     }
 
     @Test
@@ -51,55 +50,58 @@ public class ProductTest {
 
         RsData<ProductCreateResponse> productCreateResponse = productService.createProduct(productCreateRequest);
 
-        assertThat(productCreateRequest.getStoreId()).isEqualTo(productCreateResponse.getData().getStoreId());
+        assertThat(productCreateRequest.getStoreId())
+                .isEqualTo(productCreateResponse.getData().getStoreId());
     }
 
     @Test
-    @DisplayName("상품 목록 조회")
-    public void getList() {
-        List<ProductDto> productDtos = productService.getProductList();
-        for(ProductDto productDto: productDtos) {
+    public void 상품_목록_조회() {
+        RsData<List<ProductDto>> getProductListResponse = productService.getProductList();
+        for(ProductDto productDto: getProductListResponse.getData()) {
             System.out.println(productDto);
         }
     }
 
     @Test
-    @DisplayName("상품 데이터 1개 조회")
-    public void getOne() {
-        Long id = 5L;
-        RsData<ProductDto> getRs = productService.getProduct(id);
-        System.out.println(getRs.getData());
+    public void 상품_데이터_상세_조회() {
+        Long id = 1L;
+        RsData<ProductDetailResponse> productDetailResponse = productService.getProductDetail(id);
+        System.out.println(productDetailResponse.getData());
 
-        assertThat(id).isEqualTo(getRs.getData().getId());
+        assertThat(id)
+                .isEqualTo(productDetailResponse.getData().getId());
     }
 
     @Test
-    @DisplayName("상품 데이터 수정")
-    public void update() {
+    public void 상품_데이터_수정() {
         Long id = 1L;
-        ProductDto productDto = new ProductDto();
-        productDto.setCategoryId("CA01");
-        productDto.setProductTitle("상품타이틀22 Edit");
-        productDto.setProductDesc("상품에 대한 설명입니다.222 Edit");
-        productDto.setProductPrice(13000L);
-        productDto.setQualityTypeId("QU02");
-        productDto.setSalesTypeId("SA03");
-        productDto.setLocation("서울시 강남구222 Edit");
+        ProductUpdateRequest productUpdateRequest = new ProductUpdateRequest();
+        productUpdateRequest.setStoreId(1L);
+        productUpdateRequest.setCategoryId("CA01");
+        productUpdateRequest.setProductTitle("[Update] 상품타이틀");
+        productUpdateRequest.setProductDesc("[Update] 상품에 대한 설명입니다.");
+        productUpdateRequest.setProductPrice(13000L);
+        productUpdateRequest.setQualityTypeId("QU02");
+        productUpdateRequest.setSalesTypeId("SA03");
+        productUpdateRequest.setLocation("[Update] 서울시 강남구");
+        productUpdateRequest.setCoolPrice(20000L);
+        productUpdateRequest.setEndDays(2);
 
-        RsData<ProductDto> updateRs = productService.updateProduct(id, productDto);
+        RsData<ProductUpdateResponse> productUpdateResponse = productService.updateProduct(id, productUpdateRequest);
 
-        assertThat(productDto.getProductTitle()).isEqualTo(updateRs.getData().getProductTitle());
+        assertThat(productUpdateRequest.getProductTitle())
+                .isEqualTo(productUpdateResponse.getData().getProductTitle());
     }
 
     @Test
-    @DisplayName("상품 데이터 상태 변경")
-    public void changeStatus() {
+    public void 상품_데이터_상태변경() {
         Long id = 1L;
-        ProductDto productDto = new ProductDto();
-        productDto.setStatusTypeId("ST05"); // 삭제코드
+        ProductUpdateRequest productUpdateRequest = new ProductUpdateRequest();
+        productUpdateRequest.setStatusTypeId("ST05"); // 삭제코드
 
-        RsData<ProductDto> updateRs = productService.updateProduct(id, productDto);
+        RsData<ProductUpdateResponse> productUpdateResponse = productService.updateProduct(id, productUpdateRequest);
 
-        assertThat(productDto.getStatusTypeId()).isEqualTo(updateRs.getData().getStatusTypeId());
+        assertThat(productUpdateRequest.getStatusTypeId())
+                .isEqualTo(productUpdateResponse.getData().getStatusTypeId());
     }
 }

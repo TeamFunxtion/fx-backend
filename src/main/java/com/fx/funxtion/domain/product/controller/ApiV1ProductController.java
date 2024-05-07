@@ -1,8 +1,6 @@
 package com.fx.funxtion.domain.product.controller;
 
-import com.fx.funxtion.domain.product.dto.ProductCreateRequest;
-import com.fx.funxtion.domain.product.dto.ProductCreateResponse;
-import com.fx.funxtion.domain.product.dto.ProductDto;
+import com.fx.funxtion.domain.product.dto.*;
 import com.fx.funxtion.domain.product.service.ProductService;
 import com.fx.funxtion.global.RsData.RsData;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +23,7 @@ public class ApiV1ProductController {
      * 상품 등록
      *
      * @param productCreateRequest
-     * @return RsData<ProductDto>
+     * @return RsData<ProductCreateResponse>
      */
     @PostMapping("")
     public RsData<ProductCreateResponse> createProduct(@RequestBody ProductCreateRequest productCreateRequest) {
@@ -42,29 +40,29 @@ public class ApiV1ProductController {
      * 상품 상세 정보 조회
      *  
      * @param id
-     * @return RsData<ProductDto>
+     * @return RsData<ProductDetailResponse>
      */
     @GetMapping("/{id}")
-    public RsData<ProductDto> getProduct(@PathVariable(name="id") Long id) {
+    public RsData<ProductDetailResponse> getProductDetail(@PathVariable(name="id") Long id) {
         System.out.println(id);
 
-        RsData<ProductDto> getProductRs = productService.getProduct(id);
+        RsData<ProductDetailResponse> productDetailResponse = productService.getProductDetail(id);
 
-        return RsData.of(getProductRs.getResultCode(), getProductRs.getMsg(), getProductRs.getData());
+        return RsData.of(productDetailResponse.getResultCode(), productDetailResponse.getMsg(), productDetailResponse.getData());
     }
 
     /**
      * 상품 정보 수정 (기본정보 / 상태변경 )
      *
-     * @param productDto
-     * @return RsData<ProductDto>
+     * @param productUpdateRequest
+     * @return RsData<ProductUpdateResponse>
      */
     @PatchMapping("/{id}")
-    public RsData<ProductDto> updateProduct(@PathVariable(name="id") Long id, @RequestBody ProductDto productDto) {
-        System.out.println(productDto);
+    public RsData<ProductUpdateResponse> updateProduct(@PathVariable(name="id") Long id, @RequestBody ProductUpdateRequest productUpdateRequest) {
+        System.out.println(productUpdateRequest);
 
-        RsData<ProductDto> editProductRs = productService.updateProduct(id, productDto);
+        RsData<ProductUpdateResponse> productUpdateResponse = productService.updateProduct(id, productUpdateRequest);
 
-        return RsData.of(editProductRs.getResultCode(), editProductRs.getMsg(), editProductRs.getData());
+        return RsData.of(productUpdateResponse.getResultCode(), productUpdateResponse.getMsg(), productUpdateResponse.getData());
     }
 }

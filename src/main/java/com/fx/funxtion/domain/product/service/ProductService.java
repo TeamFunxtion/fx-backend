@@ -1,8 +1,6 @@
 package com.fx.funxtion.domain.product.service;
 
-import com.fx.funxtion.domain.product.dto.ProductCreateRequest;
-import com.fx.funxtion.domain.product.dto.ProductCreateResponse;
-import com.fx.funxtion.domain.product.dto.ProductDto;
+import com.fx.funxtion.domain.product.dto.*;
 import com.fx.funxtion.domain.product.entity.Product;
 import com.fx.funxtion.domain.product.entity.ProductStatusType;
 import com.fx.funxtion.domain.product.repository.ProductRepository;
@@ -45,58 +43,57 @@ public class ProductService {
                 .orElseGet(() -> RsData.of("500", "상품 등록 실패!"));
     }
 
-    public List<ProductDto> getProductList() {
+    public RsData<List<ProductDto>> getProductList() {
         List<ProductDto> list = productRepository.findAll(Sort.by(Sort.Direction.DESC, "id"))
                 .stream()
-                .map(p -> new ProductDto(p))
+                .map(ProductDto::new)
                 .collect(Collectors.toList());
-        return list;
+        return RsData.of("200", "목록 조회 성공!", list);
     }
 
-    public RsData<ProductDto> getProduct(long productId) {
+    public RsData<ProductDetailResponse> getProductDetail(Long productId) {
         Optional<Product> optionalProduct = productRepository.findById(productId);
-        System.out.println("getProduct!");
-        System.out.println(optionalProduct.get());
-        return optionalProduct.map(product -> RsData.of("200", "상품 조회 성공!", new ProductDto(product)))
+        return optionalProduct.map(product -> RsData.of("200", "상품 조회 성공!", new ProductDetailResponse(product)))
                 .orElseGet(() -> RsData.of("500", "상품 조회 실패!"));
     }
 
-    public RsData<ProductDto> updateProduct(Long id, ProductDto productDto) {
+    public RsData<ProductUpdateResponse> updateProduct(Long id, ProductUpdateRequest productUpdateRequest) {
         Optional<Product> optionalProduct = productRepository.findById(id);
         System.out.println(optionalProduct.isEmpty());
+
         if(optionalProduct.isEmpty()) {
             return RsData.of("500", "상품이 존재하지 않습니다!");
         }
 
         Product p = optionalProduct.get();
 
-        if(productDto.getCategoryId() != null && !productDto.getCategoryId().equals("")) {
-            p.setCategoryId(productDto.getCategoryId());
+        if(productUpdateRequest.getCategoryId() != null && !productUpdateRequest.getCategoryId().isEmpty()) {
+            p.setCategoryId(productUpdateRequest.getCategoryId());
         }
-        if(productDto.getProductTitle() != null && !productDto.getProductTitle().equals("")) {
-            p.setProductTitle(productDto.getProductTitle());
+        if(productUpdateRequest.getProductTitle() != null && !productUpdateRequest.getProductTitle().isEmpty()) {
+            p.setProductTitle(productUpdateRequest.getProductTitle());
         }
-        if(productDto.getProductDesc() != null && !productDto.getProductDesc().equals("")) {
-            p.setProductDesc(productDto.getProductDesc());
+        if(productUpdateRequest.getProductDesc() != null && !productUpdateRequest.getProductDesc().isEmpty()) {
+            p.setProductDesc(productUpdateRequest.getProductDesc());
         }
-        if(productDto.getProductPrice() > 0) {
-//            p.setProductPrice(productDto.getProductPrice());
+        if(productUpdateRequest.getProductPrice() != null ) {
+            p.setProductPrice(productUpdateRequest.getProductPrice());
         }
-        if(productDto.getLocation() != null && !productDto.getLocation().equals("")) {
-            p.setLocation(productDto.getLocation());
+        if(productUpdateRequest.getLocation() != null && !productUpdateRequest.getLocation().isEmpty()) {
+            p.setLocation(productUpdateRequest.getLocation());
         }
-        if(productDto.getQualityTypeId() != null && !productDto.getQualityTypeId().equals("")) {
-            p.setQualityTypeId(productDto.getQualityTypeId());
+        if(productUpdateRequest.getQualityTypeId() != null && !productUpdateRequest.getQualityTypeId().isEmpty()) {
+            p.setQualityTypeId(productUpdateRequest.getQualityTypeId());
         }
-        if(productDto.getSalesTypeId() != null && !productDto.getSalesTypeId().equals("")) {
-            p.setSalesTypeId(productDto.getSalesTypeId());
+        if(productUpdateRequest.getSalesTypeId() != null && !productUpdateRequest.getSalesTypeId().isEmpty()) {
+            p.setSalesTypeId(productUpdateRequest.getSalesTypeId());
         }
-        if(productDto.getStatusTypeId() != null && !productDto.getStatusTypeId().equals("")) {
-            p.setStatusTypeId(productDto.getStatusTypeId());
+        if(productUpdateRequest.getStatusTypeId() != null && !productUpdateRequest.getStatusTypeId().isEmpty()) {
+            p.setStatusTypeId(productUpdateRequest.getStatusTypeId());
         }
 
         productRepository.save(p);
 
-        return RsData.of("200", "상품 수정 성공!", new ProductDto(p));
+        return RsData.of("200", "상품 수정 성공!", new ProductUpdateResponse(p));
     }
 }
