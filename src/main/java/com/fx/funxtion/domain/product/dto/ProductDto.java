@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.beans.BeanUtils;
 
 import java.time.LocalDateTime;
 
@@ -31,21 +32,6 @@ public class ProductDto {
     private LocalDateTime updateDate;
 
     public ProductDto(Product p) {
-        this.id = p.getId();
-        this.storeId = p.getStoreId();
-        this.categoryId = p.getCategoryId();
-        this.productTitle = p.getProductTitle();
-        this.productDesc = p.getProductDesc();
-        this.productPrice = p.getProductPrice();
-        this.salesTypeId = p.getSalesTypeId();
-        this.qualityTypeId = p.getQualityTypeId();
-        this.statusTypeId = p.getStatusTypeId();
-        this.location = p.getLocation();
-        this.currentPrice = p.getCurrentPrice();
-        this.coolPrice = p.getCoolPrice();
-        this.endTime = p.getEndTime();
-        this.views = p.getViews();
-        this.createDate = p.getCreateDate();
-        this.updateDate = p.getUpdateDate();
+        BeanUtils.copyProperties(p, this);
     }
 }

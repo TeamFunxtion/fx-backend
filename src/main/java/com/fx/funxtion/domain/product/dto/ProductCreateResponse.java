@@ -5,6 +5,7 @@ import com.fx.funxtion.global.jpa.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.beans.BeanUtils;
 
 import java.time.LocalDateTime;
 
@@ -30,21 +31,6 @@ public class ProductCreateResponse {
     private LocalDateTime updateDate;
 
     public ProductCreateResponse(Product p) {
-        this.id = p.getId();
-        this.storeId = p.getStoreId();
-        this.categoryId = p.getCategoryId();
-        this.productTitle = p.getProductTitle();
-        this.productDesc = p.getProductDesc();
-        this.productPrice = p.getProductPrice();
-        this.salesTypeId = p.getSalesTypeId();
-        this.qualityTypeId = p.getQualityTypeId();
-        this.statusTypeId = p.getStatusTypeId();
-        this.location = p.getLocation();
-        this.coolPrice = p.getCoolPrice();
-        this.currentPrice = p.getCurrentPrice();
-        this.endTime = p.getEndTime();
-        this.views = p.getViews();
-        this.createDate = p.getCreateDate();
-        this.updateDate = p.getUpdateDate();
+        BeanUtils.copyProperties(p, this);
     }
 }
