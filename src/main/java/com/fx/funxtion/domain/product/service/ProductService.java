@@ -1,5 +1,7 @@
 package com.fx.funxtion.domain.product.service;
 
+import com.fx.funxtion.domain.member.entity.Member;
+import com.fx.funxtion.domain.member.repository.MemberRepository;
 import com.fx.funxtion.domain.product.dto.*;
 import com.fx.funxtion.domain.product.entity.Product;
 import com.fx.funxtion.domain.product.entity.ProductStatusType;
@@ -8,6 +10,7 @@ import com.fx.funxtion.global.RsData.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,10 +21,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+    private final MemberRepository memberRepository;
 
     public RsData<ProductCreateResponse> createProduct(ProductCreateRequest productCreateRequest) {
+        Member member = memberRepository.findById(productCreateRequest.getStoreId())
+                .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+
         Product product = Product.builder()
-                .storeId(productCreateRequest.getStoreId())
+                .member(member)
                 .categoryId(productCreateRequest.getCategoryId())
                 .productTitle(productCreateRequest.getProductTitle())
                 .productDesc(productCreateRequest.getProductDesc())
@@ -95,5 +102,10 @@ public class ProductService {
         productRepository.save(p);
 
         return RsData.of("200", "상품 수정 성공!", new ProductUpdateResponse(p));
+    }
+
+    @Transactional
+    public int updateViews(Long id) {
+        return productRepository.updateViews(id);
     }
 }

@@ -6,6 +6,8 @@ import com.fx.funxtion.global.RsData.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 상품 관련 Controller
  * 상품 조회, 등록, 수정(or 상태 변경)
@@ -37,6 +39,18 @@ public class ApiV1ProductController {
     }
 
     /**
+     * 상품 목록 조회
+     *
+     * @param
+     * @return RsData<ProductListResponse>
+     */
+    @GetMapping("")
+    public RsData<List<ProductDto>> getProductList() {
+        RsData<List<ProductDto>> response = productService.getProductList();
+        return RsData.of(response.getResultCode(), response.getMsg(), response.getData());
+    }
+
+    /**
      * 상품 상세 정보 조회
      *  
      * @param id
@@ -44,9 +58,8 @@ public class ApiV1ProductController {
      */
     @GetMapping("/{id}")
     public RsData<ProductDetailResponse> getProductDetail(@PathVariable(name="id") Long id) {
-        System.out.println(id);
-
         RsData<ProductDetailResponse> productDetailResponse = productService.getProductDetail(id);
+        productService.updateViews(id); // 조회수 증가
 
         return RsData.of(productDetailResponse.getResultCode(), productDetailResponse.getMsg(), productDetailResponse.getData());
     }

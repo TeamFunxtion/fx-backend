@@ -1,11 +1,17 @@
 package com.fx.funxtion.domain.product.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fx.funxtion.domain.member.entity.Member;
+import com.fx.funxtion.domain.product.dto.BidDto;
 import com.fx.funxtion.global.jpa.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.core.annotation.Order;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -13,10 +19,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-@ToString(callSuper = true)
+//@ToString(callSuper = true)
 @Table(name="products")
 public class Product extends BaseEntity {
-    private Long storeId;
+    @ManyToOne
+    @JoinColumn(name = "store_id")
+    private Member member;
 
     private String categoryId;
 
@@ -46,4 +54,13 @@ public class Product extends BaseEntity {
     private LocalDateTime endTime;
 
     private int views;
+
+    @OneToMany(mappedBy = "product")
+    @JsonIgnoreProperties({"product"})
+    @OrderBy("id desc")
+    private List<ProductImage> images = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product")
+    @JsonIgnoreProperties({"product"})
+    private List<Bid> bids = new ArrayList<>();
 }
