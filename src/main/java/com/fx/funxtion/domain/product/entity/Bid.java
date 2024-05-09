@@ -3,16 +3,15 @@ package com.fx.funxtion.domain.product.entity;
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.global.jpa.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 @Table(name="bids")
 public class Bid extends BaseEntity {
 
