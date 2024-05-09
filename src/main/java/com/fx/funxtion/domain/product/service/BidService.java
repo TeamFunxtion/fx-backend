@@ -60,12 +60,14 @@ public class BidService {
             }
         }
 
+        if(bidPrice > product.getCurrentPrice()) { // 입찰가가 현재가보다 클때
+            // 현재가 및 낙찰자 갱신
+            product.setCurrentPrice(bidCreateRequest.getBidPrice());
+            product.setAuctionWinnerId(bidCreateRequest.getBidderId());
+        }
+
         // 포인트 차감
         member.setPoint(member.getPoint() - bidPrice);
-
-        // 현재가 및 낙찰자 갱신
-        product.setCurrentPrice(bidCreateRequest.getBidPrice());
-        product.setAuctionWinnerId(bidCreateRequest.getBidderId());
 
         if(isCoolEnded) { // 즉시구매시 경매종료(거래중으로 상태변경)
             product.setStatusTypeId(ProductStatusType.ST04.name());
