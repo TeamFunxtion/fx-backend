@@ -6,9 +6,18 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Modifying
     @Query("update Product p set p.views = p.views + 1 where p.id = :id")
     int updateViews(@Param(value="id")Long id);
+
+    @Query(value = "select p " +
+            "from Product p " +
+            "where p.salesTypeId in ('SA01', 'SA02') " +
+            "and p.statusTypeId = 'ST01' " +
+            "and p.endTime <= current_date")
+    List<Product> findAllAfterAuctionEndTime();
 }
