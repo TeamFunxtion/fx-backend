@@ -29,6 +29,9 @@ public class ApiSecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/api/*/members/auth").permitAll() // 이메일 인증 누구나 가능, get요청 허용
                                 .requestMatchers("/api/*/products").permitAll()
                                 .requestMatchers("/api/*/products/*").permitAll()
+                                .requestMatchers( HttpMethod.GET,"/api/*/chats").permitAll()
+                                .requestMatchers("/api/*/chats/*").permitAll()
+                                .requestMatchers("/api/*/chats/*/messages").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .csrf(

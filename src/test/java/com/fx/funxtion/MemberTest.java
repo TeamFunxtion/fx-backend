@@ -19,7 +19,7 @@ public class MemberTest {
 
     @Test
     public void join() {
-        String email = "sksmsdirjsdnl@gmail.com";
+        String email = "abvcddddd132@gmail.com";
         String password = "1234";
 
         memberRepository.deleteByEmail(email);
