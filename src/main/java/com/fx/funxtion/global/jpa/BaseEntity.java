@@ -14,16 +14,18 @@ import java.time.LocalDateTime;
 
 @Getter
 @SuperBuilder
-@MappedSuperclass
+@MappedSuperclass // BaseEntity를 상속한 Entity들은 아래의 필드들을 컬럼으로 인식한다.
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners(AuditingEntityListener.class) // Audting(자동으로 값 Mapping) 기능 추가
 @ToString
 public class BaseEntity {
     @Id
+    @Column(updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @CreatedDate
+    @Column(updatable = false)
     private LocalDateTime createDate;
 
     @LastModifiedDate
