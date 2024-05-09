@@ -14,6 +14,7 @@ public class MemberDto {
     private Long roleId;
     private String profileImageUrl;
     private String nickname;
+    private String intro;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
 
@@ -23,6 +24,7 @@ public class MemberDto {
         this.roleId = member.getRoleId();
         this.profileImageUrl = member.getProfileImageUrl();
         this.nickname = member.getNickname();
+        this.intro = member.getIntro();
         this.createDate = member.getCreateDate();
         this.updateDate = member.getUpdateDate();
     }
