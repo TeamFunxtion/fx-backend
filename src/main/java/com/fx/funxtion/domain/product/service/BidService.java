@@ -26,7 +26,37 @@ public class BidService {
         
         Member member = memberRepository.findById(bidCreateRequest.getBidderId())
                 .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
-        
+
+        if(member.getPoint() - bidCreateRequest.getBidPrice().intValue() <= 0) {
+            throw new IllegalArgumentException("포인트 부족으로 입찰할 수 없습니다.");
+        }
+
+        // 오픈 경매일때
+        if(product.getSalesTypeId().equals("SA01")) {
+            if(product.getCurrentPrice() >= bidCreateRequest.getBidPrice()) {
+                throw new IllegalArgumentException("입찰가가 현재가보다 낮습니다.");
+            }
+
+            // todo. 기존 낙찰자 포인트 환불해주기
+            if(product.getAuctionWinnerId() != null) {
+                Member oldWinner = memberRepository.findById(product.getAuctionWinnerId())
+                        .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+                oldWinner.setPoint(oldWinner.getPoint() + product.getCurrentPrice().intValue());
+            }
+
+        } else { // 블라인드 경매일 때
+            if(product.getProductPrice() >= bidCreateRequest.getBidPrice()) {
+                throw new IllegalArgumentException("입찰가가 시작가보다 낮습니다.");
+            }
+        }
+
+        // 현재가 및 낙찰자 갱신
+        product.setCurrentPrice(bidCreateRequest.getBidPrice());
+        product.setAuctionWinnerId(bidCreateRequest.getBidderId());
+
+        // 포인트 차감
+        member.setPoint(member.getPoint() - bidCreateRequest.getBidPrice().intValue());
+
         Bid bid = Bid.builder()
                 .product(product)
                 .member(member)

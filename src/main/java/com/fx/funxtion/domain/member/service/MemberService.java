@@ -1,5 +1,6 @@
 package com.fx.funxtion.domain.member.service;
 
+import com.fx.funxtion.domain.member.dto.MemberHasMoneyRequest;
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
 import com.fx.funxtion.global.RsData.RsData;
@@ -122,5 +123,12 @@ public class MemberService {
         memberRepository.save(member);
 
         return member.getVerifiedYn();
+    }
+
+    public boolean hasMoney(MemberHasMoneyRequest memberHasMoneyRequest) {
+        Member member = memberRepository.findById(memberHasMoneyRequest.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+
+        return (member.getPoint() - memberHasMoneyRequest.getPoint()) >= 0;
     }
 }

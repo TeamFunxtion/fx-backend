@@ -1,9 +1,11 @@
 package com.fx.funxtion;
 
+import com.fx.funxtion.domain.member.dto.MemberHasMoneyRequest;
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
 import com.fx.funxtion.domain.member.service.MemberService;
 import com.fx.funxtion.global.RsData.RsData;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,5 +51,17 @@ public class MemberTest {
         String verifiedYn = memberService.verifyEmail(email, authCode);
 
         System.out.println(verifiedYn);
+    }
+
+    @Test
+    public void 포인트_사용_여부() {
+        MemberHasMoneyRequest memberHasMoneyRequest = new MemberHasMoneyRequest();
+        memberHasMoneyRequest.setUserId(1L);
+        memberHasMoneyRequest.setPoint(10000L);
+
+        boolean hasMoney = memberService.hasMoney(memberHasMoneyRequest);
+        System.out.println(hasMoney);
+
+        Assertions.assertThat(hasMoney).isTrue();
     }
 }
