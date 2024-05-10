@@ -18,4 +18,5 @@ public class Notice extends BaseEntity {
 
     private String noticeTitle;
     private String noticeContent;
+
 }
