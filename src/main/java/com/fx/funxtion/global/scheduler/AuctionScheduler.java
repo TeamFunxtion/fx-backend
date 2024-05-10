@@ -43,17 +43,17 @@ public class AuctionScheduler {
                 productRepository.save(product);
 
                 // todo. 블라인드 경매일때는 낙찰자를 제외한 모든 입찰 포인트 반환해줘야함
-                if(productDto.getSalesTypeId().equals("SA02")) {
-                    List<BidDto> bidDtos = bidRepository.findAllByProductId(productDto.getId())
-                            .stream()
-                            .map(BidDto::new)
-                            .toList();
-
-                    for(BidDto bidDto: bidDtos) { // 낙찰되지 않은 입찰 포인트 반환하기
-                        if(!(bidDto.getBidderId().equals(product.getAuctionWinnerId()) && Objects.equals(bidDto.getBidPrice(), productDto.getCurrentPrice()))) {
-                        }
-                    }
-                }
+//                if(productDto.getSalesTypeId().equals("SA02")) {
+//                    List<BidDto> bidDtos = bidRepository.findAllByProductId(productDto.getId())
+//                            .stream()
+//                            .map(BidDto::new)
+//                            .toList();
+//
+//                    for(BidDto bidDto: bidDtos) { // 낙찰되지 않은 입찰 포인트 반환하기
+//                        if(!(bidDto.getBidderId().equals(product.getAuctionWinnerId()) && Objects.equals(bidDto.getBidPrice(), productDto.getCurrentPrice()))) {
+//                        }
+//                    }
+//                }
 
             }
 
