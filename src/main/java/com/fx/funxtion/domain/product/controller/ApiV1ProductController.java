@@ -5,6 +5,10 @@ import com.fx.funxtion.domain.product.service.BidService;
 import com.fx.funxtion.domain.product.service.ProductService;
 import com.fx.funxtion.global.RsData.RsData;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,9 +51,11 @@ public class ApiV1ProductController {
      * @return RsData<ProductListResponse>
      */
     @GetMapping("")
-    public RsData<List<ProductDto>> getProductList() {
-        RsData<List<ProductDto>> response = productService.getProductList();
-        return RsData.of(response.getResultCode(), response.getMsg(), response.getData());
+    public Page<ProductDto> search(@RequestParam(value="keyword") String keyword,
+                                   @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
+                                   @PageableDefault(size = 2, sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
+        pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
+        return productService.search(keyword, pageable, pageNo);
     }
 
     /**

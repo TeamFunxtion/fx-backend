@@ -8,6 +8,9 @@ import com.fx.funxtion.domain.product.entity.ProductStatusType;
 import com.fx.funxtion.domain.product.repository.ProductRepository;
 import com.fx.funxtion.global.RsData.RsData;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +51,14 @@ public class ProductService {
 
         return optionalProduct.map(p -> RsData.of("200", "상품 등록 성공!", new ProductCreateResponse(p)))
                 .orElseGet(() -> RsData.of("500", "상품 등록 실패!"));
+    }
+
+    @Transactional
+    public Page<ProductDto> search(String keyword, Pageable pageable, int pageNo) {
+        pageable = PageRequest.of(pageNo,2, Sort.by(Sort.Direction.DESC, "id"));
+        Page<ProductDto> list = productRepository.findByProductTitleContaining(keyword, pageable)
+                .map(ProductDto::new);
+        return list; // RsData.of("200", "목록 조회 성공!", list);
     }
 
     public RsData<List<ProductDto>> getProductList() {
