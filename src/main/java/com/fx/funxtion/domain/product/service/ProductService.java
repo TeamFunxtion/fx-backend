@@ -54,9 +54,16 @@ public class ProductService {
     }
 
     @Transactional
-    public Page<ProductDto> search(String keyword, Pageable pageable, int pageNo) {
-        pageable = PageRequest.of(pageNo,2, Sort.by(Sort.Direction.DESC, "id"));
-        Page<ProductDto> list = productRepository.findByProductTitleContaining(keyword, pageable)
+    public Page<ProductDto> searchByKeyword(String keyword, Pageable pageable, int pageNo, int pageSize) {
+        pageable = PageRequest.of(pageNo,pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        Page<ProductDto> list = productRepository.findByProductTitleContainingAndStatusTypeId(keyword, "ST01", pageable)
+                .map(ProductDto::new);
+        return list; // RsData.of("200", "목록 조회 성공!", list);
+    }
+
+    public Page<ProductDto> searchByCategory(String category, Pageable pageable, int pageNo, int pageSize) {
+        pageable = PageRequest.of(pageNo,pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        Page<ProductDto> list = productRepository.findByCategoryIdAndStatusTypeId(category, "ST01", pageable)
                 .map(ProductDto::new);
         return list; // RsData.of("200", "목록 조회 성공!", list);
     }

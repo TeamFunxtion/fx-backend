@@ -24,5 +24,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "and p.endTime <= current_date")
     List<Product> findAllAfterAuctionEndTime();
 
-    Page<Product> findByProductTitleContaining(String keyword, Pageable pageable);
+    Page<Product> findByProductTitleContainingAndStatusTypeId(String keyword, String statusTypeId, Pageable pageable);
+    Page<Product> findByCategoryIdAndStatusTypeId(String category, String statusTypeId, Pageable pageable);
 }
