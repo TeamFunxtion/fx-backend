@@ -33,4 +33,5 @@ public class Member extends BaseEntity {
     private String refreshToken;
     private String verifiedYn;
     private String authCode;
+
 }
