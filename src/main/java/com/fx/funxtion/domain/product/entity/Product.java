@@ -58,9 +58,9 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product")
     @JsonIgnoreProperties({"product"})
     @OrderBy("id desc")
-    private List<ProductImage> images = new ArrayList<>();
+    private final List<ProductImage> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "product")
     @JsonIgnoreProperties({"product"})
-    private List<Bid> bids = new ArrayList<>();
+    private final List<Bid> bids = new ArrayList<>();
 }

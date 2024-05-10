@@ -1,6 +1,7 @@
 package com.fx.funxtion.domain.member.controller;
 
 import com.fx.funxtion.domain.member.dto.MemberDto;
+import com.fx.funxtion.domain.member.dto.MemberHasMoneyRequest;
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.service.MemberService;
 import com.fx.funxtion.global.RsData.RsData;
@@ -108,5 +109,13 @@ public class ApiV1MemberController {
         System.out.println(verifiedYn);
 
         return "이메일 인증이 완료되었습니다.";
+    }
+
+    @PostMapping("/has-money")
+    public RsData<Boolean> hasMoney(@RequestBody MemberHasMoneyRequest memberHasMoneyRequest) {
+
+        boolean hasMoney = memberService.hasMoney(memberHasMoneyRequest);
+
+        return RsData.of("200", "잔액 조회 성공!", hasMoney);
     }
 }

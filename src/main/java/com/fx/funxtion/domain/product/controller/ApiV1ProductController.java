@@ -1,6 +1,7 @@
 package com.fx.funxtion.domain.product.controller;
 
 import com.fx.funxtion.domain.product.dto.*;
+import com.fx.funxtion.domain.product.service.BidService;
 import com.fx.funxtion.domain.product.service.ProductService;
 import com.fx.funxtion.global.RsData.RsData;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.List;
 public class ApiV1ProductController {
 
     private final ProductService productService;
+    private final BidService bidService;
 
     /**
      * 상품 등록
@@ -77,5 +79,15 @@ public class ApiV1ProductController {
         RsData<ProductUpdateResponse> productUpdateResponse = productService.updateProduct(id, productUpdateRequest);
 
         return RsData.of(productUpdateResponse.getResultCode(), productUpdateResponse.getMsg(), productUpdateResponse.getData());
+    }
+
+
+    @PostMapping("/bid")
+    public RsData<BidCreateResponse> createBid(@RequestBody BidCreateRequest bidCreateRequest) {
+        System.out.println(bidCreateRequest);
+
+        RsData<BidCreateResponse> bidCreateResponseRsData = bidService.createBid(bidCreateRequest);
+
+        return RsData.of(bidCreateResponseRsData.getResultCode(), bidCreateResponseRsData.getMsg(), bidCreateResponseRsData.getData());
     }
 }
