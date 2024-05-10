@@ -12,28 +12,26 @@ import lombok.ToString;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
 @Getter
 @NoArgsConstructor
 @ToString
 @Setter
-public class ChatRoomDto {
-
+public class ChatRoomListResponse {
     private Long id;
     private MemberDto store;
     private Long customerId;
     private ProductDto product;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
+    private List<ChatMessage> chatMessages;
 
-
-    public ChatRoomDto(ChatRoom chatRoom) {
+    public ChatRoomListResponse(ChatRoom chatRoom, List<ChatMessage> chatMessages) {
         this.id = chatRoom.getId();
         this.store = new MemberDto(chatRoom.getMember());
         this.customerId = chatRoom.getCustomerId();
         this.product = new ProductDto(chatRoom.getProduct());
         this.createDate = chatRoom.getCreateDate();
         this.updateDate = chatRoom.getUpdateDate();
-
+        this.chatMessages = chatMessages;
     }
 }

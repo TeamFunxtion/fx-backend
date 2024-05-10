@@ -24,15 +24,17 @@ public class ChatRoomDetailResponse {
     private ProductDto product;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
+    private List<ChatMessageDto> chatMessages;
 
 
-    public ChatRoomDetailResponse(ChatRoom chatRoom) {
+    public ChatRoomDetailResponse(ChatRoom chatRoom, List<ChatMessageDto> chatMessages) {
         this.id = chatRoom.getId();
         this.store = new MemberDto(chatRoom.getMember());
         this.customerId = chatRoom.getCustomerId();
         this.product = new ProductDto(chatRoom.getProduct());
         this.createDate = chatRoom.getCreateDate();
         this.updateDate = chatRoom.getUpdateDate();
+        this.chatMessages = chatMessages;
 
     }
 }

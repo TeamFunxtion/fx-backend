@@ -71,69 +71,45 @@ public class ChatService {
     }
 
     // 채팅방 목록 조회
-    public List<ChatRoomDto> getChatRoomList(Long customerId) {
-//        Optional<Member> m = memberRepository.findById(customerId);
-
+    public List<ChatRoomListResponse> getChatRoomList(Long customerId) {
         List<ChatRoom> chatRooms = chatRoomRepository.findAllChatRoom(customerId, customerId);
-        List<ChatRoomDto> chatRoomDtos = new ArrayList<>();
+        List<ChatRoomListResponse> chatRoomListResponses = new ArrayList<>();
 
         for(ChatRoom chatRoom : chatRooms) {
-            List<ChatMessage> messages = chatMessageRepository.findTopByRoomIdOrderByUpdateDateDesc(chatRoom.getId());
-            chatRoomDtos.add(new ChatRoomDto(chatRoom, messages));
-
-//            ChatRoomDto chatRoomDto = new ChatRoomDto();
-//            chatRoomDto.setRoomId(chatRoom.getRoomId());
-//            chatRoomDto.setProductId(chatRoom.getProductId());
-//            chatRoomDto.setStoreId(chatRoom.getStoreId());
-//            chatRoomDto.setCustomerId(chatRoom.getCustomerId());
-//            chatRoomDto.setUpdateDate(chatRoom.getUpdateDate());
-//            chatRoomDto.setCreateDate(chatRoom.getCreateDate());
-//
-//            List<ChatMessage> messages = chatRoom.getChatMessages();
-//            List<ChatMessageDto> messageDtos = new ArrayList<>();
-//            for(ChatMessage message : messages) {
-//                ChatMessageDto messageDto = new ChatMessageDto();
-//                messageDto.setId(message.getId());
-//                messageDto.setUserId(message.getUserId());
-//                messageDto.setRoomId(message.getRoomId());
-//                messageDto.setCreateDate(message.getCreateDate());
-//                messageDto.setUpdateDate(message.getUpdateDate());
-//                messageDto.setMessage(message.getMessage());
-//                messageDto.setReadYn(message.getReadYn());
-//            }
-//            chatRoomDto.setChatMessages(messages);
-//            chatRoomDtos.add(chatRoomDto);
+            List<ChatMessage> messages = chatMessageRepository.findTopByRoomIdOrderByCreateDateDesc(chatRoom.getId());
+            chatRoomListResponses.add(new ChatRoomListResponse(chatRoom, messages));
         }
-        return chatRoomDtos;
+        return chatRoomListResponses;
     }
 
     // 채팅방 생성
-    public ChatRoomCreateResponse insertChatRoom(ChatRoomCreateRequest chatRoomCreateRequestDto) {
-//        ChatRoomId id = new ChatRoomId(storeId,customerId);
-        Member member = memberRepository.findById(chatRoomCreateRequestDto.getStoreId())
+    public ChatRoomCreateResponse insertChatRoom(ChatRoomCreateRequest chatRoomCreateRequest) {
+        Member member = memberRepository.findById(chatRoomCreateRequest.getStoreId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 상점이 존재하지 않습니다."));
 
-        Product product = productRepository.findById(chatRoomCreateRequestDto.getProductId())
+        Product product = productRepository.findById(chatRoomCreateRequest.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
         ChatRoom chatRoom = ChatRoom.builder()
                 .member(member)
-                .customerId(chatRoomCreateRequestDto.getCustomerId())
+                .customerId(chatRoomCreateRequest.getCustomerId())
                 .product(product)
-                .createDate(chatRoomCreateRequestDto.getCreateDate())
-                .updateDate(chatRoomCreateRequestDto.getUpdateDate())
                 .build();
         ChatRoom cr = chatRoomRepository.save(chatRoom);
 
         return new ChatRoomCreateResponse(cr, new ArrayList<>());
     }
 
+    // 채팅방 상세정보 및 채팅메시지 조회
     public RsData<ChatRoomDetailResponse> getChatRoomdetail(Long roomId) {
-//        Optional<Product> optionalProduct = productRepository.findById(productId);
         Long id = roomId;
         Optional<ChatRoom> optionalChatRoom = chatRoomRepository.findById(id);
-//        return optionalProduct.map(product -> RsData.of("200", "상품 조회 성공!", new ProductDetailResponse(product)))
-//                .orElseGet(() -> RsData.of("500", "상품 조회 실패!"));
-        return optionalChatRoom.map(chatRoom -> RsData.of("200", roomId+"번방 조회 성공", new ChatRoomDetailResponse(chatRoom)))
+        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+        List<ChatMessageDto> list = chatMessageRepository.findAllByRoomId(roomId, sort)
+                .stream()
+                .map(cm -> new ChatMessageDto(cm))
+                .collect(Collectors.toList());
+
+        return optionalChatRoom.map(chatRoom -> RsData.of("200", roomId+"번방 조회 성공", new ChatRoomDetailResponse(chatRoom, list)))
                 .orElseGet(() -> RsData.of("500", "방 조회 실패!"));
     }
 

@@ -15,13 +15,11 @@ import java.util.List;
 @ToString
 @Setter
 public class ChatRoomCreateRequest {
-    private Long id;
+
     private Long storeId;
     private Long customerId;
     private Long productId;
-    private LocalDateTime createDate;
-    private LocalDateTime updateDate;
-    private List<ChatMessage> chatMessages;
+
 
 
 }
