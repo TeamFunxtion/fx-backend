@@ -31,6 +31,7 @@ public class ApiSecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/api/*/faqs").permitAll()
                                 .requestMatchers("/api/*/products").permitAll()
                                 .requestMatchers("/api/*/products/*").permitAll()
+                                .requestMatchers("/api/*/products/*/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .csrf(

@@ -3,8 +3,10 @@ package com.fx.funxtion.domain.product.service;
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
 import com.fx.funxtion.domain.product.dto.*;
+import com.fx.funxtion.domain.product.entity.Favorite;
 import com.fx.funxtion.domain.product.entity.Product;
 import com.fx.funxtion.domain.product.entity.ProductStatusType;
+import com.fx.funxtion.domain.product.repository.FavoriteRepository;
 import com.fx.funxtion.domain.product.repository.ProductRepository;
 import com.fx.funxtion.global.RsData.RsData;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 public class ProductService {
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
+    private final FavoriteRepository favoriteRepository;
 
     public RsData<ProductCreateResponse> createProduct(ProductCreateRequest productCreateRequest) {
         Member member = memberRepository.findById(productCreateRequest.getStoreId())
@@ -76,10 +79,20 @@ public class ProductService {
         return RsData.of("200", "목록 조회 성공!", list);
     }
 
-    public RsData<ProductDetailResponse> getProductDetail(Long productId) {
+    public RsData<ProductDetailResponse> getProductDetail(Long productId, Long userId) {
         Optional<Product> optionalProduct = productRepository.findById(productId);
-        return optionalProduct.map(product -> RsData.of("200", "상품 조회 성공!", new ProductDetailResponse(product)))
-                .orElseGet(() -> RsData.of("500", "상품 조회 실패!"));
+
+        if(optionalProduct.isEmpty()) {
+            return RsData.of("500", "상품 조회 실패!");
+        }
+
+        ProductDetailResponse productDetailResponse = new ProductDetailResponse(optionalProduct.get());
+        if(userId != null) {
+            Favorite favor = favoriteRepository.findByUserIdAndProductId(userId, productId);
+            productDetailResponse.setFavorite(favor != null);
+        }
+
+        return RsData.of("200", "상품 조회 성공!", productDetailResponse);
     }
 
     public RsData<ProductUpdateResponse> updateProduct(Long id, ProductUpdateRequest productUpdateRequest) {
@@ -123,7 +136,27 @@ public class ProductService {
     }
 
     @Transactional
-    public int updateViews(Long id) {
-        return productRepository.updateViews(id);
+    public int increaseViews(Long id) {
+        return productRepository.increaseViews(id);
+    }
+
+
+    public boolean updateFavorite(Long userId, Long productId) {
+        Favorite favorite = favoriteRepository.findByUserIdAndProductId(userId, productId);
+
+        if(favorite != null) {
+            favoriteRepository.delete(favorite);
+            return false;
+        } else {
+            Product product = productRepository.findById(productId).get();
+
+            favorite = Favorite.builder()
+                    .userId(userId)
+                    .product(product)
+                    .build();
+
+            favoriteRepository.save(favorite);
+            return true;
+        }
     }
 }

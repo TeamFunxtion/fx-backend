@@ -75,11 +75,21 @@ public class ApiV1ProductController {
      * @return RsData<ProductDetailResponse>
      */
     @GetMapping("/{id}")
-    public RsData<ProductDetailResponse> getProductDetail(@PathVariable(name="id") Long id) {
-        RsData<ProductDetailResponse> productDetailResponse = productService.getProductDetail(id);
-        productService.updateViews(id); // 조회수 증가
-
+    public RsData<ProductDetailResponse> getProductDetail(@PathVariable(name="id") Long id, @RequestParam(value = "u", defaultValue = "") Long userId) {
+        RsData<ProductDetailResponse> productDetailResponse = productService.getProductDetail(id, userId);
         return RsData.of(productDetailResponse.getResultCode(), productDetailResponse.getMsg(), productDetailResponse.getData());
+    }
+
+    /**
+     * 상품 조회수 증가
+     *
+     * @param id
+     * @return RsData<Void>
+     */
+    @GetMapping("/{id}/views")
+    public RsData<Void> increaseViews(@PathVariable(name="id") Long id) {
+        productService.increaseViews(id); // 조회수 증가
+        return RsData.of("200", "조회수 증가", null);
     }
 
     /**
@@ -97,7 +107,12 @@ public class ApiV1ProductController {
         return RsData.of(productUpdateResponse.getResultCode(), productUpdateResponse.getMsg(), productUpdateResponse.getData());
     }
 
-
+    /**
+     * 경매 입찰하기
+     *
+     * @param bidCreateRequest
+     * @return RsData<BidCreateResponse>
+     */
     @PostMapping("/bid")
     public RsData<BidCreateResponse> createBid(@RequestBody BidCreateRequest bidCreateRequest) {
         System.out.println(bidCreateRequest);
@@ -105,5 +120,18 @@ public class ApiV1ProductController {
         RsData<BidCreateResponse> bidCreateResponseRsData = bidService.createBid(bidCreateRequest);
 
         return RsData.of(bidCreateResponseRsData.getResultCode(), bidCreateResponseRsData.getMsg(), bidCreateResponseRsData.getData());
+    }
+
+    /**
+     * 관심상품 등록/해제
+     *
+     * @param favoriteUpdateRequest
+     * @return RsData<Long>
+     */
+    @PutMapping("/favorite")
+    public RsData<String> favorite(@RequestBody FavoriteUpdateRequest favoriteUpdateRequest) {
+        boolean result = productService.updateFavorite(favoriteUpdateRequest.getUserId(), favoriteUpdateRequest.getProductId());
+
+        return RsData.of("200", "성공", result ? "Y" : "N");
     }
 }
