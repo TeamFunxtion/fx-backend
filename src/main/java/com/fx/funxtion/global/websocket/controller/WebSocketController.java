@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class WebSocketController {
 
     @Autowired
-    private ChatService chatService
+    private ChatService chatService;
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
