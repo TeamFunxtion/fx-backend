@@ -1,6 +1,8 @@
 package com.fx.funxtion.domain.member.service;
 
+import com.fx.funxtion.domain.member.dto.MemberDto;
 import com.fx.funxtion.domain.member.dto.MemberHasMoneyRequest;
+import com.fx.funxtion.domain.member.dto.MemberJoinRequest;
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
 import com.fx.funxtion.global.RsData.RsData;
@@ -37,10 +39,15 @@ public class MemberService {
     }
 
 
-    public Member join(String email, String password) {
+    public RsData<MemberDto> join(MemberJoinRequest memberJoinRequest) {
+
+        if(memberRepository.findByEmail(memberJoinRequest.getEmail()).isPresent()) {
+            return RsData.of("500", "이미 사용중인 이메일 입니다!");
+        }
+
         Member member = Member.builder()
-                .email(email)
-                .password(passwordEncoder.encode(password))
+                .email(memberJoinRequest.getEmail())
+                .password(passwordEncoder.encode(memberJoinRequest.getPassword()))
                 .roleId(Long.valueOf(Roles.ROLE_USER.ordinal()))
                 .point(0)
                 .deleteYn("N")
@@ -56,7 +63,7 @@ public class MemberService {
 
         memberRepository.save(member);
 
-        return member;
+        return RsData.of("200", "환영합니다! 이메일 인증을 완료해주세요.", new MemberDto(member));
     }
 
     public boolean validateToken(String token) {
