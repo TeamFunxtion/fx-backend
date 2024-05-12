@@ -33,11 +33,14 @@ public class ProductDetailResponse {
     private LocalDateTime updateDate;
     private List<ProductImageDto> images = new ArrayList<>();
     private List<BidDto> bids = new ArrayList<>();
+    private int favorites;
+    private boolean isFavorite = false;
 
     public ProductDetailResponse(Product p) {
         BeanUtils.copyProperties(p, this);
         this.seller = new MemberDto(p.getMember());
         this.images = p.getImages().stream().map(ProductImageDto::new).toList();
         this.bids  = p.getBids().stream().map(BidDto::new).toList();
+        this.favorites = p.getFavorites().size();
     }
 }
