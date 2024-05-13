@@ -53,13 +53,13 @@ public class ApiV1chatRoomController {
         return RsData.of("200", "채팅내용 조회 성공!", list);
     }
 
-    // 채팅 메시지 추가(입력)
-    @PostMapping("/{id}/messages")
-    public RsData<ChatMessageDto> insert(@RequestBody ChatMessageDto chatMessageDto) {
-        ChatMessageDto insertDto = chatService.insertChatMessage(chatMessageDto);
-
-        return RsData.of("200", "채팅 입력 성공!", insertDto);
-    }
+//    // 채팅 메시지 추가(입력)
+//    @PostMapping("/{id}/messages")
+//    public RsData<ChatMessageDto> insert(@RequestBody ChatMessageDto chatMessageDto) {
+//        ChatMessageDto insertDto = chatService.insertChatMessage(chatMessageDto);
+//
+//        return RsData.of("200", "채팅 입력 성공!", insertDto);
+//    }
 
     // 채팅 읽음 처리
     @PatchMapping("/{id}/messages")

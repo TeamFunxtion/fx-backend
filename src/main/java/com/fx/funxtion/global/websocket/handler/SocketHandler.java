@@ -1,5 +1,9 @@
 package com.fx.funxtion.global.websocket.handler;
 
+
+import com.fx.funxtion.domain.chat.entity.ChatMessage;
+import com.fx.funxtion.domain.chat.repository.ChatMessageRepository;
+import com.fx.funxtion.domain.chat.service.ChatService;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
@@ -9,8 +13,6 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +24,10 @@ public class SocketHandler extends TextWebSocketHandler {
 
     // 웹소켓 세션을 담아둘 리스트
     List<Map<String, Object>> roomSessionList = new ArrayList<>();
-
+    @Autowired
+    ChatService chatService;
+    @Autowired
+    ChatMessageRepository chatMessageRepository;
     // 메시지 발송
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -47,11 +52,32 @@ public class SocketHandler extends TextWebSocketHandler {
                     continue;
                 }
 
+
                 WebSocketSession wss = (WebSocketSession) temp.get(k);
                 if (wss != null) {
+                    obj.addProperty("sessionLength", temp.keySet().size());
                     wss.sendMessage(new TextMessage(obj.toString()));
+
                 }
             }
+            ChatMessage chatMessage;
+            if(temp.keySet().size() >= 3) {
+                chatMessage = ChatMessage.builder()
+                        .userId(obj.get("userId").getAsLong())
+                        .roomId(obj.get("roomNumber").getAsLong())
+                        .message(obj.get("msg").getAsString())
+                        .readYn("Y")
+                        .build();
+            } else {
+                chatMessage = ChatMessage.builder()
+                        .userId(obj.get("userId").getAsLong())
+                        .roomId(obj.get("roomNumber").getAsLong())
+                        .message(obj.get("msg").getAsString())
+                        .build();
+            }
+
+            chatMessageRepository.save(chatMessage);
+
         }
     }
 
@@ -60,12 +86,14 @@ public class SocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         super.afterConnectionEstablished(session);
 
+
+
         boolean flag = false;
 
         String url = session.getUri().toString();
-
-        String roomNumber = url.split("/ws/")[1];
-
+        log.info(">>>>>>>>>>>>>>>>>>>>>>>>socket {} >>>>>>>>>>>>>>>>>>>>>>>>> ", url);
+        String roomNumber = url.split("/chat/")[1];
+        log.info(">>>>>>>>>>>>>>>>>>>>>>>>  {} >>>>>>>>>>>>>>>>>>>>>>>>> ", roomNumber);
         int idx = roomSessionList.size();
         if(!roomSessionList.isEmpty()) {
 
