@@ -57,15 +57,15 @@ public class ProductService {
     }
 
     @Transactional
-    public Page<ProductDto> searchByKeyword(String keyword, Pageable pageable, int pageNo, int pageSize) {
-        pageable = PageRequest.of(pageNo,pageSize, Sort.by(Sort.Direction.DESC, "id"));
+    public Page<ProductDto> searchByKeyword(String keyword, Pageable pageable, int pageNo, int pageSize, String sort) {
+        pageable = PageRequest.of(pageNo,pageSize, getPageableSort(sort));
         Page<ProductDto> list = productRepository.findByProductTitleContainingAndStatusTypeId(keyword, "ST01", pageable)
                 .map(ProductDto::new);
         return list; // RsData.of("200", "목록 조회 성공!", list);
     }
 
-    public Page<ProductDto> searchByCategory(String category, Pageable pageable, int pageNo, int pageSize) {
-        pageable = PageRequest.of(pageNo,pageSize, Sort.by(Sort.Direction.DESC, "id"));
+    public Page<ProductDto> searchByCategory(String category, Pageable pageable, int pageNo, int pageSize, String sort) {
+        pageable = PageRequest.of(pageNo,pageSize, getPageableSort(sort));
         Page<ProductDto> list = productRepository.findByCategoryIdAndStatusTypeId(category, "ST01", pageable)
                 .map(ProductDto::new);
         return list; // RsData.of("200", "목록 조회 성공!", list);
@@ -157,6 +157,14 @@ public class ProductService {
 
             favoriteRepository.save(favorite);
             return true;
+        }
+    }
+
+    public static Sort getPageableSort(String sort) {
+        if(sort.equals("price_asc") || sort.equals("price_desc")) {
+            return Sort.by(sort.equals("price_asc") ?  Sort.Direction.ASC : Sort.Direction.DESC, "currentPrice");
+        } else {
+            return Sort.by(Sort.Direction.DESC, sort);
         }
     }
 }

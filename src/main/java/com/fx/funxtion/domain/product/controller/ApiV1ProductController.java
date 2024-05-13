@@ -51,8 +51,9 @@ public class ApiV1ProductController {
      * @return RsData<ProductListResponse>
      */
     @GetMapping("")
-    public Page<ProductDto> search(@RequestParam(required = false, defaultValue = "", value="keyword") String keyword,
-                                   @RequestParam(required = false, defaultValue = "", value="category") String category,
+    public Page<ProductDto> search(@RequestParam(required = false, defaultValue = "", value = "keyword") String keyword,
+                                   @RequestParam(required = false, defaultValue = "", value = "category") String category,
+                                   @RequestParam(required = false, defaultValue = "id", value = "sort") String sort,
                                    @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
                                    @PageableDefault(size = 2, sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
         pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
@@ -61,9 +62,9 @@ public class ApiV1ProductController {
         Page<ProductDto> pageList;
 
         if(category != null && !category.equals("")) {
-            pageList = productService.searchByCategory(category, pageable, pageNo, pageSize);
+            pageList = productService.searchByCategory(category, pageable, pageNo, pageSize, sort);
         } else {
-            pageList = productService.searchByKeyword(keyword, pageable, pageNo, pageSize);
+            pageList = productService.searchByKeyword(keyword, pageable, pageNo, pageSize, sort);
         }
         return pageList;
     }
