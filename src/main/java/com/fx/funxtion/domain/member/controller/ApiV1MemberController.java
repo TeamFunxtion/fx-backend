@@ -1,9 +1,6 @@
 package com.fx.funxtion.domain.member.controller;
 
-import com.fx.funxtion.domain.member.dto.MemberDto;
-import com.fx.funxtion.domain.member.dto.MemberHasMoneyRequest;
-import com.fx.funxtion.domain.member.dto.MemberJoinRequest;
-import com.fx.funxtion.domain.member.dto.MemberLoginRequest;
+import com.fx.funxtion.domain.member.dto.*;
 import com.fx.funxtion.domain.member.service.MemberService;
 import com.fx.funxtion.global.RsData.RsData;
 import com.fx.funxtion.global.rq.Rq;
@@ -74,4 +71,27 @@ public class ApiV1MemberController {
 
         return RsData.of("200", "잔액 조회 성공!", hasMoney);
     }
+
+
+    @PostMapping("/kakao/login")
+    public RsData<MemberDto> kakaoLogin(@RequestBody KakaoLoginRequest kakaoLoginRequest) {
+        System.out.println(kakaoLoginRequest);
+
+        memberService.kakaoLogin(kakaoLoginRequest);
+
+        // username, password => accessToken
+        RsData<MemberService.AuthAndMakeTokensResponseBody> authAndMakeTokensRs = memberService.kakaoLogin(kakaoLoginRequest);
+
+        if(authAndMakeTokensRs.getResultCode().equals("500") || authAndMakeTokensRs.getData() == null) {
+            return RsData.of(authAndMakeTokensRs.getResultCode(),authAndMakeTokensRs.getMsg());
+        }
+
+        // 쿠키에 accessToken, refreshToken 넣기
+        rq.setCrossDomainCookie("accessToken", authAndMakeTokensRs.getData().getAccessToken());
+        rq.setCrossDomainCookie("refreshToken", authAndMakeTokensRs.getData().getRefreshToken());
+
+        return RsData.of(authAndMakeTokensRs.getResultCode(),authAndMakeTokensRs.getMsg(), new MemberDto(authAndMakeTokensRs.getData().getMember()));
+    }
 }
+
+

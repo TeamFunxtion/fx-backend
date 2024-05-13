@@ -1,5 +1,6 @@
 package com.fx.funxtion.domain.member.service;
 
+import com.fx.funxtion.domain.member.dto.KakaoLoginRequest;
 import com.fx.funxtion.domain.member.dto.MemberDto;
 import com.fx.funxtion.domain.member.dto.MemberHasMoneyRequest;
 import com.fx.funxtion.domain.member.dto.MemberJoinRequest;
@@ -137,5 +138,40 @@ public class MemberService {
                 .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
 
         return (member.getPoint() - memberHasMoneyRequest.getPoint()) >= 0;
+    }
+
+    public RsData<AuthAndMakeTokensResponseBody> kakaoLogin(KakaoLoginRequest kakaoLoginRequest) {
+        Optional<Member> findMember = memberRepository.findByEmail(kakaoLoginRequest.getEmail());
+
+        if(findMember.isEmpty()) {
+            // 회원가입
+            Member newMember = Member.builder()
+                    .email(kakaoLoginRequest.getEmail())
+                    .password(passwordEncoder.encode("passwordTemp#!$#$13"))
+                    .profileImageUrl(kakaoLoginRequest.getProfileImageUrl())
+                    .nickname(kakaoLoginRequest.getNickname())
+                    .name(kakaoLoginRequest.getNickname())
+                    .socialId(kakaoLoginRequest.getId())
+                    .socialProvider("kakao")
+                    .roleId(Long.valueOf(Roles.ROLE_USER.ordinal()))
+                    .point(0)
+                    .deleteYn("N")
+                    .verifiedYn("Y")
+                    .build();
+
+            String refreshToken = jwtProvider.genRefreshToken(newMember);
+            newMember.setRefreshToken(refreshToken);
+
+            memberRepository.save((newMember));
+
+            // Access Token 생성
+            String accessToken = jwtProvider.genAccessToken(newMember);
+            return RsData.of("200", "회원가입 후 로그인 성공!", new AuthAndMakeTokensResponseBody(newMember, accessToken, refreshToken));
+        } else {
+            String accessToken = jwtProvider.genAccessToken(findMember.get());
+            String refreshToken = jwtProvider.genRefreshToken(findMember.get());
+
+            return RsData.of("200", "로그인 성공!", new AuthAndMakeTokensResponseBody(findMember.get(), accessToken, refreshToken));
+        }
     }
 }
