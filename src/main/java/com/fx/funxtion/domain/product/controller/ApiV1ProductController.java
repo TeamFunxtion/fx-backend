@@ -3,6 +3,7 @@ package com.fx.funxtion.domain.product.controller;
 import com.fx.funxtion.domain.product.dto.*;
 import com.fx.funxtion.domain.product.service.BidService;
 import com.fx.funxtion.domain.product.service.ProductService;
+import com.fx.funxtion.domain.product.service.ReportService;
 import com.fx.funxtion.global.RsData.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ public class ApiV1ProductController {
 
     private final ProductService productService;
     private final BidService bidService;
+    private final ReportService reportService;
 
     /**
      * 상품 등록
@@ -134,5 +136,16 @@ public class ApiV1ProductController {
         boolean result = productService.updateFavorite(favoriteUpdateRequest.getUserId(), favoriteUpdateRequest.getProductId());
 
         return RsData.of("200", "성공", result ? "Y" : "N");
+    }
+
+    /**
+     * 신고하기
+     * @param productReportRequest
+     * @return RsData<Long>
+     */
+    @PostMapping("/reports")
+    public RsData<Long> reports(@RequestBody ProductReportRequest productReportRequest) {
+        RsData<Long> reportRs = reportService.report(productReportRequest.getUserId(), productReportRequest.getProductId(), productReportRequest.getReportTypeCode());
+        return RsData.of(reportRs.getResultCode(), reportRs.getMsg(), reportRs.getData());
     }
 }
