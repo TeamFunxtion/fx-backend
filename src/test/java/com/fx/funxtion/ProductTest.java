@@ -104,4 +104,14 @@ public class ProductTest {
         assertThat(productUpdateRequest.getStatusTypeId())
                 .isEqualTo(productUpdateResponse.getData().getStatusTypeId());
     }
+
+    @Test
+    public void 관심상품_토글() {
+        Long userId = 1L;
+        Long productId = 3L;
+
+        boolean result = productService.updateFavorite(userId, productId);
+
+        assertThat(result).isTrue();
+    }
 }
