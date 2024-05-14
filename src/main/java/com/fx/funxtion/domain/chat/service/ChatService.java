@@ -90,10 +90,9 @@ public class ChatService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 상점이 존재하지 않습니다."));
         Product product = productRepository.findById(chatRoomCreateRequest.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
-        boolean exist = chatRoomRepository.existsByCustomerIdAndMemberId(chatRoomCreateRequest.getCustomerId(), chatRoomCreateRequest.getStoreId());
         ChatRoom chatRoomEx = chatRoomRepository.findByCustomerIdAndMemberId(chatRoomCreateRequest.getCustomerId(), chatRoomCreateRequest.getStoreId());
         ChatRoom cr;
-        if(exist == false) {
+        if(chatRoomEx == null) {
             ChatRoom chatRoom = ChatRoom.builder()
                     .member(member)
                     .customerId(chatRoomCreateRequest.getCustomerId())
