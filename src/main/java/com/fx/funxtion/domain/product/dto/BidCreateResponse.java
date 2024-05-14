@@ -20,8 +20,11 @@ public class BidCreateResponse {
     private Long bidPrice;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
+    private boolean winnerYn;
 
-    public BidCreateResponse(Bid bid){
+    public BidCreateResponse(Bid bid, boolean winnerYn){
+
         BeanUtils.copyProperties(bid, this);
+        this.winnerYn = winnerYn;
     }
 }
