@@ -1,17 +1,26 @@
 package com.fx.funxtion.domain.product.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fx.funxtion.domain.product.dto.*;
 import com.fx.funxtion.domain.product.service.BidService;
 import com.fx.funxtion.domain.product.service.ProductService;
+import com.fx.funxtion.domain.product.service.ReportService;
 import com.fx.funxtion.global.RsData.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 /**
  * 상품 관련 Controller
@@ -26,6 +35,7 @@ public class ApiV1ProductController {
 
     private final ProductService productService;
     private final BidService bidService;
+    private final ReportService reportService;
 
     /**
      * 상품 등록
@@ -45,14 +55,55 @@ public class ApiV1ProductController {
     }
 
     /**
+     * 상품 등록 with MultipartFiles
+     * @param multipartFiles
+     * @param stringFoodDto
+     */
+    @PostMapping("/uploadFiles")
+    public void uploadFiles(@RequestParam(value="file", required = false)MultipartFile[] multipartFiles, @RequestParam(value="productRequestDto", required = false) String stringFoodDto) { // 파라미터의 이름은 client의 formData key값과 동일해야함
+        String UPLOAD_PATH = "C:\\funxtionUpload"; // 업로드 할 위치
+
+        try {
+            // 객체는 client에서 직렬화를 하여 전달
+            ProductCreateRequest foodDto = new ObjectMapper().readValue(stringFoodDto, ProductCreateRequest.class); // String to Object
+            System.out.println("foodDto= " + foodDto);
+
+            for(int i=0; i<multipartFiles.length; i++) {
+                MultipartFile file = multipartFiles[i];
+
+                String fileId = (new Date().getTime()) + "" + (new Random().ints(1000, 9999).findAny().getAsInt()); // 현재 날짜와 랜덤 정수값으로 새로운 파일명 만들기
+                String originName = file.getOriginalFilename(); // ex) 파일.jpg
+                String fileExtension = originName.substring(originName.lastIndexOf(".") + 1); // ex) jpg
+                originName = originName.substring(0, originName.lastIndexOf(".")); // ex) 파일
+                long fileSize = file.getSize(); // 파일 사이즈
+
+                File fileSave = new File(UPLOAD_PATH, fileId + "." + fileExtension); // ex) fileId.jpg
+                if(!fileSave.exists()) { // 폴더가 없을 경우 폴더 만들기
+                    fileSave.mkdirs();
+                }
+
+                file.transferTo(fileSave); // fileSave의 형태로 파일 저장
+
+                System.out.println("fileId= " + fileId);
+                System.out.println("originName= " + originName);
+                System.out.println("fileExtension= " + fileExtension);
+                System.out.println("fileSize= " + fileSize);
+            }
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * 상품 목록 조회
      *
      * @param
      * @return RsData<ProductListResponse>
      */
     @GetMapping("")
-    public Page<ProductDto> search(@RequestParam(required = false, defaultValue = "", value="keyword") String keyword,
-                                   @RequestParam(required = false, defaultValue = "", value="category") String category,
+    public Page<ProductDto> search(@RequestParam(required = false, defaultValue = "", value = "keyword") String keyword,
+                                   @RequestParam(required = false, defaultValue = "", value = "category") String category,
+                                   @RequestParam(required = false, defaultValue = "id", value = "sort") String sort,
                                    @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
                                    @PageableDefault(size = 2, sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
         pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
@@ -61,9 +112,9 @@ public class ApiV1ProductController {
         Page<ProductDto> pageList;
 
         if(category != null && !category.equals("")) {
-            pageList = productService.searchByCategory(category, pageable, pageNo, pageSize);
+            pageList = productService.searchByCategory(category, pageable, pageNo, pageSize, sort);
         } else {
-            pageList = productService.searchByKeyword(keyword, pageable, pageNo, pageSize);
+            pageList = productService.searchByKeyword(keyword, pageable, pageNo, pageSize, sort);
         }
         return pageList;
     }
@@ -133,5 +184,16 @@ public class ApiV1ProductController {
         boolean result = productService.updateFavorite(favoriteUpdateRequest.getUserId(), favoriteUpdateRequest.getProductId());
 
         return RsData.of("200", "성공", result ? "Y" : "N");
+    }
+
+    /**
+     * 신고하기
+     * @param productReportRequest
+     * @return RsData<Long>
+     */
+    @PostMapping("/reports")
+    public RsData<Long> reports(@RequestBody ProductReportRequest productReportRequest) {
+        RsData<Long> reportRs = reportService.report(productReportRequest.getUserId(), productReportRequest.getProductId(), productReportRequest.getReportTypeCode());
+        return RsData.of(reportRs.getResultCode(), reportRs.getMsg(), reportRs.getData());
     }
 }
