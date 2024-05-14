@@ -15,6 +15,6 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
 
     List<ChatMessage> findTopByRoomIdOrderByCreateDateDesc(Long roomId);
 
-    @Query(value = "select * from chat_message where room_id = ?1 and user_id != ?2", nativeQuery = true)
+    @Query(value = "select * from chat_messages where room_id = ?1 and user_id != ?2", nativeQuery = true)
     List<ChatMessage> findAllReadMessages(Long roomId, Long userId);
 }

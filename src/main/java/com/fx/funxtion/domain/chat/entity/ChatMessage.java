@@ -14,7 +14,7 @@ import org.hibernate.annotations.DynamicInsert;
 @NoArgsConstructor
 @SuperBuilder
 @ToString
-@Table(name="chat_message")
+@Table(name="chat_messages")
 @DynamicInsert
 public class ChatMessage extends BaseEntity {
     private Long userId;
@@ -24,6 +24,7 @@ public class ChatMessage extends BaseEntity {
     @ColumnDefault("'N'")
     @Column(length = 1)
     private String readYn;
+
 
 
 }

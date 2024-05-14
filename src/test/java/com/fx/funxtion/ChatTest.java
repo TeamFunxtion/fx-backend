@@ -32,8 +32,8 @@ public class ChatTest {
     public void enter() {
         ChatRoomCreateRequest chatRoomCreateRequest = new ChatRoomCreateRequest();
         chatRoomCreateRequest.setCustomerId(1L);
-        chatRoomCreateRequest.setStoreId(6L);
-        chatRoomCreateRequest.setProductId(5L);
+        chatRoomCreateRequest.setStoreId(2L);
+        chatRoomCreateRequest.setProductId(3L);
 
         ChatRoomCreateResponse crd = chatService.insertChatRoom(chatRoomCreateRequest);
         System.out.println(crd);
@@ -45,11 +45,12 @@ public class ChatTest {
     @DisplayName("채팅방 목록 조회")
     public void getList() {
         long customerId = 1;
-//        List<ChatRoomDto> chatRoomList = chatService.getChatRoomList(customerId);
+        List<ChatRoomListResponse> chatRoomList = chatService.getChatRoomList(customerId);
 
-//        for(ChatRoomDto chatRoomDto: chatRoomList) {
-//            System.out.println(chatRoomDto.getStore().getNickname());
-//        }
+        for(ChatRoomListResponse chatRoomDto: chatRoomList) {
+
+            System.out.println(chatRoomDto.getStore().getNickname());
+        }
     }
 
     // chatRoom 한 개 조회
@@ -66,8 +67,8 @@ public class ChatTest {
     @DisplayName("채팅 메시지 추가")
     public void insert() {
         ChatMessageDto chatMessageDto = new ChatMessageDto();
-//        chatMessageDto.setUserId(1);
-//        chatMessageDto.setRoomId(5);
+        chatMessageDto.setUserId(1L);
+        chatMessageDto.setRoomId(1L);
         chatMessageDto.setMessage("안녕하세요 코딩못하는 버러지입니다.");
 
         ChatMessageDto cmd = chatService.insertChatMessage(chatMessageDto);
