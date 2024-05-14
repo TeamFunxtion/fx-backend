@@ -1,5 +1,7 @@
 package com.fx.funxtion.domain.product.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fx.funxtion.domain.product.dto.*;
 import com.fx.funxtion.domain.product.service.BidService;
 import com.fx.funxtion.domain.product.service.ProductService;
@@ -10,9 +12,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 /**
  * 상품 관련 Controller
@@ -44,6 +52,46 @@ public class ApiV1ProductController {
         // todo. 파일 업로드...
 
         return RsData.of(productCreateResponse.getResultCode(), productCreateResponse.getMsg(), productCreateResponse.getData());
+    }
+
+    /**
+     * 상품 등록 with MultipartFiles
+     * @param multipartFiles
+     * @param stringFoodDto
+     */
+    @PostMapping("/uploadFiles")
+    public void uploadFiles(@RequestParam(value="file", required = false)MultipartFile[] multipartFiles, @RequestParam(value="productRequestDto", required = false) String stringFoodDto) { // 파라미터의 이름은 client의 formData key값과 동일해야함
+        String UPLOAD_PATH = "C:\\funxtionUpload"; // 업로드 할 위치
+
+        try {
+            // 객체는 client에서 직렬화를 하여 전달
+            ProductCreateRequest foodDto = new ObjectMapper().readValue(stringFoodDto, ProductCreateRequest.class); // String to Object
+            System.out.println("foodDto= " + foodDto);
+
+            for(int i=0; i<multipartFiles.length; i++) {
+                MultipartFile file = multipartFiles[i];
+
+                String fileId = (new Date().getTime()) + "" + (new Random().ints(1000, 9999).findAny().getAsInt()); // 현재 날짜와 랜덤 정수값으로 새로운 파일명 만들기
+                String originName = file.getOriginalFilename(); // ex) 파일.jpg
+                String fileExtension = originName.substring(originName.lastIndexOf(".") + 1); // ex) jpg
+                originName = originName.substring(0, originName.lastIndexOf(".")); // ex) 파일
+                long fileSize = file.getSize(); // 파일 사이즈
+
+                File fileSave = new File(UPLOAD_PATH, fileId + "." + fileExtension); // ex) fileId.jpg
+                if(!fileSave.exists()) { // 폴더가 없을 경우 폴더 만들기
+                    fileSave.mkdirs();
+                }
+
+                file.transferTo(fileSave); // fileSave의 형태로 파일 저장
+
+                System.out.println("fileId= " + fileId);
+                System.out.println("originName= " + originName);
+                System.out.println("fileExtension= " + fileExtension);
+                System.out.println("fileSize= " + fileSize);
+            }
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
