@@ -27,10 +27,12 @@ public class ApiSecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/api/*/members/logout").permitAll() // 로그아웃 누구나 가능, post요청만 허용
                                 .requestMatchers(HttpMethod.POST, "/api/*/members/join").permitAll() // 회원가입 누구나 가능, post요청만 허용
                                 .requestMatchers(HttpMethod.GET, "/api/*/members/auth").permitAll() // 이메일 인증 누구나 가능, get요청 허용
+                                .requestMatchers(HttpMethod.POST, "/api/*/members/kakao/login").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/api/*/notices").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/*/faqs").permitAll()
                                 .requestMatchers("/api/*/products").permitAll()
                                 .requestMatchers("/api/*/products/*").permitAll()
+                                .requestMatchers("/api/*/products/*/**").permitAll()
                                 .requestMatchers( HttpMethod.GET,"/api/*/chats").permitAll()
                                 .requestMatchers("/api/*/chats/*").permitAll()
                                 .requestMatchers("/api/*/chats/*/messages").permitAll()

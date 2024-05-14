@@ -65,7 +65,7 @@ public class ProductTest {
     @Test
     public void 상품_데이터_상세_조회() {
         Long id = 1L;
-        RsData<ProductDetailResponse> productDetailResponse = productService.getProductDetail(id);
+        RsData<ProductDetailResponse> productDetailResponse = productService.getProductDetail(id, null);
         System.out.println(productDetailResponse.getData());
 
         assertThat(id)
@@ -103,5 +103,15 @@ public class ProductTest {
 
         assertThat(productUpdateRequest.getStatusTypeId())
                 .isEqualTo(productUpdateResponse.getData().getStatusTypeId());
+    }
+
+    @Test
+    public void 관심상품_토글() {
+        Long userId = 1L;
+        Long productId = 3L;
+
+        boolean result = productService.updateFavorite(userId, productId);
+
+        assertThat(result).isTrue();
     }
 }

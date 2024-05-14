@@ -1,6 +1,8 @@
 package com.fx.funxtion;
 
+import com.fx.funxtion.domain.member.dto.MemberDto;
 import com.fx.funxtion.domain.member.dto.MemberHasMoneyRequest;
+import com.fx.funxtion.domain.member.dto.MemberJoinRequest;
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
 import com.fx.funxtion.domain.member.service.MemberService;
@@ -21,14 +23,13 @@ public class MemberTest {
 
     @Test
     public void join() {
-        String email = "abvcddddd132@gmail.com";
-        String password = "1234";
+        MemberJoinRequest memberJoinRequest = new MemberJoinRequest();
+        memberJoinRequest.setEmail("admin@gmail.com");
+        memberJoinRequest.setPassword("1234");
 
-        memberRepository.deleteByEmail(email);
+        RsData<MemberDto> member = memberService.join(memberJoinRequest);
 
-        Member member = memberService.join(email, password);
-
-        System.out.println(member);
+        Assertions.assertThat(member.getData().getId()).isGreaterThan(0);
     }
 
     @Test

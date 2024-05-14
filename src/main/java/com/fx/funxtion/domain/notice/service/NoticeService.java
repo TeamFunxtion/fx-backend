@@ -1,13 +1,16 @@
 package com.fx.funxtion.domain.notice.service;
 
-
 import com.fx.funxtion.domain.notice.dto.NoticeDto;
 import com.fx.funxtion.domain.notice.repository.NoticeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -15,8 +18,10 @@ public class NoticeService {
     private final NoticeRepository noticeRepository;
 
     @Transactional(readOnly = true)
-    public List<NoticeDto> getselectList() {
+    public Page<NoticeDto> getSelectPage(Pageable pageable,int pageNo , int pageSize) {
+        pageable = PageRequest.of(pageNo,pageSize,Sort.by(Sort.Direction.DESC,"id"));
+        Page<NoticeDto> list =noticeRepository.findAll(pageable).map(NoticeDto::new);
 
-        return noticeRepository.findAll().stream().map(NoticeDto::new).toList();
+        return list;
     }
 }

@@ -33,9 +33,11 @@ public class ProductDto {
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
     private List<ProductImageDto> images = new ArrayList<>();
+    private int bidCount;
 
     public ProductDto(Product p) {
         BeanUtils.copyProperties(p, this);
         this.creator = new MemberDto(p.getMember());
+        this.bidCount = p.getBids().size();
     }
 }

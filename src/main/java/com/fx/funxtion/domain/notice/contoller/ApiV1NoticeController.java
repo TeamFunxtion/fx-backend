@@ -5,11 +5,12 @@ import com.fx.funxtion.domain.notice.dto.NoticeDto;
 import com.fx.funxtion.domain.notice.service.NoticeService;
 import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/notices")
@@ -18,11 +19,22 @@ import java.util.List;
 public class ApiV1NoticeController {
     private final NoticeService noticeService;
 
-
     @GetMapping("") // /api/v1/notices
-    public List<NoticeDto> selectiList(){
+    public Page<NoticeDto> selectList(@RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
+                                        @PageableDefault(size = 5,sort ="id",direction = Sort.Direction.DESC) Pageable pageable) {
 
-        return noticeService.getselectList();
+        int pageSize = 10;
+        pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
+        Page<NoticeDto> pageNotice;
+
+        pageNotice = noticeService.getSelectPage(pageable,pageNo,pageSize);
+
+        return  pageNotice;
+
     }
+
+
+
+
 
 }

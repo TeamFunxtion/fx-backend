@@ -18,12 +18,11 @@ public class NoticeTest {
     @Test
     public void test() {
 
-        List<NoticeDto> result =  noticeService.getselectList();
+//        List<NoticeDto> result =  noticeService.getselectList();
 
-        for(int i=0; i < result.size() ; i++) {
-            System.out.println(result.get(i));
-
-        }
+//        for(int i=0; i < result.size() ; i++) {
+//            System.out.println(result.get(i));
+//        }
 
 
     }
