@@ -82,22 +82,31 @@ public class ChatService {
         return chatRoomListResponses;
     }
 
+
+
     // 채팅방 생성
     public ChatRoomCreateResponse insertChatRoom(ChatRoomCreateRequest chatRoomCreateRequest) {
         Member member = memberRepository.findById(chatRoomCreateRequest.getStoreId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 상점이 존재하지 않습니다."));
-
         Product product = productRepository.findById(chatRoomCreateRequest.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
-        ChatRoom chatRoom = ChatRoom.builder()
-                .member(member)
-                .customerId(chatRoomCreateRequest.getCustomerId())
-                .product(product)
-                .build();
-        ChatRoom cr = chatRoomRepository.save(chatRoom);
-
+        boolean exist = chatRoomRepository.existsByCustomerIdAndMemberId(chatRoomCreateRequest.getCustomerId(), chatRoomCreateRequest.getStoreId());
+        ChatRoom chatRoomEx = chatRoomRepository.findByCustomerIdAndMemberId(chatRoomCreateRequest.getCustomerId(), chatRoomCreateRequest.getStoreId());
+        ChatRoom cr;
+        if(exist == false) {
+            ChatRoom chatRoom = ChatRoom.builder()
+                    .member(member)
+                    .customerId(chatRoomCreateRequest.getCustomerId())
+                    .product(product)
+                    .build();
+            cr = chatRoomRepository.save(chatRoom);
+        } else {
+            chatRoomEx.setProduct(product);
+            cr = chatRoomRepository.save(chatRoomEx);
+        }
         return new ChatRoomCreateResponse(cr, new ArrayList<>());
     }
+
 
     // 채팅방 상세정보 및 채팅메시지 조회
     public RsData<ChatRoomDetailResponse> getChatRoomdetail(Long roomId) {

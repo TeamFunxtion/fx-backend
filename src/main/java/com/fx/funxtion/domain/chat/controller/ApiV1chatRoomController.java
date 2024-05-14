@@ -1,6 +1,7 @@
 package com.fx.funxtion.domain.chat.controller;
 
 import com.fx.funxtion.domain.chat.dto.*;
+import com.fx.funxtion.domain.chat.entity.ChatRoom;
 import com.fx.funxtion.domain.chat.service.ChatService;
 import com.fx.funxtion.domain.product.dto.ProductDetailResponse;
 import com.fx.funxtion.global.RsData.RsData;
@@ -27,6 +28,7 @@ public class ApiV1chatRoomController {
         return RsData.of("200", "채팅방 조회 성공!", list);
     }
 
+
     // 특정 채팅방 조회
     @GetMapping("/{id}")
     public RsData<ChatRoomDetailResponse> findRoom(@RequestParam("id") String id) {
@@ -35,13 +37,13 @@ public class ApiV1chatRoomController {
         return RsData.of(chatRoomDetailResponse.getResultCode(), chatRoomDetailResponse.getMsg(), chatRoomDetailResponse.getData());
     }
 
-    // 채팅방 추가
+    // 채팅방 추가 |변경
     @PostMapping("")
-    public RsData<ChatRoomCreateResponse> enter(@RequestBody ChatRoomCreateRequest chatRoomCreateRequest) {
+    public RsData<Long> enter(@RequestBody ChatRoomCreateRequest chatRoomCreateRequest) {
 
         ChatRoomCreateResponse enterRoom = chatService.insertChatRoom(chatRoomCreateRequest);
-
-        return RsData.of("200", "채팅방 추가 성공!", enterRoom);
+        Long id = enterRoom.getId();
+        return RsData.of("200", "채팅방 추가|변경 성공!", id);
     }
 
     // 채팅 내역 조회
@@ -53,13 +55,6 @@ public class ApiV1chatRoomController {
         return RsData.of("200", "채팅내용 조회 성공!", list);
     }
 
-//    // 채팅 메시지 추가(입력)
-//    @PostMapping("/{id}/messages")
-//    public RsData<ChatMessageDto> insert(@RequestBody ChatMessageDto chatMessageDto) {
-//        ChatMessageDto insertDto = chatService.insertChatMessage(chatMessageDto);
-//
-//        return RsData.of("200", "채팅 입력 성공!", insertDto);
-//    }
 
     // 채팅 읽음 처리
     @PatchMapping("/{id}/messages")
