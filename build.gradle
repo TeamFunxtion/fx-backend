@@ -17,8 +17,11 @@ configurations {
 	}
 }
 
-repositories {
-	mavenCentral()
+allprojects {
+	repositories {
+		mavenCentral()
+		maven { url 'https://jitpack.io' }
+	}
 }
 
 dependencies {
@@ -45,6 +48,13 @@ dependencies {
 	// webSocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	// gson
+	implementation 'com.google.code.gson:gson'
+	//swagger
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+
+	// iamport
+	implementation 'com.github.iamport:iamport-rest-client-java:0.2.21'
 }
 
 tasks.named('test') {

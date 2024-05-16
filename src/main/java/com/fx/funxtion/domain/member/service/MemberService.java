@@ -39,6 +39,13 @@ public class MemberService {
         ROLE_ADMIN
     }
 
+    public RsData<MemberDto> getUser(Long userId) {
+        Optional<Member> findMember = memberRepository.findById(userId);
+
+        return findMember.map(member -> RsData.of("200", "조회 성공!", new MemberDto(member)))
+                .orElseGet(() -> RsData.of("500", "조회 실패!"));
+
+    }
 
     public RsData<MemberDto> join(MemberJoinRequest memberJoinRequest) {
 

@@ -17,11 +17,13 @@ public class NoticeDto {
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
 
+
     public NoticeDto(Notice notice){
         this.id = notice.getId();
         this.title = notice.getNoticeTitle();
         this.content = notice.getNoticeContent();
         this.createDate = notice.getCreateDate();
         this.updateDate = notice.getCreateDate();
+
     }
 }

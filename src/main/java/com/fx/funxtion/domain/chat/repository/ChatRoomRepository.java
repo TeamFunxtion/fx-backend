@@ -16,5 +16,6 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long>  {
 
     @Query(value = "select * from chat_rooms where store_id = ?1 or customer_id = ?2", nativeQuery = true)
     List<ChatRoom> findAllChatRoom(Long storeId, Long customerId);
+    ChatRoom findByCustomerIdAndMemberId(Long customerId, Long memberId);
 
 }

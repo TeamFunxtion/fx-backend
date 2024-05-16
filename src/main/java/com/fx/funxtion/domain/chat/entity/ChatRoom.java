@@ -42,6 +42,6 @@ public class ChatRoom extends BaseEntity{
     @JoinColumn(name="store_id")
     private Member member;
 
-    //private Long productId;
+
 
 }

@@ -8,6 +8,7 @@ import groovy.util.logging.Slf4j;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 @RequestMapping("/api/v1/members")
@@ -40,10 +41,14 @@ public class ApiV1MemberController {
         return RsData.of("200", "로그아웃 성공");
     }
 
+    @GetMapping("{id}")
+    public RsData<MemberDto> getUser(@PathVariable("id") Long userId) {
+        return memberService.getUser(userId);
+    }
+
+
     @PostMapping("/join")
     public RsData<MemberDto> join(@Valid @RequestBody MemberJoinRequest memberJoinRequest) {
-        System.out.println(memberJoinRequest);
-
         if(!memberJoinRequest.getPassword().equals(memberJoinRequest.getPasswordConfirm())) {
             return RsData.of("500", "회원가입 실패..");
         }
@@ -54,19 +59,15 @@ public class ApiV1MemberController {
     }
 
     @GetMapping("/auth")
-    public String auth(@RequestParam(value="email") String email, @RequestParam(value="code") String code) {
-        System.out.println(email);
-        System.out.println(code);
-
+    public RedirectView auth(@RequestParam(value="email") String email, @RequestParam(value="code") String code) {
         String verifiedYn = memberService.verifyEmail(email, code);
-        System.out.println(verifiedYn);
-
-        return "이메일 인증이 완료되었습니다.";
+        RedirectView redirectView = new RedirectView();
+        redirectView.setUrl("http://localhost:3000/auth/login?auth=success");
+        return redirectView;
     }
 
     @PostMapping("/has-money")
     public RsData<Boolean> hasMoney(@RequestBody MemberHasMoneyRequest memberHasMoneyRequest) {
-
         boolean hasMoney = memberService.hasMoney(memberHasMoneyRequest);
 
         return RsData.of("200", "잔액 조회 성공!", hasMoney);
@@ -75,8 +76,6 @@ public class ApiV1MemberController {
 
     @PostMapping("/kakao/login")
     public RsData<MemberDto> kakaoLogin(@RequestBody KakaoLoginRequest kakaoLoginRequest) {
-        System.out.println(kakaoLoginRequest);
-
         memberService.kakaoLogin(kakaoLoginRequest);
 
         // username, password => accessToken

@@ -10,17 +10,13 @@ spring:
         show_sql: true
         format_sql: true
         use_sql_comments: true
+  servlet:
+    multipart:
+      maxFileSize: 1MB
+
 logging:
   level:
     root: INFO
     com.example.sksb: DEBUG
     org.hibernate.orm.jdbc.bind: TRACE
     org.hibernate.orm.jdbc.extract: TRACE
-
-application:
-  mail:
-    host: smtp.naver.com
-    port: 465
-    username: funxtion@naver.com
-    password: fx!@231212
-    from-mail: funxtion@naver.com

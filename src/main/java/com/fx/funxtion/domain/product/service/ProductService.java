@@ -57,15 +57,15 @@ public class ProductService {
     }
 
     @Transactional
-    public Page<ProductDto> searchByKeyword(String keyword, Pageable pageable, int pageNo, int pageSize) {
-        pageable = PageRequest.of(pageNo,pageSize, Sort.by(Sort.Direction.DESC, "id"));
+    public Page<ProductDto> searchByKeyword(String keyword, Pageable pageable, int pageNo, int pageSize, String sort) {
+        pageable = PageRequest.of(pageNo,pageSize, getPageableSort(sort));
         Page<ProductDto> list = productRepository.findByProductTitleContainingAndStatusTypeId(keyword, "ST01", pageable)
                 .map(ProductDto::new);
         return list; // RsData.of("200", "목록 조회 성공!", list);
     }
 
-    public Page<ProductDto> searchByCategory(String category, Pageable pageable, int pageNo, int pageSize) {
-        pageable = PageRequest.of(pageNo,pageSize, Sort.by(Sort.Direction.DESC, "id"));
+    public Page<ProductDto> searchByCategory(String category, Pageable pageable, int pageNo, int pageSize, String sort) {
+        pageable = PageRequest.of(pageNo,pageSize, getPageableSort(sort));
         Page<ProductDto> list = productRepository.findByCategoryIdAndStatusTypeId(category, "ST01", pageable)
                 .map(ProductDto::new);
         return list; // RsData.of("200", "목록 조회 성공!", list);
@@ -104,30 +104,41 @@ public class ProductService {
         }
 
         Product p = optionalProduct.get();
-
-        if(productUpdateRequest.getCategoryId() != null && !productUpdateRequest.getCategoryId().isEmpty()) {
-            p.setCategoryId(productUpdateRequest.getCategoryId());
+        
+        if(p.getStatusTypeId().equals(ProductStatusType.ST01.name()) && !p.getBids().isEmpty()) { // 입찰내역이 있는 경매진행중인 상품이라면
+            return RsData.of("500", "해당 상품은 입찰내역이 있는 경매가 진행중인 상품입니다.");
         }
-        if(productUpdateRequest.getProductTitle() != null && !productUpdateRequest.getProductTitle().isEmpty()) {
+
+        if(productUpdateRequest.getProductTitle() != null && !productUpdateRequest.getProductTitle().isEmpty()) { // 상품명
             p.setProductTitle(productUpdateRequest.getProductTitle());
         }
-        if(productUpdateRequest.getProductDesc() != null && !productUpdateRequest.getProductDesc().isEmpty()) {
+        if(productUpdateRequest.getCategoryId() != null && !productUpdateRequest.getCategoryId().isEmpty()) { // 카테고리
+            p.setCategoryId(productUpdateRequest.getCategoryId());
+        }
+        if(productUpdateRequest.getProductPrice() != null ) { // 가격
+            p.setProductPrice(productUpdateRequest.getProductPrice());
+            p.setCurrentPrice(productUpdateRequest.getProductPrice());
+        }
+        if(productUpdateRequest.getProductDesc() != null && !productUpdateRequest.getProductDesc().isEmpty()) { // 설명
             p.setProductDesc(productUpdateRequest.getProductDesc());
         }
-        if(productUpdateRequest.getProductPrice() != null ) {
-            p.setProductPrice(productUpdateRequest.getProductPrice());
-        }
-        if(productUpdateRequest.getLocation() != null && !productUpdateRequest.getLocation().isEmpty()) {
-            p.setLocation(productUpdateRequest.getLocation());
-        }
-        if(productUpdateRequest.getQualityTypeId() != null && !productUpdateRequest.getQualityTypeId().isEmpty()) {
+        if(productUpdateRequest.getQualityTypeId() != null && !productUpdateRequest.getQualityTypeId().isEmpty()) { // 품질상태
             p.setQualityTypeId(productUpdateRequest.getQualityTypeId());
         }
-        if(productUpdateRequest.getSalesTypeId() != null && !productUpdateRequest.getSalesTypeId().isEmpty()) {
+        if(productUpdateRequest.getLocation() != null && !productUpdateRequest.getLocation().isEmpty()) { // 거래지역
+            p.setLocation(productUpdateRequest.getLocation());
+        }
+        if(productUpdateRequest.getSalesTypeId() != null && !productUpdateRequest.getSalesTypeId().isEmpty()) { // 판매방식
             p.setSalesTypeId(productUpdateRequest.getSalesTypeId());
         }
-        if(productUpdateRequest.getStatusTypeId() != null && !productUpdateRequest.getStatusTypeId().isEmpty()) {
+        if(productUpdateRequest.getStatusTypeId() != null && !productUpdateRequest.getStatusTypeId().isEmpty()) { // 상품상태
             p.setStatusTypeId(productUpdateRequest.getStatusTypeId());
+        }
+        if(productUpdateRequest.getCoolPrice() != null) { // 즉구가
+            p.setCoolPrice(productUpdateRequest.getCoolPrice());
+        }
+        if(productUpdateRequest.getEndDays() > 0) { // 경매 종료일
+            p.setEndTime(LocalDateTime.now().plusDays(productUpdateRequest.getEndDays()));
         }
 
         productRepository.save(p);
@@ -157,6 +168,14 @@ public class ProductService {
 
             favoriteRepository.save(favorite);
             return true;
+        }
+    }
+
+    public static Sort getPageableSort(String sort) {
+        if(sort.equals("price_asc") || sort.equals("price_desc")) {
+            return Sort.by(sort.equals("price_asc") ?  Sort.Direction.ASC : Sort.Direction.DESC, "currentPrice");
+        } else {
+            return Sort.by(Sort.Direction.DESC, sort);
         }
     }
 }
