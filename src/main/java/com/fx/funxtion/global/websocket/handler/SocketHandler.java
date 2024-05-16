@@ -83,9 +83,8 @@ public class SocketHandler extends TextWebSocketHandler {
                         .message(obj.get("msg").getAsString())
                         .build();
             }
-            System.out.println("=====================================");
-            System.out.println(obj.get("msg").getAsString());
             chatMessageRepository.save(chatMessage);
+            // 안전거래 버튼 클릭 시 DB 저장.
             SafePayments safePaymentsEx = safePaymentsRepository.findByProductIdAndSellerIdAndBuyerId(obj.get("productId").getAsLong(), obj.get("sellerId").getAsLong(), obj.get("buyerId").getAsLong());
             SafePayments safePayments;
             if(safePaymentsEx == null && temp.keySet().size() >= 2 && obj.get("safe").getAsString() == "true") {
@@ -96,7 +95,7 @@ public class SocketHandler extends TextWebSocketHandler {
                         .build();
                 safePaymentsRepository.save(safePayments);
             }
-
+            // 판매자가 안전거래 수락 시 DB start_yn 컬럼 값 변경
             if(temp.keySet().size() >=2 && obj.get("msg").getAsString().equals("상품의 안전거래가 수락되었습니다.") ) {
                 safePaymentsEx.setStartYn("Y");
                 safePaymentsRepository.save(safePaymentsEx);

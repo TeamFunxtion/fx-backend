@@ -19,7 +19,7 @@ import java.util.List;
 public class ChatRoomListResponse {
     private Long id;
     private MemberDto store;
-    private Long customerId;
+    private MemberDto customer;
     private ProductDto product;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
@@ -28,7 +28,7 @@ public class ChatRoomListResponse {
     public ChatRoomListResponse(ChatRoom chatRoom, List<ChatMessage> chatMessages) {
         this.id = chatRoom.getId();
         this.store = new MemberDto(chatRoom.getMember());
-        this.customerId = chatRoom.getCustomerId();
+        this.customer = new MemberDto(chatRoom.getCustomer());
         this.product = new ProductDto(chatRoom.getProduct());
         this.createDate = chatRoom.getCreateDate();
         this.updateDate = chatRoom.getUpdateDate();

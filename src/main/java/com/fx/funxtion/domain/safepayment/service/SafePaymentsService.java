@@ -17,7 +17,6 @@ public class SafePaymentsService {
     public SafePaymentsDetailResponse findSafePayments(Long productId, Long sellerId, Long buyerId) {
         SafePayments sp = safePaymentsRepository.findByProductIdAndSellerIdAndBuyerId(productId, sellerId, buyerId);
         SafePaymentsDetailResponse spdr = new SafePaymentsDetailResponse(sp.getSellerOk(), sp.getBuyerOk(), sp.getStartYn(), sp.getEndYn());
-
         return spdr;
     }
 }

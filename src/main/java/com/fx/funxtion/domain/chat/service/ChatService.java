@@ -88,6 +88,8 @@ public class ChatService {
     public ChatRoomCreateResponse insertChatRoom(ChatRoomCreateRequest chatRoomCreateRequest) {
         Member member = memberRepository.findById(chatRoomCreateRequest.getStoreId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 상점이 존재하지 않습니다."));
+        Member customer = memberRepository.findById(chatRoomCreateRequest.getCustomerId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 고객이 존재하지 않습니다."));
         Product product = productRepository.findById(chatRoomCreateRequest.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
         ChatRoom chatRoomEx = chatRoomRepository.findByCustomerIdAndMemberId(chatRoomCreateRequest.getCustomerId(), chatRoomCreateRequest.getStoreId());
@@ -95,7 +97,7 @@ public class ChatService {
         if(chatRoomEx == null) {
             ChatRoom chatRoom = ChatRoom.builder()
                     .member(member)
-                    .customerId(chatRoomCreateRequest.getCustomerId())
+                    .customer(customer)
                     .product(product)
                     .build();
             cr = chatRoomRepository.save(chatRoom);
