@@ -4,8 +4,6 @@ package com.fx.funxtion.domain.qna.controller;
 import com.fx.funxtion.domain.qna.dto.QnaCreateRequest;
 import com.fx.funxtion.domain.qna.dto.QnaCreateResponse;
 import com.fx.funxtion.domain.qna.dto.QnaDto;
-import com.fx.funxtion.domain.qna.entity.Qna;
-import com.fx.funxtion.domain.qna.repository.QnaRepository;
 import com.fx.funxtion.domain.qna.service.QnaService;
 import com.fx.funxtion.global.RsData.RsData;
 import groovy.util.logging.Slf4j;

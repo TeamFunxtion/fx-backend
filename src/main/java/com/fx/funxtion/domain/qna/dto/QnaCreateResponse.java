@@ -1,8 +1,6 @@
 package com.fx.funxtion.domain.qna.dto;
 
 
-import com.fx.funxtion.domain.member.dto.MemberDto;
-import com.fx.funxtion.domain.product.entity.Product;
 import com.fx.funxtion.domain.qna.entity.Qna;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
