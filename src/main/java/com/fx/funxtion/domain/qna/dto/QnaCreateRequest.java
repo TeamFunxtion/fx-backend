@@ -10,9 +10,11 @@ import lombok.ToString;
 @Setter
 @ToString
 public class QnaCreateRequest {
-    private MemberDto member;
+    private Long userId;
     private String categoryId;
     private String qnaTitle;
     private String qnaContent;
 
 }
+
+
