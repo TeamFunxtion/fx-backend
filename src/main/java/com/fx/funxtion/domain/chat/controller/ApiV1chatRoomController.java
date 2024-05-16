@@ -1,9 +1,7 @@
 package com.fx.funxtion.domain.chat.controller;
 
 import com.fx.funxtion.domain.chat.dto.*;
-import com.fx.funxtion.domain.chat.entity.ChatRoom;
 import com.fx.funxtion.domain.chat.service.ChatService;
-import com.fx.funxtion.domain.product.dto.ProductDetailResponse;
 import com.fx.funxtion.global.RsData.RsData;
 import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +22,7 @@ public class ApiV1chatRoomController {
     @GetMapping("")
     public RsData<List> findAllRoom(@RequestParam("id") String id) {
         Long customerId = Long.parseLong(id);
-        List<ChatRoomListResponse> list = chatService.getChatRoomList(customerId);
+        List<ChatRoomWithMessagesDto> list = chatService.getChatRoomList(customerId);
         return RsData.of("200", "채팅방 조회 성공!", list);
     }
 
@@ -41,9 +39,8 @@ public class ApiV1chatRoomController {
     @PostMapping("")
     public RsData<Long> enter(@RequestBody ChatRoomCreateRequest chatRoomCreateRequest) {
 
-        ChatRoomCreateResponse enterRoom = chatService.insertChatRoom(chatRoomCreateRequest);
-        Long id = enterRoom.getId();
-        return RsData.of("200", "채팅방 추가|변경 성공!", id);
+        Long id = chatService.insertChatRoom(chatRoomCreateRequest);
+        return RsData.of("200", "채팅방 추가 성공", id);
     }
 
     // 채팅 내역 조회
