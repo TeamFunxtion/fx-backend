@@ -22,6 +22,15 @@ public class MemberTest {
     private MemberRepository memberRepository;
 
     @Test
+    public void 유저정보_조회() {
+        Long userId = 1L;
+
+        RsData<MemberDto> getRs = memberService.getUser(userId);
+
+        Assertions.assertThat(getRs.getResultCode()).isEqualTo("200");
+    }
+
+    @Test
     public void join() {
         MemberJoinRequest memberJoinRequest = new MemberJoinRequest();
         memberJoinRequest.setEmail("admin@gmail.com");
