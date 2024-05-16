@@ -34,6 +34,5 @@ public class ChatRoomDto {
         this.product = new ProductDto(chatRoom.getProduct());
         this.createDate = chatRoom.getCreateDate();
         this.updateDate = chatRoom.getUpdateDate();
-
     }
 }

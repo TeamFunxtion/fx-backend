@@ -2,8 +2,12 @@ package com.fx.funxtion.global.websocket.handler;
 
 
 import com.fx.funxtion.domain.chat.entity.ChatMessage;
+import com.fx.funxtion.domain.chat.entity.ChatRoom;
 import com.fx.funxtion.domain.chat.repository.ChatMessageRepository;
 import com.fx.funxtion.domain.chat.service.ChatService;
+import com.fx.funxtion.domain.safepayment.entity.SafePayments;
+import com.fx.funxtion.domain.safepayment.repository.SafePaymentsRepository;
+import com.fx.funxtion.domain.safepayment.service.SafePaymentsService;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +32,10 @@ public class SocketHandler extends TextWebSocketHandler {
     ChatService chatService;
     @Autowired
     ChatMessageRepository chatMessageRepository;
+    @Autowired
+    SafePaymentsService safePaymentsService;
+    @Autowired
+    SafePaymentsRepository safePaymentsRepository;
     // 메시지 발송
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -75,9 +83,24 @@ public class SocketHandler extends TextWebSocketHandler {
                         .message(obj.get("msg").getAsString())
                         .build();
             }
-
+            System.out.println("=====================================");
+            System.out.println(obj.get("msg").getAsString());
             chatMessageRepository.save(chatMessage);
+            SafePayments safePaymentsEx = safePaymentsRepository.findByProductIdAndSellerIdAndBuyerId(obj.get("productId").getAsLong(), obj.get("sellerId").getAsLong(), obj.get("buyerId").getAsLong());
+            SafePayments safePayments;
+            if(safePaymentsEx == null && temp.keySet().size() >= 2 && obj.get("safe").getAsString() == "true") {
+                safePayments = SafePayments.builder()
+                        .productId(obj.get("productId").getAsLong())
+                        .sellerId(obj.get("sellerId").getAsLong())
+                        .buyerId(obj.get("buyerId").getAsLong())
+                        .build();
+                safePaymentsRepository.save(safePayments);
+            }
 
+            if(temp.keySet().size() >=2 && obj.get("msg").getAsString().equals("상품의 안전거래가 수락되었습니다.") ) {
+                safePaymentsEx.setStartYn("Y");
+                safePaymentsRepository.save(safePaymentsEx);
+            }
         }
     }
 
