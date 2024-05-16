@@ -23,7 +23,7 @@ public class ApiV1QnaController {
     private final QnaService qnaService;
 
 
-    @GetMapping("/userId")
+    @GetMapping("")
     public Page<QnaDto> selectQna(
             @RequestParam("id") Long userId,
             @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
@@ -39,7 +39,7 @@ public class ApiV1QnaController {
     }
 
 
-    @PostMapping("/uplod")
+    @PostMapping("")
     public RsData<QnaCreateResponse> createQna(@RequestBody QnaCreateRequest qnaCreateRequest) {
         System.out.println(qnaCreateRequest);
 
