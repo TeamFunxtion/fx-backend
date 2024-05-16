@@ -25,14 +25,6 @@ public class QnaDto {
 
     public QnaDto(Qna qna) {
         BeanUtils.copyProperties(qna, this);
-        this.id = qna.getId();
-        this.userId = qna.getUserId();
-        this.categoryId = qna.getCategoryId();
-        this.qnaTitle = qna.getQnaTitle();
-        this.qnaContent = qna.getQnaContent();
-        this.qnaAnswer = qna.getQnaAnswer();
-        this.createDate = qna.getCreateDate();
-
 
     }
 }
