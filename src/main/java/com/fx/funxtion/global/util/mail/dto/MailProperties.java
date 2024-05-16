@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Data
 @Configuration
 @EnableConfigurationProperties
-@ConfigurationProperties("application.mail") // application.yml
+@ConfigurationProperties("spring.mail") // application-secret.yml
 public class MailProperties {
     // SMTP 서버
     private String host;
