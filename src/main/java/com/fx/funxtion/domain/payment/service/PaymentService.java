@@ -9,28 +9,33 @@ import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
-import groovy.util.logging.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class PaymentService {
-    private final IamportClient iamportClient;
     private final PaymentRepository paymentRepository;
     private final MemberRepository memberRepository;
 
+    @Value("${custom.iamport.apiKey}")
+    private String iamportApiKey;
+
+    @Value("${custom.iamport.secretKey}")
+    private String iamportSecretKey;
+
+
     public PaymentService(PaymentRepository paymentRepository, MemberRepository memberRepository) {
-        this.iamportClient = new IamportClient("8773443842444657",
-                "4z9Zod44545jqAePeCEOQ3BjmMI5QGhsBKkYSnkrOMQ1kxk8tueDTw0fmuYvxX1GRlrG0svwCh1dO0pq");
         this.paymentRepository = paymentRepository;
         this.memberRepository = memberRepository;
     }
 
     public PaymentDto verifyPayment(String imp_uid) throws IamportResponseException, IOException {
+        IamportClient iamportClient = new IamportClient(iamportApiKey, iamportSecretKey);
         IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(imp_uid); // 결제 검증
 
         Long amount = (iamportResponse.getResponse().getAmount()).longValue(); // 결제금액
