@@ -15,6 +15,7 @@ public class MemberDto {
     private String profileImageUrl;
     private String nickname;
     private String intro;
+    private int point;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
 
@@ -25,6 +26,7 @@ public class MemberDto {
         this.profileImageUrl = member.getProfileImageUrl();
         this.nickname = member.getNickname();
         this.intro = member.getIntro();
+        this.point = member.getPoint();
         this.createDate = member.getCreateDate();
         this.updateDate = member.getUpdateDate();
     }

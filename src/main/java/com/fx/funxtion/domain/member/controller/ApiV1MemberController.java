@@ -40,6 +40,12 @@ public class ApiV1MemberController {
         return RsData.of("200", "로그아웃 성공");
     }
 
+    @GetMapping("{id}")
+    public RsData<MemberDto> getUser(@PathVariable("id") Long userId) {
+        return memberService.getUser(userId);
+    }
+
+
     @PostMapping("/join")
     public RsData<MemberDto> join(@Valid @RequestBody MemberJoinRequest memberJoinRequest) {
         System.out.println(memberJoinRequest);
