@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.beans.BeanUtils;
 
 import java.time.LocalDateTime;
 
@@ -28,16 +29,7 @@ public class SafePaymentsDto {
     private LocalDateTime updateDate;
 
     public SafePaymentsDto(SafePayments safePayments) {
-        this.id = safePayments.getId();
-        this.productId = safePayments.getProductId();
-        this.sellerId = safePayments.getSellerId();
-        this.buyerId = safePayments.getBuyerId();
-        this.sellerOk = safePayments.getSellerOk();
-        this.buyerOk = safePayments.getBuyerOk();
-        this.startYn = safePayments.getStartYn();
-        this.endYn = safePayments.getEndYn();
-        this.createDate = safePayments.getCreateDate();
-        this.updateDate = safePayments.getUpdateDate();
+        BeanUtils.copyProperties(safePayments, this);
 
     }
 

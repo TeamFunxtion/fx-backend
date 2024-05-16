@@ -15,7 +15,6 @@ import org.hibernate.annotations.DynamicInsert;
 @SuperBuilder
 @ToString
 @Table(name="safe_payments")
-@DynamicInsert
 public class SafePayments extends BaseEntity {
     private Long productId;
     private Long sellerId;

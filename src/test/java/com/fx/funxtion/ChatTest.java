@@ -32,12 +32,12 @@ public class ChatTest {
     public void enter() {
         ChatRoomCreateRequest chatRoomCreateRequest = new ChatRoomCreateRequest();
         chatRoomCreateRequest.setCustomerId(1L);
-        chatRoomCreateRequest.setStoreId(2L);
-        chatRoomCreateRequest.setProductId(3L);
+        chatRoomCreateRequest.setStoreId(3L);
+        chatRoomCreateRequest.setProductId(4L);
 
-        ChatRoomCreateResponse crd = chatService.insertChatRoom(chatRoomCreateRequest);
-        System.out.println(crd);
-        assertThat(chatRoomCreateRequest.getStoreId()).isEqualTo(crd.getStore().getId());
+        Long id = chatService.insertChatRoom(chatRoomCreateRequest);
+        System.out.println(id);
+
     }
 
     // chatRoom 조회
@@ -45,9 +45,9 @@ public class ChatTest {
     @DisplayName("채팅방 목록 조회")
     public void getList() {
         long customerId = 1;
-        List<ChatRoomListResponse> chatRoomList = chatService.getChatRoomList(customerId);
+        List<ChatRoomWithMessagesDto> chatRoomList = chatService.getChatRoomList(customerId);
 
-        for(ChatRoomListResponse chatRoomDto: chatRoomList) {
+        for(ChatRoomWithMessagesDto chatRoomDto: chatRoomList) {
 
             System.out.println(chatRoomDto.getStore().getNickname());
         }

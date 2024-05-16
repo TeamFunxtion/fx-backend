@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 @Setter
-public class ChatRoomCreateResponse {
+public class ChatRoomWithMessagesDto {
     private Long id;
     private MemberDto store;
     private MemberDto customer;
@@ -25,7 +25,7 @@ public class ChatRoomCreateResponse {
     private LocalDateTime updateDate;
     private List<ChatMessage> chatMessages;
 
-    public ChatRoomCreateResponse(ChatRoom chatRoom, List<ChatMessage> chatMessages) {
+    public ChatRoomWithMessagesDto(ChatRoom chatRoom, List<ChatMessage> chatMessages) {
         this.id = chatRoom.getId();
         this.store = new MemberDto(chatRoom.getMember());
         this.customer = new MemberDto(chatRoom.getCustomer());

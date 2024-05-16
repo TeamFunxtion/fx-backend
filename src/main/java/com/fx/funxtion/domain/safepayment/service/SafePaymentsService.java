@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class SafePaymentsService {
-    @Autowired
+
     private final SafePaymentsRepository safePaymentsRepository;
 
     public SafePaymentsDetailResponse findSafePayments(Long productId, Long sellerId, Long buyerId) {

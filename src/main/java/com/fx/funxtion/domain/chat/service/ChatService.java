@@ -7,9 +7,6 @@ import com.fx.funxtion.domain.chat.repository.ChatMessageRepository;
 import com.fx.funxtion.domain.chat.repository.ChatRoomRepository;
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
-import com.fx.funxtion.domain.product.dto.ProductCreateResponse;
-import com.fx.funxtion.domain.product.dto.ProductDetailResponse;
-import com.fx.funxtion.domain.product.dto.ProductUpdateResponse;
 import com.fx.funxtion.domain.product.entity.Product;
 import com.fx.funxtion.domain.product.repository.ProductRepository;
 import com.fx.funxtion.global.RsData.RsData;
@@ -71,21 +68,21 @@ public class ChatService {
     }
 
     // 채팅방 목록 조회
-    public List<ChatRoomListResponse> getChatRoomList(Long customerId) {
+    public List<ChatRoomWithMessagesDto> getChatRoomList(Long customerId) {
         List<ChatRoom> chatRooms = chatRoomRepository.findAllChatRoom(customerId, customerId);
-        List<ChatRoomListResponse> chatRoomListResponses = new ArrayList<>();
+        List<ChatRoomWithMessagesDto> chatRoomListRespons = new ArrayList<>();
 
         for(ChatRoom chatRoom : chatRooms) {
             List<ChatMessage> messages = chatMessageRepository.findTopByRoomIdOrderByCreateDateDesc(chatRoom.getId());
-            chatRoomListResponses.add(new ChatRoomListResponse(chatRoom, messages));
+            chatRoomListRespons.add(new ChatRoomWithMessagesDto(chatRoom, messages));
         }
-        return chatRoomListResponses;
+        return chatRoomListRespons;
     }
 
 
 
     // 채팅방 생성
-    public ChatRoomCreateResponse insertChatRoom(ChatRoomCreateRequest chatRoomCreateRequest) {
+    public Long insertChatRoom(ChatRoomCreateRequest chatRoomCreateRequest) {
         Member member = memberRepository.findById(chatRoomCreateRequest.getStoreId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 상점이 존재하지 않습니다."));
         Member customer = memberRepository.findById(chatRoomCreateRequest.getCustomerId())
@@ -105,7 +102,8 @@ public class ChatService {
             chatRoomEx.setProduct(product);
             cr = chatRoomRepository.save(chatRoomEx);
         }
-        return new ChatRoomCreateResponse(cr, new ArrayList<>());
+        return cr.getId();
+//        return new ChatRoomCreateResponse(cr, new ArrayList<>());
     }
 
 

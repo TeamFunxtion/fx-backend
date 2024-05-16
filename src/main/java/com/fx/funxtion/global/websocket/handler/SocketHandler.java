@@ -10,6 +10,7 @@ import com.fx.funxtion.domain.safepayment.repository.SafePaymentsRepository;
 import com.fx.funxtion.domain.safepayment.service.SafePaymentsService;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,15 +25,14 @@ import java.util.Map;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SocketHandler extends TextWebSocketHandler {
 
     // 웹소켓 세션을 담아둘 리스트
     List<Map<String, Object>> roomSessionList = new ArrayList<>();
-    @Autowired
     ChatService chatService;
     @Autowired
     ChatMessageRepository chatMessageRepository;
-    @Autowired
     SafePaymentsService safePaymentsService;
     @Autowired
     SafePaymentsRepository safePaymentsRepository;
@@ -84,6 +84,9 @@ public class SocketHandler extends TextWebSocketHandler {
                         .build();
             }
             chatMessageRepository.save(chatMessage);
+            System.out.println(obj.get("productId").getAsLong());
+            System.out.println(obj.get("sellerId").getAsLong());
+            System.out.println(obj.get("buyerId").getAsLong());
             // 안전거래 버튼 클릭 시 DB 저장.
             SafePayments safePaymentsEx = safePaymentsRepository.findByProductIdAndSellerIdAndBuyerId(obj.get("productId").getAsLong(), obj.get("sellerId").getAsLong(), obj.get("buyerId").getAsLong());
             SafePayments safePayments;
