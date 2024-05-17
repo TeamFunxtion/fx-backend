@@ -11,6 +11,7 @@ import com.fx.funxtion.global.RsData.RsData;
 import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,22 +21,28 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class ApiV1FollowController {
-    @Autowired
+
     private final FollowService followService;
 
     // 팔로워 목록 조회
     @GetMapping("/follower")
-    public RsData<List> getFollowerList(@RequestParam("userId") String userId) {
+    public RsData<Page<FollowerListResponse>> getFollowerList(@RequestParam("userId") String userId,
+                                                              @RequestParam(value= "page", defaultValue = "0")int page,
+                                                              @RequestParam(value="size", defaultValue = "10")int size) {
         Long toId = Long.parseLong(userId);
-        List<FollowerListResponse> list = followService.getFollowerList(toId);
+        Page<FollowerListResponse> list = followService.getFollowerList(toId, page, size);
+
         return RsData.of("200", "채팅방 조회 성공!", list);
     }
 
     // 팔로잉 목록 조회
     @GetMapping("following")
-    public RsData<List> getFollowingList(@RequestParam("userId") String userId) {
+    public RsData<Page<FollowingListResponse>> getFollowingList(@RequestParam("userId") String userId,
+                                                                @RequestParam(value= "page", defaultValue = "0")int page,
+                                                                @RequestParam(value="size", defaultValue = "10")int size) {
         Long fromId = Long.parseLong(userId);
-        List<FollowingListResponse> list = followService.getFollowingList(fromId);
+        Page<FollowingListResponse> list = followService.getFollowingList(fromId, page, size);
+
         return RsData.of("200", "팔로잉 목록 조회 성공!", list);
     }
 
@@ -45,9 +52,7 @@ public class ApiV1FollowController {
     public RsData<Long> updateFollow(@RequestBody FollowUpdateRequest followUpdateRequest) {
 
         Long id = followService.updateFollow(followUpdateRequest);
-        if(id == null) {
-            id = 999999L;
-        }
+
         return RsData.of("200", "팔로우 추가|해제 성공", id);
     }
 }

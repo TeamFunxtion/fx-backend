@@ -14,15 +14,17 @@ import lombok.ToString;
 public class FollowingListResponse {
     private Long id;
     private MemberDto toMember;
-    private Long prCnt;
+    private Long productCnt;
     private Long followerCnt;
     private boolean isFollowing;
+    private int followCnt;
 
-    public FollowingListResponse(UserFollows userFollows, Long prCnt, Long followerCnt, boolean isFollowing) {
+    public FollowingListResponse(UserFollows userFollows, Long productCnt, Long followerCnt, boolean isFollowing, int followCnt) {
         this.id = userFollows.getId();
         this.toMember = new MemberDto(userFollows.getToMember());
-        this.prCnt = prCnt;
+        this.productCnt = productCnt;
         this.followerCnt = followerCnt;
         this.isFollowing = isFollowing;
+        this.followCnt = followCnt;
     }
 }

@@ -7,8 +7,6 @@ import lombok.ToString;
 
 @Getter
 @NoArgsConstructor
-@ToString
-@Setter
 public class FollowUpdateRequest {
 
     private Long toId;
