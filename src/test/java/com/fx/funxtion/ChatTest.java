@@ -32,8 +32,8 @@ public class ChatTest {
     public void enter() {
         ChatRoomCreateRequest chatRoomCreateRequest = new ChatRoomCreateRequest();
         chatRoomCreateRequest.setCustomerId(1L);
-        chatRoomCreateRequest.setStoreId(3L);
-        chatRoomCreateRequest.setProductId(4L);
+        chatRoomCreateRequest.setStoreId(2L);
+        chatRoomCreateRequest.setProductId(1L);
 
         Long id = chatService.insertChatRoom(chatRoomCreateRequest);
         System.out.println(id);
