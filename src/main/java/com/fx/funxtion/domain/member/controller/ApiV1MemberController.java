@@ -91,6 +91,11 @@ public class ApiV1MemberController {
 
         return RsData.of(authAndMakeTokensRs.getResultCode(),authAndMakeTokensRs.getMsg(), new MemberDto(authAndMakeTokensRs.getData().getMember()));
     }
+    @PutMapping("/update")
+    public RsData<Void> putUpdateMember(@RequestBody MemberUpdateDto memberUpdateDto) {
+        memberService.updateMember(memberUpdateDto);
+        return RsData.of("200", "회원 정보가 성공적으로 수정되었습니다.");
+    }
 }
 
 

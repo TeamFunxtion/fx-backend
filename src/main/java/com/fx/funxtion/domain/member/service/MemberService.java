@@ -10,6 +10,7 @@ import com.fx.funxtion.global.RsData.RsData;
 import com.fx.funxtion.global.jwt.JwtProvider;
 import com.fx.funxtion.global.security.SecurityUser;
 import com.fx.funxtion.global.util.mail.MailUtils;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

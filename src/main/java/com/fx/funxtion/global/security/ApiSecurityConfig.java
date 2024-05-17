@@ -30,6 +30,7 @@ public class ApiSecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/api/*/members/kakao/login").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/api/*/notices").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/*/faqs").permitAll()
+                                .requestMatchers(HttpMethod.PUT, "/api/*/members/update").permitAll()
                                 .requestMatchers("/api/*/products").permitAll()
                                 .requestMatchers("/api/*/products/*").permitAll()
                                 .requestMatchers("/api/*/products/*/**").permitAll()
