@@ -8,7 +8,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class ProductUpdateRequest {
-    private Long id;
+    private Long productId;
     private Long storeId;
     private String categoryId;
     private String productTitle;

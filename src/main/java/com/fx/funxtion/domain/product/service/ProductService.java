@@ -95,8 +95,8 @@ public class ProductService {
         return RsData.of("200", "상품 조회 성공!", productDetailResponse);
     }
 
-    public RsData<ProductUpdateResponse> updateProduct(Long id, ProductUpdateRequest productUpdateRequest) {
-        Optional<Product> optionalProduct = productRepository.findById(id);
+    public RsData<ProductUpdateResponse> updateProduct(ProductUpdateRequest productUpdateRequest) {
+        Optional<Product> optionalProduct = productRepository.findById(productUpdateRequest.getProductId());
         System.out.println(optionalProduct.isEmpty());
 
         if(optionalProduct.isEmpty()) {

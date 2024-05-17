@@ -74,8 +74,8 @@ public class ProductTest {
 
     @Test
     public void 상품_데이터_수정() {
-        Long id = 1L;
         ProductUpdateRequest productUpdateRequest = new ProductUpdateRequest();
+        productUpdateRequest.setProductId(1L);
         productUpdateRequest.setStoreId(1L);
         productUpdateRequest.setCategoryId("CA01");
         productUpdateRequest.setProductTitle("[Update] 상품타이틀");
@@ -87,7 +87,7 @@ public class ProductTest {
         productUpdateRequest.setCoolPrice(20000L);
         productUpdateRequest.setEndDays(2);
 
-        RsData<ProductUpdateResponse> productUpdateResponse = productService.updateProduct(id, productUpdateRequest);
+        RsData<ProductUpdateResponse> productUpdateResponse = productService.updateProduct(productUpdateRequest);
 
         assertThat(productUpdateRequest.getProductTitle())
                 .isEqualTo(productUpdateResponse.getData().getProductTitle());
@@ -95,11 +95,11 @@ public class ProductTest {
 
     @Test
     public void 상품_데이터_상태변경() {
-        Long id = 1L;
         ProductUpdateRequest productUpdateRequest = new ProductUpdateRequest();
+        productUpdateRequest.setProductId(1L);
         productUpdateRequest.setStatusTypeId("ST05"); // 삭제코드
 
-        RsData<ProductUpdateResponse> productUpdateResponse = productService.updateProduct(id, productUpdateRequest);
+        RsData<ProductUpdateResponse> productUpdateResponse = productService.updateProduct(productUpdateRequest);
 
         assertThat(productUpdateRequest.getStatusTypeId())
                 .isEqualTo(productUpdateResponse.getData().getStatusTypeId());

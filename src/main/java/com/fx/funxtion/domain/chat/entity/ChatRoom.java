@@ -31,8 +31,9 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class ChatRoom extends BaseEntity{
 
-    @NotNull
-    private Long customerId;
+    @OneToOne
+    @JoinColumn(name="customer_id")
+    private Member customer;
 
     @OneToOne
     @JoinColumn(name="product_id")
