@@ -5,6 +5,7 @@ import com.fx.funxtion.domain.member.repository.MemberRepository;
 import com.fx.funxtion.domain.payment.dto.PaymentDto;
 import com.fx.funxtion.domain.payment.entity.PaymentEntity;
 import com.fx.funxtion.domain.payment.repository.PaymentRepository;
+import com.fx.funxtion.global.RsData.RsData;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -44,6 +46,7 @@ public class PaymentService {
 
         PaymentDto paymentDto = PaymentDto.builder()
                 .impUid(imp_uid)
+                .email(buyerEmail)
                 .amount(amount)
                 .status(status)
                 .build();
@@ -69,5 +72,13 @@ public class PaymentService {
             paymentDto.setStatus("이미 결제되었습니다.");
             return paymentDto;
         }
+    }
+
+    public RsData<List<PaymentDto>> selectPaymentListByUserId(String email) {
+        List<PaymentDto> paymentDtos = paymentRepository.findAllByEmail(email).stream()
+                .map(PaymentDto::new)
+                .toList();
+
+        return RsData.of("200", "결제 내역 조회 성공!", paymentDtos);
     }
 }

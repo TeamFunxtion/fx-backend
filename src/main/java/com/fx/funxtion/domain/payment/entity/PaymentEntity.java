@@ -5,6 +5,7 @@ import com.fx.funxtion.global.jpa.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.beans.BeanUtils;
 
 @Entity
 @Getter
@@ -19,14 +20,15 @@ public class PaymentEntity extends BaseEntity {
     private String impUid;
 
     @Column
+    private String email;
+
+    @Column
     private String status;
 
     @Column
     private Long amount;
 
     public PaymentEntity(PaymentDto dto) {
-        this.impUid = dto.getImpUid();
-        this.amount = dto.getAmount();
-        this.status = dto.getStatus();
+        BeanUtils.copyProperties(dto, this);
     }
 }
