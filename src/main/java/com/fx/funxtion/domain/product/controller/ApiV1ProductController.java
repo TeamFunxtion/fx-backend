@@ -149,12 +149,9 @@ public class ApiV1ProductController {
      * @param productUpdateRequest
      * @return RsData<ProductUpdateResponse>
      */
-    @PatchMapping("/{id}")
-    public RsData<ProductUpdateResponse> updateProduct(@PathVariable(name="id") Long id, @RequestBody ProductUpdateRequest productUpdateRequest) {
-        System.out.println(productUpdateRequest);
-
-        RsData<ProductUpdateResponse> productUpdateResponse = productService.updateProduct(id, productUpdateRequest);
-
+    @PatchMapping("")
+    public RsData<ProductUpdateResponse> updateProduct(@RequestBody ProductUpdateRequest productUpdateRequest) {
+        RsData<ProductUpdateResponse> productUpdateResponse = productService.updateProduct(productUpdateRequest);
         return RsData.of(productUpdateResponse.getResultCode(), productUpdateResponse.getMsg(), productUpdateResponse.getData());
     }
 
