@@ -178,6 +178,10 @@ public class MemberService {
             String accessToken = jwtProvider.genAccessToken(findMember.get());
             String refreshToken = jwtProvider.genRefreshToken(findMember.get());
 
+            Member loginMember = findMember.get();
+            loginMember.setRefreshToken(refreshToken);
+            memberRepository.save(loginMember);
+
             return RsData.of("200", "로그인 성공!", new AuthAndMakeTokensResponseBody(findMember.get(), accessToken, refreshToken));
         }
     }

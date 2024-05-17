@@ -30,6 +30,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         System.out.println(request.getRequestURI());
         if(request.getRequestURI().startsWith("/h2-console")
                 || request.getRequestURI().equals("/api/v1/members/login")
+                || request.getRequestURI().equals("/api/v1/members/kakao/login")
                 || request.getRequestURI().equals("/api/v1/members/logout")
                 || request.getRequestURI().equals("/api/v1/members/join")
                 || request.getRequestURI().equals("/api/v1/members/auth")
@@ -44,13 +45,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String accessToken = rq.getCookie("accessToken");
         // accessToken 검증 or refreshToken 발급
         if (!accessToken.isBlank()) {
-
             // 토큰 유효기간 검증
-            if(!memberService.validateToken(accessToken)) {
+            if(!memberService.validateToken(accessToken)) { // accessToken이 유효하지않을때
                 String refreshToken = rq.getCookie("refreshToken");
 
                 RsData<String> rs =  memberService.refreshAccessToken(refreshToken);
-                rq.setCrossDomainCookie("accessToken", rs.getData());
+                accessToken = rs.getData();
+                rq.setCrossDomainCookie("accessToken", accessToken);
             }
 
             // securityUser 가져오기
