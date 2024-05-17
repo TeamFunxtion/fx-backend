@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Optional;
 
@@ -23,7 +24,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class QnaService {
     private final QnaRepository qnaRepository;
-    private final MemberRepository memberRepository;
 
     public RsData<QnaCreateResponse> createQna(QnaCreateRequest qnaCreateRequest) {
 
@@ -41,6 +41,7 @@ public class QnaService {
         return optionalQna.map(q -> RsData.of("200","1:1문의 등록 성공",new QnaCreateResponse(q)))
                 .orElseGet(() -> RsData.of("500","1:1 문의 등록 실패"));
     }
+
 
     @Transactional
     public Page<QnaDto> getSelectPage(Long userId,Pageable pageable, int pageNo, int pageSize){
