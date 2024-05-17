@@ -16,6 +16,7 @@ public class MemberDto {
     private String nickname;
     private String intro;
     private int point;
+    private String phoneNumber;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
 
@@ -27,6 +28,7 @@ public class MemberDto {
         this.nickname = member.getNickname();
         this.intro = member.getIntro();
         this.point = member.getPoint();
+        this.phoneNumber = member.getPhoneNumber();
         this.createDate = member.getCreateDate();
         this.updateDate = member.getUpdateDate();
     }
