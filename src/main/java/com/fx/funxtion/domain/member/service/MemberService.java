@@ -1,9 +1,6 @@
 package com.fx.funxtion.domain.member.service;
 
-import com.fx.funxtion.domain.member.dto.KakaoLoginRequest;
-import com.fx.funxtion.domain.member.dto.MemberDto;
-import com.fx.funxtion.domain.member.dto.MemberHasMoneyRequest;
-import com.fx.funxtion.domain.member.dto.MemberJoinRequest;
+import com.fx.funxtion.domain.member.dto.*;
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
 import com.fx.funxtion.global.RsData.RsData;
@@ -180,6 +177,40 @@ public class MemberService {
             String refreshToken = jwtProvider.genRefreshToken(findMember.get());
 
             return RsData.of("200", "로그인 성공!", new AuthAndMakeTokensResponseBody(findMember.get(), accessToken, refreshToken));
+        }
+    }
+    @Transactional
+    public RsData<Void> updateMember(@RequestBody MemberUpdateDto memberUpdateDto) {
+        try {
+            // 이메일을 기반으로 회원을 찾습니다.
+            Member findMember = memberRepository.findByEmail(memberUpdateDto.getEmail())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 회원이 존재하지 않습니다."));
+
+            // 현재 비밀번호와 DB에 저장된 비밀번호를 비교합니다.
+            if (!passwordEncoder.matches(memberUpdateDto.getPassword(), findMember.getPassword())) {
+                return RsData.of("400", "현재 비밀번호가 일치하지 않습니다.");
+
+            }
+
+            // 새로운 비밀번호를 설정합니다.
+            if (!memberUpdateDto.getNewPassword().isEmpty()) {
+                // 비밀번호 암호화
+                String newPasswordEncoded = passwordEncoder.encode(memberUpdateDto.getNewPassword());
+                findMember.setPassword(newPasswordEncoded);
+            }
+
+            // 닉네임, 소개글, 전화번호 등의 정보를 업데이트합니다.
+            findMember.setNickname(memberUpdateDto.getNickname());
+            findMember.setIntro(memberUpdateDto.getIntro());
+            findMember.setPhoneNumber(memberUpdateDto.getPhoneNumber());
+
+            // 변경된 회원 정보를 저장합니다.
+            memberRepository.save(findMember);
+
+            return RsData.of("200", "회원 정보가 성공적으로 수정되었습니다.");
+        } catch (Exception e) {
+            // 예외가 발생하면 예외 메시지를 반환합니다.
+            return RsData.of("500", "회원 정보 수정 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
 }
