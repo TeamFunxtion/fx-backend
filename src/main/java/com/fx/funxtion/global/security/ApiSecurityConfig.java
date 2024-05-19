@@ -29,6 +29,8 @@ public class ApiSecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/api/*/members/auth").permitAll() // 이메일 인증 누구나 가능, get요청 허용
                                 .requestMatchers(HttpMethod.POST, "/api/*/members/kakao/login").permitAll()
                                 .requestMatchers("/api/*/notices").permitAll()
+                                .requestMatchers("/api/*/notices/*").permitAll()
+                                .requestMatchers("/api/*/notices/*/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/*/faqs").permitAll()
                                 .requestMatchers("/api/*/products").permitAll()
                                 .requestMatchers("/api/*/products/*").permitAll()

@@ -1,9 +1,7 @@
 package com.fx.funxtion.domain.notice.contoller;
 
 
-import com.fx.funxtion.domain.notice.dto.NoticeCreateRequest;
-import com.fx.funxtion.domain.notice.dto.NoticeCreateResponse;
-import com.fx.funxtion.domain.notice.dto.NoticeDto;
+import com.fx.funxtion.domain.notice.dto.*;
 import com.fx.funxtion.domain.notice.service.NoticeService;
 import com.fx.funxtion.global.RsData.RsData;
 import groovy.util.logging.Slf4j;
@@ -22,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class ApiV1NoticeController {
     private final NoticeService noticeService;
 
+    // 전체 공지 조회
     @GetMapping("") // /api/v1/notices
     public Page<NoticeDto> selectList(@RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
                                       @PageableDefault(size = 5,sort ="id",direction = Sort.Direction.DESC) Pageable pageable) {
@@ -36,11 +35,16 @@ public class ApiV1NoticeController {
 
     }
 
-    @GetMapping("/update")
-    public RsData<NoticeCreateResponse> getNoticeDeatils(@PathVariable(name="id") Long id){
-        return null;
+    @PatchMapping("")
+    public RsData<NoticeUpdateResponse> updateNotice(@RequestBody NoticeUpdateRequest noticeUpdateRequest){
+        RsData<NoticeUpdateResponse> noticeUpdateResponse = noticeService.updateNotice(noticeUpdateRequest);
+
+
+        return RsData.of(noticeUpdateResponse.getResultCode(), noticeUpdateResponse.getMsg() , noticeUpdateResponse.getData());
     }
 
+
+    //공지 생성
     @PostMapping("")
     public RsData<NoticeCreateResponse> createNotice(@RequestBody NoticeCreateRequest noticeCreateRequest) {
 
@@ -48,6 +52,23 @@ public class ApiV1NoticeController {
 
 
     return  RsData.of(noticeCreateResponse.getResultCode() , noticeCreateResponse.getMsg(), noticeCreateResponse.getData());
+    }
+
+
+    // 수정할 공지 불러오기
+    @GetMapping("/{id}")
+    public RsData<NoticeCreateResponse> getNoticeDetail(@PathVariable(name="id") Long id ){
+        RsData<NoticeCreateResponse> noticeCreateResponse = noticeService.getNoticeDetail(id);
+        return RsData.of(noticeCreateResponse.getResultCode(),noticeCreateResponse.getMsg(),noticeCreateResponse.getData());
+
+    }
+
+    @DeleteMapping("/{id}")
+    public RsData<NoticeDto> NoticeDelete(@PathVariable(name="id") Long id){
+       RsData<NoticeDto> noticeDto = noticeService.deleteNotice(id);
+
+        return RsData.of(noticeDto.getResultCode(),noticeDto.getMsg());
+
     }
 
 
