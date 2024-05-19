@@ -13,16 +13,14 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @ToString
-public class NoticeDto {
-    private long id;
+public class NoticeUpdateResponse {
+
+    private Long id;
     private String noticeTitle;
     private String noticeContent;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
 
-
-    public NoticeDto(Notice notice){
-        BeanUtils.copyProperties(notice,this);
-
-    }
+    public NoticeUpdateResponse(Notice notice) {
+        BeanUtils.copyProperties(notice, this);}
 }
