@@ -95,12 +95,13 @@ public class SocketHandler extends TextWebSocketHandler {
                         .productId(obj.get("productId").getAsLong())
                         .sellerId(obj.get("sellerId").getAsLong())
                         .buyerId(obj.get("buyerId").getAsLong())
+                        .status("SP01")
                         .build();
                 safePaymentsRepository.save(safePayments);
             }
-            // 판매자가 안전거래 수락 시 DB start_yn 컬럼 값 변경
+            // 판매자가 안전거래 수락 시 DB status 컬럼 값 변경
             if(temp.keySet().size() >=2 && obj.get("msg").getAsString().equals("상품의 안전거래가 수락되었습니다.") ) {
-                safePaymentsEx.setStartYn("Y");
+                safePaymentsEx.setStatus("SP02");
                 safePaymentsRepository.save(safePaymentsEx);
             }
         }

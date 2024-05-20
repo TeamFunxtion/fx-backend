@@ -21,6 +21,5 @@ public class SafePayments extends BaseEntity {
     private Long buyerId;
     private String sellerOk;
     private String buyerOk;
-    private String startYn;
-    private String endYn;
+    private String status;
 }
