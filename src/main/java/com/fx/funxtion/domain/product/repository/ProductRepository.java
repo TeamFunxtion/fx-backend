@@ -1,8 +1,8 @@
 package com.fx.funxtion.domain.product.repository;
 
+import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.product.entity.Product;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -25,6 +25,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllAfterAuctionEndTime();
 
     Page<Product> findByProductTitleContainingAndStatusTypeId(String keyword, String statusTypeId, Pageable pageable);
+
     Page<Product> findByCategoryIdAndStatusTypeId(String category, String statusTypeId, Pageable pageable);
+
+    Page<Product> findByMemberAndStatusTypeId(Member member, String statusTypeId, Pageable pageable);
+
     Long countByMemberId(Long memberId);
 }
