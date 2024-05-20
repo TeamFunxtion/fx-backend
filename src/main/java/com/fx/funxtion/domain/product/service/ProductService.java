@@ -11,7 +11,6 @@ import com.fx.funxtion.domain.product.repository.ProductRepository;
 import com.fx.funxtion.global.RsData.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -57,18 +56,24 @@ public class ProductService {
     }
 
     @Transactional
-    public Page<ProductDto> searchByKeyword(String keyword, Pageable pageable, int pageNo, int pageSize, String sort) {
-        pageable = PageRequest.of(pageNo,pageSize, getPageableSort(sort));
+    public Page<ProductDto> searchByKeyword(String keyword, Pageable pageable) {
         Page<ProductDto> list = productRepository.findByProductTitleContainingAndStatusTypeId(keyword, "ST01", pageable)
                 .map(ProductDto::new);
         return list; // RsData.of("200", "목록 조회 성공!", list);
     }
 
-    public Page<ProductDto> searchByCategory(String category, Pageable pageable, int pageNo, int pageSize, String sort) {
-        pageable = PageRequest.of(pageNo,pageSize, getPageableSort(sort));
+    public Page<ProductDto> searchByCategory(String category, Pageable pageable) {
         Page<ProductDto> list = productRepository.findByCategoryIdAndStatusTypeId(category, "ST01", pageable)
                 .map(ProductDto::new);
         return list; // RsData.of("200", "목록 조회 성공!", list);
+    }
+
+    public Page<ProductDto> getMyProducts(Long userId, String statusTypeId, Pageable pageable) {
+        Optional<Member> member = memberRepository.findById(userId);
+
+        Page<ProductDto> results = productRepository.findByMemberAndStatusTypeId(member.get(), statusTypeId, pageable)
+                .map(ProductDto::new);
+        return results;
     }
 
     public RsData<List<ProductDto>> getProductList() {

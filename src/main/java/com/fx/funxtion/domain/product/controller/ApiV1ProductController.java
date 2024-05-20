@@ -9,18 +9,18 @@ import com.fx.funxtion.domain.product.service.ReportService;
 import com.fx.funxtion.global.RsData.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.Random;
+
+import static com.fx.funxtion.domain.product.service.ProductService.getPageableSort;
 
 /**
  * 상품 관련 Controller
@@ -105,17 +105,33 @@ public class ApiV1ProductController {
                                    @RequestParam(required = false, defaultValue = "", value = "category") String category,
                                    @RequestParam(required = false, defaultValue = "id", value = "sort") String sort,
                                    @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
-                                   @PageableDefault(size = 2, sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
+                                   @PageableDefault(size = 10, sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
         pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
-        int pageSize = 10;
+
+        pageable = PageRequest.of(pageNo, pageable.getPageSize(), getPageableSort(sort));
 
         Page<ProductDto> pageList;
 
         if(category != null && !category.equals("")) {
-            pageList = productService.searchByCategory(category, pageable, pageNo, pageSize, sort);
+            pageList = productService.searchByCategory(category, pageable);
         } else {
-            pageList = productService.searchByKeyword(keyword, pageable, pageNo, pageSize, sort);
+            pageList = productService.searchByKeyword(keyword, pageable);
         }
+        return pageList;
+    }
+
+    /**
+     * 마이페이지 > 내 상품 목록 조회
+     */
+    @GetMapping("/my")
+    public Page<ProductDto> getMyProducts(@RequestParam(required = true, value = "userId") Long userId,
+                                          @RequestParam(required = false, defaultValue = "ST01", value = "status") String statusTypeId,
+                                          @RequestParam(required = false, defaultValue = "id", value = "sort") String sort,
+                                          @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
+                                          @PageableDefault(size = 10, sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
+        pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
+        pageable = PageRequest.of(pageNo, pageable.getPageSize(), getPageableSort(sort));
+        Page<ProductDto> pageList = productService.getMyProducts(userId, statusTypeId, pageable);
         return pageList;
     }
 
