@@ -30,6 +30,8 @@ public class NoticeService {
     }
 
     public RsData<NoticeCreateResponse> createNotice(NoticeCreateRequest noticeCreateRequest) {
+
+
         Notice notice = Notice.builder()
                 .noticeContent(noticeCreateRequest.getNoticeContent())
                 .noticeTitle(noticeCreateRequest.getNoticeTitle())
@@ -55,15 +57,21 @@ public class NoticeService {
         if(optionalNotice.isEmpty()){
             return RsData.of("500","공지가 존재하지 않습니다");
         }
+
+
         Notice n = optionalNotice.get();
 
         if(noticeUpdateRequest.getNoticeTitle() != null && !noticeUpdateRequest.getNoticeTitle().isEmpty()){
             n.setNoticeTitle(noticeUpdateRequest.getNoticeTitle());
+        }else{
+            return RsData.of("500","타이틀이 없습니다");
+        }
+        if(noticeUpdateRequest.getNoticeContent() != null && !noticeUpdateRequest.getNoticeContent().isEmpty()) {
+            n.setNoticeContent(noticeUpdateRequest.getNoticeContent());
+        }else {
+            return RsData.of("500","내용이 없습니다");
         }
 
-        if(noticeUpdateRequest.getNoticeContent() != null && !noticeUpdateRequest.getNoticeContent().isEmpty()) {
-            n.setNoticeTitle(noticeUpdateRequest.getNoticeContent());
-        }
             noticeRepository.save(n);
 
         return RsData.of("200","공지 수정 성공",new NoticeUpdateResponse(n));
