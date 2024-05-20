@@ -68,42 +68,48 @@ public class SocketHandler extends TextWebSocketHandler {
 
                 }
             }
-            ChatMessage chatMessage;
-            if(temp.keySet().size() >= 3) {
-                chatMessage = ChatMessage.builder()
-                        .userId(obj.get("userId").getAsLong())
-                        .roomId(obj.get("roomNumber").getAsLong())
-                        .message(obj.get("msg").getAsString())
-                        .readYn("Y")
-                        .build();
-            } else {
-                chatMessage = ChatMessage.builder()
-                        .userId(obj.get("userId").getAsLong())
-                        .roomId(obj.get("roomNumber").getAsLong())
-                        .message(obj.get("msg").getAsString())
-                        .build();
+
+            if (obj.get("type").getAsString().equals("message")) {
+                ChatMessage chatMessage;
+                if(temp.keySet().size() >= 3) {
+                    chatMessage = ChatMessage.builder()
+                            .userId(obj.get("userId").getAsLong())
+                            .roomId(obj.get("roomNumber").getAsLong())
+                            .message(obj.get("msg").getAsString())
+                            .readYn("Y")
+                            .build();
+                } else {
+                    chatMessage = ChatMessage.builder()
+                            .userId(obj.get("userId").getAsLong())
+                            .roomId(obj.get("roomNumber").getAsLong())
+                            .message(obj.get("msg").getAsString())
+                            .build();
+                }
+                chatMessageRepository.save(chatMessage);
+                System.out.println(obj.get("productId").getAsLong());
+                System.out.println(obj.get("sellerId").getAsLong());
+                System.out.println(obj.get("buyerId").getAsLong());
+
+
+                // 안전거래 버튼 클릭 시 DB 저장.
+                SafePayments safePaymentsEx = safePaymentsRepository.findByProductIdAndSellerIdAndBuyerId(obj.get("productId").getAsLong(), obj.get("sellerId").getAsLong(), obj.get("buyerId").getAsLong());
+                SafePayments safePayments;
+                if(safePaymentsEx == null && temp.keySet().size() >= 2 && obj.get("safe").getAsString() == "true") {
+                    safePayments = SafePayments.builder()
+                            .productId(obj.get("productId").getAsLong())
+                            .sellerId(obj.get("sellerId").getAsLong())
+                            .buyerId(obj.get("buyerId").getAsLong())
+                            .status("SP01")
+                            .build();
+                    safePaymentsRepository.save(safePayments);
+                }
+                // 판매자가 안전거래 수락 시 DB status 컬럼 값 변경
+                if(temp.keySet().size() >=2 && obj.get("msg").getAsString().equals("상품의 안전거래가 수락되었습니다.") ) {
+                    safePaymentsEx.setStatus("SP02");
+                    safePaymentsRepository.save(safePaymentsEx);
+                }
             }
-            chatMessageRepository.save(chatMessage);
-            System.out.println(obj.get("productId").getAsLong());
-            System.out.println(obj.get("sellerId").getAsLong());
-            System.out.println(obj.get("buyerId").getAsLong());
-            // 안전거래 버튼 클릭 시 DB 저장.
-            SafePayments safePaymentsEx = safePaymentsRepository.findByProductIdAndSellerIdAndBuyerId(obj.get("productId").getAsLong(), obj.get("sellerId").getAsLong(), obj.get("buyerId").getAsLong());
-            SafePayments safePayments;
-            if(safePaymentsEx == null && temp.keySet().size() >= 2 && obj.get("safe").getAsString() == "true") {
-                safePayments = SafePayments.builder()
-                        .productId(obj.get("productId").getAsLong())
-                        .sellerId(obj.get("sellerId").getAsLong())
-                        .buyerId(obj.get("buyerId").getAsLong())
-                        .status("SP01")
-                        .build();
-                safePaymentsRepository.save(safePayments);
-            }
-            // 판매자가 안전거래 수락 시 DB status 컬럼 값 변경
-            if(temp.keySet().size() >=2 && obj.get("msg").getAsString().equals("상품의 안전거래가 수락되었습니다.") ) {
-                safePaymentsEx.setStatus("SP02");
-                safePaymentsRepository.save(safePaymentsEx);
-            }
+
         }
     }
 

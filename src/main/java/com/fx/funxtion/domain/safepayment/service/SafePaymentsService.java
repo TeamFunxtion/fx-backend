@@ -86,7 +86,7 @@ public class SafePaymentsService {
         Optional<Product> product = productRepository.findById(safePaymentsUpdateRequest.getProductId());
         if(sp != null) {
             sp.setBuyerOk("Y");
-            if(sp.getBuyerOk()!= null && sp.getSellerOk().equals("Y")) {
+            if(sp.getSellerOk()!= null && sp.getSellerOk().equals("Y")) {
                 sp.setStatus("SP04");
                 Optional<Member> seller = memberRepository.findById(safePaymentsUpdateRequest.getSellerId());
                 seller.get().setPoint(seller.get().getPoint() + product.get().getCurrentPrice().intValue());
