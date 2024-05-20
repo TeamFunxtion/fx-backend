@@ -70,13 +70,13 @@ public class ChatService {
     // 채팅방 목록 조회
     public List<ChatRoomWithMessagesDto> getChatRoomList(Long customerId) {
         List<ChatRoom> chatRooms = chatRoomRepository.findAllChatRoom(customerId, customerId);
-        List<ChatRoomWithMessagesDto> chatRoomListRespons = new ArrayList<>();
+        List<ChatRoomWithMessagesDto> chatRoomListResponse = new ArrayList<>();
 
         for(ChatRoom chatRoom : chatRooms) {
             List<ChatMessage> messages = chatMessageRepository.findTopByRoomIdOrderByCreateDateDesc(chatRoom.getId());
-            chatRoomListRespons.add(new ChatRoomWithMessagesDto(chatRoom, messages));
+            chatRoomListResponse.add(new ChatRoomWithMessagesDto(chatRoom, messages));
         }
-        return chatRoomListRespons;
+        return chatRoomListResponse;
     }
 
 
