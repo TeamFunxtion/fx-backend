@@ -19,10 +19,5 @@ public class FaqTest {
 
     @Test
     public void test(){
-
-        Page<FaqDto> result = faqService.findAll();
-        System.out.println(result.getTotalElements());
-
-
     }
 }

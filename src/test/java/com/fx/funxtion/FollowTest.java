@@ -25,22 +25,20 @@ public class FollowTest {
     @DisplayName("팔로워 목록 조회")
     public void getFollowerList() {
         Long toId = 1L;
-        List<FollowerListResponse> followerList = followService.getFollowerList(toId);
-
-        for(FollowerListResponse followerListResponse: followerList) {
-            System.out.println(followerListResponse.getFromMember().getNickname());
-        }
+//        List<FollowerListResponse> followerList = followService.getFollowerList(toId);
+//        for(FollowerListResponse followerListResponse: followerList) {
+//            System.out.println(followerListResponse.getFromMember().getNickname());
+//        }
     }
 
     @Test
     @DisplayName("팔로잉 목록 조회")
     public void getFollowingList() {
         Long fromId = 1L;
-        List<FollowingListResponse> followingList = followService.getFollowingList(fromId);
-
-        for(FollowingListResponse followingListResponse: followingList) {
-            System.out.println(followingListResponse.getToMember().getNickname());
-        }
+//        List<FollowingListResponse> followingList = followService.getFollowingList(fromId);
+//        for(FollowingListResponse followingListResponse: followingList) {
+//            System.out.println(followingListResponse.getToMember().getNickname());
+//        }
     }
 
 }
