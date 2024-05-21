@@ -23,8 +23,7 @@ public class SafePaymentsDto {
     private Long buyerId;
     private String sellerOk;
     private String buyerOk;
-    private String startYn;
-    private String endYn;
+    private String status;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
 

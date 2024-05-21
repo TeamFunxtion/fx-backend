@@ -1,9 +1,8 @@
 package com.fx.funxtion.domain.qna.controller;
 
 
-import com.fx.funxtion.domain.qna.dto.QnaCreateRequest;
-import com.fx.funxtion.domain.qna.dto.QnaCreateResponse;
-import com.fx.funxtion.domain.qna.dto.QnaDto;
+import com.fx.funxtion.domain.notice.dto.NoticeUpdateResponse;
+import com.fx.funxtion.domain.qna.dto.*;
 import com.fx.funxtion.domain.qna.service.QnaService;
 import com.fx.funxtion.global.RsData.RsData;
 import groovy.util.logging.Slf4j;
@@ -38,6 +37,21 @@ public class ApiV1QnaController {
         return pageQna;
     }
 
+    @GetMapping("/manager")
+    public Page<QnaDto> selectManagerPage(
+            @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
+            @PageableDefault(size = 5,sort ="id",direction = Sort.Direction.DESC) Pageable pageable) {
+
+        int pageSize = 5;
+        pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
+        Page<QnaDto> pageQna;
+
+        pageQna = qnaService.getSelectManagerPage(pageable, pageNo, pageSize);
+
+        return pageQna;
+
+    }
+
 
     @PostMapping("")
     public RsData<QnaCreateResponse> createQna(@RequestBody QnaCreateRequest qnaCreateRequest) {
@@ -47,6 +61,13 @@ public class ApiV1QnaController {
 
 
         return RsData.of(qnaCreateResponse.getResultCode(), qnaCreateResponse.getMsg(), qnaCreateResponse.getData());
+    }
+
+    @PatchMapping("")
+    public RsData<QnaUpdateResponse> updateQna(@RequestBody QnaUpdateRequest qnaUpdateRequest) {
+        RsData<QnaUpdateResponse> qnaUpdateResponse = qnaService.updateQna(qnaUpdateRequest);
+
+        return RsData.of(qnaUpdateResponse.getResultCode(), qnaUpdateResponse.getMsg(), qnaUpdateResponse.getData());
     }
 
 }
