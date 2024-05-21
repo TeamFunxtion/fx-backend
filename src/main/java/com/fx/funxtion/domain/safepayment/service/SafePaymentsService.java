@@ -7,6 +7,7 @@ import com.fx.funxtion.domain.product.entity.Product;
 import com.fx.funxtion.domain.product.repository.ProductRepository;
 import com.fx.funxtion.domain.safepayment.dto.SafePaymentsDetailResponse;
 import com.fx.funxtion.domain.safepayment.dto.SafePaymentsUpdateRequest;
+import com.fx.funxtion.domain.safepayment.entity.SafePaymentStatus;
 import com.fx.funxtion.domain.safepayment.entity.SafePayments;
 import com.fx.funxtion.domain.safepayment.repository.SafePaymentsRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class SafePaymentsService {
 
         SafePaymentsDetailResponse spdr = null;
         if (sp != null) {
-            spdr = new SafePaymentsDetailResponse(sp.getSellerOk(), sp.getBuyerOk(), sp.getStatus());
+            spdr = new SafePaymentsDetailResponse(sp.getSellerOk(), sp.getBuyerOk(), sp.getStatus().name());
         }
         return spdr;
     }
@@ -38,14 +39,14 @@ public class SafePaymentsService {
     public void updateSafePayment(SafePaymentsUpdateRequest safePaymentsUpdateRequest) {
         SafePayments sp = safePaymentsRepository.findByProductIdAndSellerIdAndBuyerId(safePaymentsUpdateRequest.getProductId(), safePaymentsUpdateRequest.getSellerId(), safePaymentsUpdateRequest.getBuyerId());
         if(sp != null) {
-            sp.setStatus("SP03");
+            sp.setStatus(SafePaymentStatus.SP03);
             safePaymentsRepository.save(sp);
         }
         Optional<Product> product = productRepository.findById(safePaymentsUpdateRequest.getProductId());
         Long price = 0L;
         if(product != null) {
             price = product.get().getCurrentPrice();
-            if(sp.getStatus().equals("SP03")) {
+            if(sp.getStatus().equals(SafePaymentStatus.SP03)) {
                 product.get().setStatusTypeId("ST04");
                 productRepository.save(product.get());
             }
@@ -67,7 +68,7 @@ public class SafePaymentsService {
         if(sp != null) {
             sp.setSellerOk("Y");
             if(sp.getBuyerOk()!= null && sp.getBuyerOk().equals("Y")) {
-                sp.setStatus("SP04");
+                sp.setStatus(SafePaymentStatus.SP04);
                 Optional<Member> member = memberRepository.findById(safePaymentsUpdateRequest.getSellerId());
                 Member seller = member.get();
                 seller.setPoint(seller.getPoint() + product.getCurrentPrice().intValue());
@@ -76,7 +77,7 @@ public class SafePaymentsService {
             safePaymentsRepository.save(sp);
         }
 
-        if(p != null && sp.getStatus().equals("SP04")) {
+        if(p != null && sp.getStatus().equals(SafePaymentStatus.SP04)) {
             product.setStatusTypeId("ST02");
             productRepository.save(product);
         }
@@ -91,7 +92,7 @@ public class SafePaymentsService {
         if(sp != null) {
             sp.setBuyerOk("Y");
             if(sp.getSellerOk()!= null && sp.getSellerOk().equals("Y")) {
-                sp.setStatus("SP04");
+                sp.setStatus(SafePaymentStatus.SP04);
                 Optional<Member> member = memberRepository.findById(safePaymentsUpdateRequest.getSellerId());
                 Member seller = member.get();
                 seller.setPoint(seller.getPoint() + product.getCurrentPrice().intValue());
@@ -100,7 +101,7 @@ public class SafePaymentsService {
             safePaymentsRepository.save(sp);
         }
 
-        if(product != null && sp.getStatus().equals("SP04")) {
+        if(product != null && sp.getStatus().equals(SafePaymentStatus.SP04)) {
             product.setStatusTypeId("ST02");
             productRepository.save(product);
         }

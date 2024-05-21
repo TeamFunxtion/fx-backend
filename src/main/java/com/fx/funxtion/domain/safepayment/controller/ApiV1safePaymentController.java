@@ -45,22 +45,7 @@ public class ApiV1safePaymentController {
         } else {
             return null;
         }
-
-
     }
 
-//    // 안전거래 판매 확정
-//    @PatchMapping("/seller")
-//    public RsData<String> updateSellerOk(@RequestBody SafePaymentsUpdateRequest safePaymentsUpdateRequest) {
-//
-//
-//    }
-//
-//    // 안전거래 구매 확정
-//    @PatchMapping("/buyer")
-//    public RsData<String> updateBuyerOk(@RequestBody SafePaymentsUpdateRequest safePaymentsUpdateRequest) {
-//
-//
-//    }
 
 }

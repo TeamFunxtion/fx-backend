@@ -2,6 +2,8 @@ package com.fx.funxtion.domain.safepayment.entity;
 
 import com.fx.funxtion.global.jpa.BaseEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -21,5 +23,6 @@ public class SafePayments extends BaseEntity {
     private Long buyerId;
     private String sellerOk;
     private String buyerOk;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private SafePaymentStatus status;
 }
