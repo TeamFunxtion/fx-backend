@@ -1,15 +1,14 @@
 package com.fx.funxtion.domain.safepayment.controller;
 
 import com.fx.funxtion.domain.chat.dto.ChatMessageDto;
+import com.fx.funxtion.domain.chat.dto.ChatMessageUpdateRequest;
 import com.fx.funxtion.domain.safepayment.dto.SafePaymentsDetailResponse;
+import com.fx.funxtion.domain.safepayment.dto.SafePaymentsUpdateRequest;
 import com.fx.funxtion.domain.safepayment.service.SafePaymentsService;
 import com.fx.funxtion.global.RsData.RsData;
 import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,4 +29,23 @@ public class ApiV1safePaymentController {
 
         return RsData.of("200", "안전거래 시작 여부 조회 성공!", safePaymentsDetailResponse);
     }
+
+    // 안전거래 결제 완료
+    @PatchMapping("")
+    public RsData<String> updateSafePayment(@RequestBody SafePaymentsUpdateRequest safePaymentsUpdateRequest) {
+        if(safePaymentsUpdateRequest.getStatus().equals("buyerPayment")) {
+            safePaymentsService.updateSafePayment(safePaymentsUpdateRequest);
+            return RsData.of("200", "안전거래 결제 성공!", "결제 성공!");
+        } else if(safePaymentsUpdateRequest.getStatus().equals("sellerOk")) {
+            safePaymentsService.updateSellerOk(safePaymentsUpdateRequest);
+            return RsData.of("200", "안전거래 판매 확정!", "안전거래 판매 확정!");
+        } else if(safePaymentsUpdateRequest.getStatus().equals("buyerOk")) {
+            safePaymentsService.updateBuyerOk(safePaymentsUpdateRequest);
+            return RsData.of("200", "안전거래 구매 확정!", "안전거래 구매 확정!");
+        } else {
+            return null;
+        }
+    }
+
+
 }
