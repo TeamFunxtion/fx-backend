@@ -52,7 +52,7 @@ public class QnaService {
     @Transactional
     public Page<QnaDto> getSelectManagerPage(Pageable pageable, int pageNo, int pageSize){
         pageable = PageRequest.of(pageNo,pageSize, Sort.by(Sort.Direction.DESC,"id"));
-        Page<QnaDto> list = qnaRepository.findBy(pageable).map(QnaDto::new);
+        Page<QnaDto> list = qnaRepository.findAll(pageable).map(QnaDto::new);
 
         return list;
     }
