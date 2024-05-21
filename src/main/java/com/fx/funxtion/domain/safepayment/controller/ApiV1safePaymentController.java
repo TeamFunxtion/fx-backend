@@ -33,22 +33,34 @@ public class ApiV1safePaymentController {
     // 안전거래 결제 완료
     @PatchMapping("")
     public RsData<String> updateSafePayment(@RequestBody SafePaymentsUpdateRequest safePaymentsUpdateRequest) {
-        safePaymentsService.updateSafePayment(safePaymentsUpdateRequest);
-        return RsData.of("200", "안전거래 시작 여부 조회 성공!", "결제 성공!");
+        if(safePaymentsUpdateRequest.getStatus().equals("buyerPayment")) {
+            safePaymentsService.updateSafePayment(safePaymentsUpdateRequest);
+            return RsData.of("200", "안전거래 결제 성공!", "결제 성공!");
+        } else if(safePaymentsUpdateRequest.getStatus().equals("sellerOk")) {
+            safePaymentsService.updateSellerOk(safePaymentsUpdateRequest);
+            return RsData.of("200", "안전거래 판매 확정!", "안전거래 판매 확정!");
+        } else if(safePaymentsUpdateRequest.getStatus().equals("buyerOk")) {
+            safePaymentsService.updateBuyerOk(safePaymentsUpdateRequest);
+            return RsData.of("200", "안전거래 구매 확정!", "안전거래 구매 확정!");
+        } else {
+            return null;
+        }
+
+
     }
 
-    // 안전거래 판매 확정
-    @PatchMapping("/seller")
-    public RsData<String> updateSellerOk(@RequestBody SafePaymentsUpdateRequest safePaymentsUpdateRequest) {
-        safePaymentsService.updateSellerOk(safePaymentsUpdateRequest);
-        return RsData.of("200", "안전거래 판매 확정!", "안전거래 판매 확정!");
-    }
-
-    // 안전거래 구매 확정
-    @PatchMapping("/buyer")
-    public RsData<String> updateBuyerOk(@RequestBody SafePaymentsUpdateRequest safePaymentsUpdateRequest) {
-        safePaymentsService.updateBuyerOk(safePaymentsUpdateRequest);
-        return RsData.of("200", "안전거래 구매 확정!", "안전거래 구매 확정!");
-    }
+//    // 안전거래 판매 확정
+//    @PatchMapping("/seller")
+//    public RsData<String> updateSellerOk(@RequestBody SafePaymentsUpdateRequest safePaymentsUpdateRequest) {
+//
+//
+//    }
+//
+//    // 안전거래 구매 확정
+//    @PatchMapping("/buyer")
+//    public RsData<String> updateBuyerOk(@RequestBody SafePaymentsUpdateRequest safePaymentsUpdateRequest) {
+//
+//
+//    }
 
 }

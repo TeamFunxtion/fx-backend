@@ -51,31 +51,34 @@ public class SafePaymentsService {
             }
         }
         int productPrice = price.intValue();
-        Optional<Member> member = memberRepository.findById(safePaymentsUpdateRequest.getBuyerId());
-        if(member != null) {
-            member.get().setPoint(member.get().getPoint() - productPrice);
-            memberRepository.save(member.get());
+        Optional<Member> m = memberRepository.findById(safePaymentsUpdateRequest.getBuyerId());
+        Member member = m.get();
+        if(member != null && member.getPoint() >= productPrice) {
+            member.setPoint(member.getPoint() - productPrice);
+            memberRepository.save(member);
         }
     }
 
     // 판매자가 판매 확정 누른 경우
     public void updateSellerOk(SafePaymentsUpdateRequest safePaymentsUpdateRequest) {
         SafePayments sp = safePaymentsRepository.findByProductIdAndSellerIdAndBuyerId(safePaymentsUpdateRequest.getProductId(), safePaymentsUpdateRequest.getSellerId(), safePaymentsUpdateRequest.getBuyerId());
-        Optional<Product> product = productRepository.findById(safePaymentsUpdateRequest.getProductId());
+        Optional<Product> p = productRepository.findById(safePaymentsUpdateRequest.getProductId());
+        Product product = p.get();
         if(sp != null) {
             sp.setSellerOk("Y");
             if(sp.getBuyerOk()!= null && sp.getBuyerOk().equals("Y")) {
                 sp.setStatus("SP04");
-                Optional<Member> seller = memberRepository.findById(safePaymentsUpdateRequest.getSellerId());
-                seller.get().setPoint(seller.get().getPoint() + product.get().getCurrentPrice().intValue());
-                memberRepository.save(seller.get());
+                Optional<Member> member = memberRepository.findById(safePaymentsUpdateRequest.getSellerId());
+                Member seller = member.get();
+                seller.setPoint(seller.getPoint() + product.getCurrentPrice().intValue());
+                memberRepository.save(seller);
             }
             safePaymentsRepository.save(sp);
         }
 
-        if(product != null && sp.getStatus().equals("SP04")) {
-            product.get().setStatusTypeId("ST02");
-            productRepository.save(product.get());
+        if(p != null && sp.getStatus().equals("SP04")) {
+            product.setStatusTypeId("ST02");
+            productRepository.save(product);
         }
 
     }
@@ -83,21 +86,23 @@ public class SafePaymentsService {
     // 구매자가 구매 확정 누른 경우
     public void updateBuyerOk(SafePaymentsUpdateRequest safePaymentsUpdateRequest) {
         SafePayments sp = safePaymentsRepository.findByProductIdAndSellerIdAndBuyerId(safePaymentsUpdateRequest.getProductId(), safePaymentsUpdateRequest.getSellerId(), safePaymentsUpdateRequest.getBuyerId());
-        Optional<Product> product = productRepository.findById(safePaymentsUpdateRequest.getProductId());
+        Optional<Product> p = productRepository.findById(safePaymentsUpdateRequest.getProductId());
+        Product product = p.get();
         if(sp != null) {
             sp.setBuyerOk("Y");
             if(sp.getSellerOk()!= null && sp.getSellerOk().equals("Y")) {
                 sp.setStatus("SP04");
-                Optional<Member> seller = memberRepository.findById(safePaymentsUpdateRequest.getSellerId());
-                seller.get().setPoint(seller.get().getPoint() + product.get().getCurrentPrice().intValue());
-                memberRepository.save(seller.get());
+                Optional<Member> member = memberRepository.findById(safePaymentsUpdateRequest.getSellerId());
+                Member seller = member.get();
+                seller.setPoint(seller.getPoint() + product.getCurrentPrice().intValue());
+                memberRepository.save(seller);
             }
             safePaymentsRepository.save(sp);
         }
 
         if(product != null && sp.getStatus().equals("SP04")) {
-            product.get().setStatusTypeId("ST02");
-            productRepository.save(product.get());
+            product.setStatusTypeId("ST02");
+            productRepository.save(product);
         }
     }
 }

@@ -11,4 +11,5 @@ public class SafePaymentsUpdateRequest {
     private Long productId;
     private Long sellerId;
     private Long buyerId;
+    private String status;
 }
