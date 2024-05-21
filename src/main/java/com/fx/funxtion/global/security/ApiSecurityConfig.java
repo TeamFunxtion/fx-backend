@@ -28,6 +28,8 @@ public class ApiSecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/api/*/members/join").permitAll() // 회원가입 누구나 가능, post요청만 허용
                                 .requestMatchers(HttpMethod.GET, "/api/*/members/auth").permitAll() // 이메일 인증 누구나 가능, get요청 허용
                                 .requestMatchers(HttpMethod.POST, "/api/*/members/kakao/login").permitAll()
+                                .requestMatchers(HttpMethod.PUT, "/api/*/members/update").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/*/members/*").permitAll()
                                 .requestMatchers("/api/*/notices").permitAll()
                                 .requestMatchers("/api/*/notices/*").permitAll()
                                 .requestMatchers("/api/*/notices/*/**").permitAll()
@@ -41,7 +43,6 @@ public class ApiSecurityConfig {
                                 .requestMatchers( HttpMethod.GET,"/api/*/chats").permitAll()
                                 .requestMatchers("/api/*/chats/*").permitAll()
                                 .requestMatchers("/api/*/chats/*/messages").permitAll()
-                                .requestMatchers("/chat").permitAll()
                                 .requestMatchers("/api/*/payments").permitAll()
                                 .requestMatchers("/api/*/payments/*").permitAll()
                                 .requestMatchers("/api/*/payments/*/**").permitAll()
