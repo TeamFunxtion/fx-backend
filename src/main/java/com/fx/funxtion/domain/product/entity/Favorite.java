@@ -1,10 +1,7 @@
 package com.fx.funxtion.domain.product.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -17,8 +14,13 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @EntityListeners(AuditingEntityListener.class)
-@Table(name="user_favorites")
+@Table(name="user_favorites" , uniqueConstraints = {
+        @UniqueConstraint(
+                columnNames={"user_id", "product_id"}
+        )
+})
 public class Favorite {
 
     @Id
@@ -29,7 +31,7 @@ public class Favorite {
     @Column(name="user_id")
     private Long userId;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name="product_id")
     private Product product;
 
