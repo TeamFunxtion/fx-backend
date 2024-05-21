@@ -1,5 +1,6 @@
 package com.fx.funxtion;
 
+import com.fx.funxtion.domain.faq.dto.FaqCreateRequest;
 import com.fx.funxtion.domain.faq.dto.FaqDto;
 import com.fx.funxtion.domain.faq.repository.FaqRepository;
 import com.fx.funxtion.domain.faq.service.FaqService;
@@ -18,6 +19,11 @@ public class FaqTest {
 
 
     @Test
-    public void test(){
+    public void FAQ등록(){
+        FaqCreateRequest faqCreateRequest = new FaqCreateRequest();
+        faqCreateRequest.setFaqContent("테스트내용");
+        faqCreateRequest.setFaqTitle("테스트제목");
+
+        faqService.createFaq(faqCreateRequest);
     }
 }
