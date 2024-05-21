@@ -1,17 +1,18 @@
 package com.fx.funxtion.domain.faq.controller;
 
-import com.fx.funxtion.domain.faq.dto.FaqDto;
+import com.fx.funxtion.domain.faq.dto.*;
+import com.fx.funxtion.domain.faq.repository.FaqRepository;
 import com.fx.funxtion.domain.faq.service.FaqService;
+import com.fx.funxtion.domain.member.entity.Member;
+import com.fx.funxtion.global.RsData.RsData;
 import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ import java.util.List;
 @Slf4j
 public class ApiV1faqController {
     private final FaqService faqService;
+    private final FaqRepository faqRepository;
 
     @GetMapping("")
     public Page<FaqDto> getFaqs(
@@ -35,6 +37,29 @@ public class ApiV1faqController {
 
         return pageFaq;
     }
+   @PostMapping("")
+    public RsData<FaqCreateResponse> createFaq(@RequestBody FaqCreateRequest faqCreateRequest) {
+        System.out.println(faqCreateRequest);
 
+        RsData<FaqCreateResponse> faqCreateResponse = faqService.createFaq(faqCreateRequest);
 
+        return RsData.of(faqCreateResponse.getResultCode(),faqCreateResponse.getMsg(),faqCreateResponse.getData());
+   }
+    @PatchMapping("/{id}")
+    public RsData<FaqUpdateResponse> updateFaq(@PathVariable(name="id") Long id, @RequestBody FaqUpdateRequest faqUpdateRequest) {
+        faqUpdateRequest.setId(id);
+        return faqService.updateFaq(faqUpdateRequest);
+    }
+    @GetMapping("/{id}")
+    public RsData<FaqCreateResponse> getFaq(@PathVariable(name="id") Long id) {
+        RsData<FaqCreateResponse> faqCreateResponse = faqService.getFaqDetail(id);
+        return RsData.of(faqCreateResponse.getResultCode(), faqCreateResponse.getMsg(),faqCreateResponse.getData());
+
+    }
+    @DeleteMapping("/{id}")
+    public RsData<FaqDto> FaqDelete(@PathVariable(name="id") Long id){
+        RsData<FaqDto> faqDto = faqService.deleteFaq(id);
+
+        return RsData.of(faqDto.getResultCode(),faqDto.getMsg());
+    }
 }

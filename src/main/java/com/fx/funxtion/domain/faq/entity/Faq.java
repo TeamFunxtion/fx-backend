@@ -17,5 +17,5 @@ import lombok.experimental.SuperBuilder;
 public class Faq extends BaseEntity {
     private String faqTitle;
     private String faqContent;
-    private String order;
+    private Long faqOrder;
 }
