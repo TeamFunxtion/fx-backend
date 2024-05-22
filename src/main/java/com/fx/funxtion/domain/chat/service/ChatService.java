@@ -9,6 +9,9 @@ import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
 import com.fx.funxtion.domain.product.entity.Product;
 import com.fx.funxtion.domain.product.repository.ProductRepository;
+import com.fx.funxtion.domain.safepayment.entity.SafePaymentStatus;
+import com.fx.funxtion.domain.safepayment.entity.SafePayments;
+import com.fx.funxtion.domain.safepayment.repository.SafePaymentsRepository;
 import com.fx.funxtion.global.RsData.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +26,16 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ChatService {
-    @Autowired
+
     private final ChatRoomRepository chatRoomRepository;
-    @Autowired
+
     private final ChatMessageRepository chatMessageRepository;
-    @Autowired
+
     private final MemberRepository memberRepository;
-    @Autowired
+
     private final ProductRepository productRepository;
+
+    private final SafePaymentsRepository safePaymentsRepository;
     // 채팅 메시지 입력
     public ChatMessageDto insertChatMessage(ChatMessageDto chatMessageDto) {
         ChatMessage chatMessage = ChatMessage.builder()
@@ -89,21 +94,41 @@ public class ChatService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 고객이 존재하지 않습니다."));
         Product product = productRepository.findById(chatRoomCreateRequest.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
-        ChatRoom chatRoomEx = chatRoomRepository.findByCustomerIdAndMemberId(chatRoomCreateRequest.getCustomerId(), chatRoomCreateRequest.getStoreId());
+        ChatRoom chatRoomEx = chatRoomRepository
+                            .findByCustomerIdAndMemberId(chatRoomCreateRequest.getCustomerId(), chatRoomCreateRequest.getStoreId());
         ChatRoom cr;
-        if(chatRoomEx == null) {
+        if(chatRoomEx != null) {
+            List<SafePayments> safePaymentsList = safePaymentsRepository
+                            .findBySellerIdAndBuyerId(chatRoomCreateRequest.getStoreId(), chatRoomCreateRequest.getCustomerId());
+            if(safePaymentsList == null) {
+                chatRoomEx.setProduct(product);
+                cr = chatRoomRepository.save(chatRoomEx);
+                return cr.getId();
+            }
+            boolean hasSP03 = false;
+            for (int i = 0; i < safePaymentsList.size(); i++) {
+                if (safePaymentsList.get(i).getStatus().equals(SafePaymentStatus.SP03)) {
+                    hasSP03 = true;
+                    break;
+                }
+            }
+            if (hasSP03) {
+                return chatRoomEx.getId();
+            } else {
+                chatRoomEx.setProduct(product);
+                cr = chatRoomRepository.save(chatRoomEx);
+                return cr.getId();  // SP03 상태를 가진 항목이 하나도 없으면 이 값을 반환합니다.
+            }
+        } else {
             ChatRoom chatRoom = ChatRoom.builder()
                     .member(member)
                     .customer(customer)
                     .product(product)
                     .build();
             cr = chatRoomRepository.save(chatRoom);
-        } else {
-            chatRoomEx.setProduct(product);
-            cr = chatRoomRepository.save(chatRoomEx);
+            return cr.getId();
         }
-        return cr.getId();
-//        return new ChatRoomCreateResponse(cr, new ArrayList<>());
+
     }
 
 

@@ -1,6 +1,8 @@
 package com.fx.funxtion.domain.safepayment.service;
 
 import com.fx.funxtion.domain.chat.entity.ChatMessage;
+import com.fx.funxtion.domain.chat.entity.ChatRoom;
+import com.fx.funxtion.domain.chat.repository.ChatRoomRepository;
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
 import com.fx.funxtion.domain.product.entity.Product;
@@ -24,6 +26,7 @@ public class SafePaymentsService {
     private final SafePaymentsRepository safePaymentsRepository;
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     public SafePaymentsDetailResponse findSafePayments(Long productId, Long sellerId, Long buyerId) {
         SafePayments sp = safePaymentsRepository.findByProductIdAndSellerIdAndBuyerId(productId, sellerId, buyerId);
@@ -80,6 +83,20 @@ public class SafePaymentsService {
         if(p != null && sp.getStatus().equals(SafePaymentStatus.SP04)) {
             product.setStatusTypeId("ST02");
             productRepository.save(product);
+
+            SafePayments sp00 = safePaymentsRepository
+                    .findFirstBySellerIdAndBuyerIdAndStatusOrderByIdAsc(safePaymentsUpdateRequest.getProductId(),
+                                                safePaymentsUpdateRequest.getSellerId(), SafePaymentStatus.SP00);
+            if(sp00 != null) {
+                sp00.setStatus(SafePaymentStatus.SP03);
+                safePaymentsRepository.save(sp00);
+                Product pr = productRepository.findById(sp00.getProductId()).get();
+                ChatRoom cr = chatRoomRepository.findByCustomerIdAndMemberId(sp00.getBuyerId(), sp00.getSellerId());
+                if(cr!= null) {
+                    cr.setProduct(pr);
+                    chatRoomRepository.save(cr);
+                }
+            }
         }
 
     }
@@ -104,6 +121,20 @@ public class SafePaymentsService {
         if(product != null && sp.getStatus().equals(SafePaymentStatus.SP04)) {
             product.setStatusTypeId("ST02");
             productRepository.save(product);
+
+            SafePayments sp00 = safePaymentsRepository
+                    .findFirstBySellerIdAndBuyerIdAndStatusOrderByIdAsc(safePaymentsUpdateRequest.getProductId(),
+                            safePaymentsUpdateRequest.getSellerId(), SafePaymentStatus.SP00);
+            if(sp00 != null) {
+                sp00.setStatus(SafePaymentStatus.SP03);
+                safePaymentsRepository.save(sp00);
+                Product pr = productRepository.findById(sp00.getProductId()).get();
+                ChatRoom cr = chatRoomRepository.findByCustomerIdAndMemberId(sp00.getBuyerId(), sp00.getSellerId());
+                if(cr!= null) {
+                    cr.setProduct(pr);
+                    chatRoomRepository.save(cr);
+                }
+            }
         }
     }
 }
