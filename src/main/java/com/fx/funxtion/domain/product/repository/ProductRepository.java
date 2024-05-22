@@ -21,7 +21,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "from Product p " +
             "where p.salesTypeId in ('SA01', 'SA02') " +
             "and p.statusTypeId = 'ST01' " +
-            "and p.endTime <= current_date")
+            "and p.endTime <= CURRENT_TIMESTAMP")
     List<Product> findAllAfterAuctionEndTime();
 
     Page<Product> findByProductTitleContainingAndStatusTypeId(String keyword, String statusTypeId, Pageable pageable);

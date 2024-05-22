@@ -1,5 +1,6 @@
 package com.fx.funxtion.domain.safepayment.repository;
 
+import com.fx.funxtion.domain.safepayment.entity.SafePaymentStatus;
 import com.fx.funxtion.domain.safepayment.entity.SafePayments;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -8,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface SafePaymentsRepository extends JpaRepository<SafePayments, Long> {
 
     SafePayments findByProductIdAndSellerIdAndBuyerId(Long productId, Long sellerId, Long buyerId);
+
+    SafePayments findBySellerIdAndBuyerIdAndStatus(Long sellerId, Long buyerId, SafePaymentStatus status);
 }
