@@ -33,17 +33,23 @@ public class ProductDto {
     private int views;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
-    private List<ProductImageDto> images = new ArrayList<>();
+    private String thumbnailUrl;
     private int bidCount;
 
     public ProductDto(Product p) {
         BeanUtils.copyProperties(p, this);
         this.creator = new MemberDto(p.getMember());
         this.bidCount = p.getBids().size();
+        if(p.getImages().size() > 0) {
+            this.thumbnailUrl = p.getImages().get(0).getImageUrl();
+        }
     }
 
     public ProductDto(Bid b) {
         BeanUtils.copyProperties(b.getProduct(), this);
         this.creator = new MemberDto(b.getMember());
+        if(b.getProduct().getImages().size() > 0) {
+            this.thumbnailUrl = b.getProduct().getImages().get(0).getImageUrl();
+        }
     }
 }
