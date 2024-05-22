@@ -204,7 +204,7 @@ public class ProductService {
 
         return results;
     }
-    public Page<ProductDto> getBidProducts(Long userId, String statusTypeId, Pageable pageable) {
+    public Page<ProductDto> getBidProducts(Long userId, Pageable pageable) {
         Optional<Member> member = memberRepository.findById(userId);
 
         if (member.isEmpty()) {

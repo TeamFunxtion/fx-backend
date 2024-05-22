@@ -39,7 +39,6 @@ public class ApiV1ProductController {
     private final ProductService productService;
     private final BidService bidService;
     private final ReportService reportService;
-    private final ProductRepository productRepository;
 
     /**
      * 상품 등록
@@ -212,6 +211,12 @@ public class ApiV1ProductController {
         RsData<Long> reportRs = reportService.report(productReportRequest.getUserId(), productReportRequest.getProductId(), productReportRequest.getReportTypeCode());
         return RsData.of(reportRs.getResultCode(), reportRs.getMsg(), reportRs.getData());
     }
+
+    /**
+     * 진행중인 경매(판매자)
+     * @param
+     * @return Page<ProductDto>
+     */
     @GetMapping("/my/auction")
     public Page<ProductDto> getAuctionProducts(@RequestParam(required = true, value = "userId") Long userId,
                                                @RequestParam(required = false, defaultValue = "ST01", value = "status") String statusTypeId,
@@ -223,15 +228,20 @@ public class ApiV1ProductController {
         Page<ProductDto> pageList = productService.getAuctionProducts(userId, statusTypeId, pageable);
         return pageList;
     }
+
+    /**
+     * 참여중인 경매(구매자)
+     * @param
+     * @return Page<ProductDto>
+     */
     @GetMapping("/my/bids")
     public Page<ProductDto> getBidProducts(@RequestParam(required = true, value = "userId") Long userId,
-                                               @RequestParam(required = false, defaultValue = "ST01", value = "status") String statusTypeId,
                                                @RequestParam(required = false, defaultValue = "id", value = "sort") String sort,
                                                @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
                                                @PageableDefault(size = 10, sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
         pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
         pageable = PageRequest.of(pageNo, pageable.getPageSize(), getPageableSort(sort));
-        Page<ProductDto> pageList = productService.getBidProducts(userId, statusTypeId, pageable);
+        Page<ProductDto> pageList = productService.getBidProducts(userId, pageable);
         return pageList;
 
     }
