@@ -1,6 +1,7 @@
 package com.fx.funxtion.domain.product.dto;
 
 import com.fx.funxtion.domain.member.dto.MemberDto;
+import com.fx.funxtion.domain.product.entity.Bid;
 import com.fx.funxtion.domain.product.entity.Product;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,5 +40,10 @@ public class ProductDto {
         BeanUtils.copyProperties(p, this);
         this.creator = new MemberDto(p.getMember());
         this.bidCount = p.getBids().size();
+    }
+
+    public ProductDto(Bid b) {
+        BeanUtils.copyProperties(b.getProduct(), this);
+        this.creator = new MemberDto(b.getMember());
     }
 }

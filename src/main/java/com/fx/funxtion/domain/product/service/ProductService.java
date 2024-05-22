@@ -3,20 +3,24 @@ package com.fx.funxtion.domain.product.service;
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
 import com.fx.funxtion.domain.product.dto.*;
+import com.fx.funxtion.domain.product.entity.Bid;
 import com.fx.funxtion.domain.product.entity.Favorite;
 import com.fx.funxtion.domain.product.entity.Product;
 import com.fx.funxtion.domain.product.entity.ProductStatusType;
+import com.fx.funxtion.domain.product.repository.BidRepository;
 import com.fx.funxtion.domain.product.repository.FavoriteRepository;
 import com.fx.funxtion.domain.product.repository.ProductRepository;
 import com.fx.funxtion.global.RsData.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,6 +31,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
     private final FavoriteRepository favoriteRepository;
+    private final BidRepository bidRepository;
 
     public RsData<ProductCreateResponse> createProduct(ProductCreateRequest productCreateRequest) {
         Member member = memberRepository.findById(productCreateRequest.getStoreId())
@@ -87,12 +92,12 @@ public class ProductService {
     public RsData<ProductDetailResponse> getProductDetail(Long productId, Long userId) {
         Optional<Product> optionalProduct = productRepository.findById(productId);
 
-        if(optionalProduct.isEmpty()) {
+        if (optionalProduct.isEmpty()) {
             return RsData.of("500", "상품 조회 실패!");
         }
 
         ProductDetailResponse productDetailResponse = new ProductDetailResponse(optionalProduct.get());
-        if(userId != null) {
+        if (userId != null) {
             Favorite favor = favoriteRepository.findByUserIdAndProductId(userId, productId);
             productDetailResponse.setFavorite(favor != null);
         }
@@ -104,45 +109,45 @@ public class ProductService {
         Optional<Product> optionalProduct = productRepository.findById(productUpdateRequest.getProductId());
         System.out.println(optionalProduct.isEmpty());
 
-        if(optionalProduct.isEmpty()) {
+        if (optionalProduct.isEmpty()) {
             return RsData.of("500", "상품이 존재하지 않습니다!");
         }
 
         Product p = optionalProduct.get();
-        
-        if(p.getStatusTypeId().equals(ProductStatusType.ST01.name()) && !p.getBids().isEmpty()) { // 입찰내역이 있는 경매진행중인 상품이라면
+
+        if (p.getStatusTypeId().equals(ProductStatusType.ST01.name()) && !p.getBids().isEmpty()) { // 입찰내역이 있는 경매진행중인 상품이라면
             return RsData.of("500", "해당 상품은 입찰내역이 있는 경매가 진행중인 상품입니다.");
         }
 
-        if(productUpdateRequest.getProductTitle() != null && !productUpdateRequest.getProductTitle().isEmpty()) { // 상품명
+        if (productUpdateRequest.getProductTitle() != null && !productUpdateRequest.getProductTitle().isEmpty()) { // 상품명
             p.setProductTitle(productUpdateRequest.getProductTitle());
         }
-        if(productUpdateRequest.getCategoryId() != null && !productUpdateRequest.getCategoryId().isEmpty()) { // 카테고리
+        if (productUpdateRequest.getCategoryId() != null && !productUpdateRequest.getCategoryId().isEmpty()) { // 카테고리
             p.setCategoryId(productUpdateRequest.getCategoryId());
         }
-        if(productUpdateRequest.getProductPrice() != null ) { // 가격
+        if (productUpdateRequest.getProductPrice() != null) { // 가격
             p.setProductPrice(productUpdateRequest.getProductPrice());
             p.setCurrentPrice(productUpdateRequest.getProductPrice());
         }
-        if(productUpdateRequest.getProductDesc() != null && !productUpdateRequest.getProductDesc().isEmpty()) { // 설명
+        if (productUpdateRequest.getProductDesc() != null && !productUpdateRequest.getProductDesc().isEmpty()) { // 설명
             p.setProductDesc(productUpdateRequest.getProductDesc());
         }
-        if(productUpdateRequest.getQualityTypeId() != null && !productUpdateRequest.getQualityTypeId().isEmpty()) { // 품질상태
+        if (productUpdateRequest.getQualityTypeId() != null && !productUpdateRequest.getQualityTypeId().isEmpty()) { // 품질상태
             p.setQualityTypeId(productUpdateRequest.getQualityTypeId());
         }
-        if(productUpdateRequest.getLocation() != null && !productUpdateRequest.getLocation().isEmpty()) { // 거래지역
+        if (productUpdateRequest.getLocation() != null && !productUpdateRequest.getLocation().isEmpty()) { // 거래지역
             p.setLocation(productUpdateRequest.getLocation());
         }
-        if(productUpdateRequest.getSalesTypeId() != null && !productUpdateRequest.getSalesTypeId().isEmpty()) { // 판매방식
+        if (productUpdateRequest.getSalesTypeId() != null && !productUpdateRequest.getSalesTypeId().isEmpty()) { // 판매방식
             p.setSalesTypeId(productUpdateRequest.getSalesTypeId());
         }
-        if(productUpdateRequest.getStatusTypeId() != null && !productUpdateRequest.getStatusTypeId().isEmpty()) { // 상품상태
+        if (productUpdateRequest.getStatusTypeId() != null && !productUpdateRequest.getStatusTypeId().isEmpty()) { // 상품상태
             p.setStatusTypeId(productUpdateRequest.getStatusTypeId());
         }
-        if(productUpdateRequest.getCoolPrice() != null) { // 즉구가
+        if (productUpdateRequest.getCoolPrice() != null) { // 즉구가
             p.setCoolPrice(productUpdateRequest.getCoolPrice());
         }
-        if(productUpdateRequest.getEndDays() > 0) { // 경매 종료일
+        if (productUpdateRequest.getEndDays() > 0) { // 경매 종료일
             p.setEndTime(LocalDateTime.now().plusDays(productUpdateRequest.getEndDays()));
         }
 
@@ -160,7 +165,7 @@ public class ProductService {
     public boolean updateFavorite(Long userId, Long productId) {
         Favorite favorite = favoriteRepository.findByUserIdAndProductId(userId, productId);
 
-        if(favorite != null) {
+        if (favorite != null) {
             favoriteRepository.delete(favorite);
             return false;
         } else {
@@ -177,10 +182,42 @@ public class ProductService {
     }
 
     public static Sort getPageableSort(String sort) {
-        if(sort.equals("price_asc") || sort.equals("price_desc")) {
-            return Sort.by(sort.equals("price_asc") ?  Sort.Direction.ASC : Sort.Direction.DESC, "currentPrice");
+        if (sort.equals("price_asc") || sort.equals("price_desc")) {
+            return Sort.by(sort.equals("price_asc") ? Sort.Direction.ASC : Sort.Direction.DESC, "currentPrice");
         } else {
             return Sort.by(Sort.Direction.DESC, sort);
         }
+    }
+
+    public Page<ProductDto> getAuctionProducts(Long userId, String statusTypeId, Pageable pageable) {
+        Optional<Member> member = memberRepository.findById(userId);
+
+        if (member.isEmpty()) {
+            throw new IllegalArgumentException("유저가 존재하지 않습니다.");
+        }
+
+        Page<ProductDto> results = productRepository.findByMemberAndSalesTypeIdNotAndStatusTypeId(
+                member.get(),
+                "SA03", // salesTypeId가 3이 아닌 상품들만 조회합니다.
+                statusTypeId, // 상태가 활성인 상품만 조회합니다.
+                pageable).map(ProductDto::new);
+
+        return results;
+    }
+    public Page<ProductDto> getBidProducts(Long userId, String statusTypeId, Pageable pageable) {
+        Optional<Member> member = memberRepository.findById(userId);
+
+        if (member.isEmpty()) {
+            throw new IllegalArgumentException("유저가 존재하지 않습니다.");
+        }
+
+        Page<ProductDto> results = bidRepository.findWithProductUsingJoinByMember(member.get().getId(), pageable);
+
+
+        System.out.println("------------------------------------");
+
+
+        return results;
+
     }
 }
