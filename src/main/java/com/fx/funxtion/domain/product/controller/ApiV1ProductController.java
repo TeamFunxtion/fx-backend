@@ -1,10 +1,7 @@
 package com.fx.funxtion.domain.product.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fx.funxtion.domain.product.dto.*;
-import com.fx.funxtion.domain.product.entity.Product;
-import com.fx.funxtion.domain.product.repository.ProductRepository;
 import com.fx.funxtion.domain.product.service.BidService;
 import com.fx.funxtion.domain.product.service.ProductService;
 import com.fx.funxtion.domain.product.service.ReportService;
