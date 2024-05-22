@@ -83,8 +83,6 @@ public class BidService {
 
         bidRepository.save(bid);
 
-        // todo. 현재가 갱신되었으니 이전 최고 입찰자 환불시키기?
-
         if(bid.getId() != null && bid.getId() > 0) {
             return RsData.of("200", !isCoolEnded ? "입찰 등록 성공!" : "바로구매 성공! 판매자와 거래를 진행하시기 바랍니다.", new BidCreateResponse(bid, isCoolEnded));
         } else {
