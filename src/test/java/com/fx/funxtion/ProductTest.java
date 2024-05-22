@@ -7,6 +7,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.multipart.MultipartFile;
+
 import static org.assertj.core.api.Assertions.*;
 import java.util.List;
 
@@ -30,7 +32,7 @@ public class ProductTest {
         productCreateRequest.setCoolPrice(20000L);
         productCreateRequest.setEndDays(3);
 
-        RsData<ProductCreateResponse> productCreateResponse = productService.createProduct(productCreateRequest);
+        RsData<ProductCreateResponse> productCreateResponse = productService.createProduct(productCreateRequest, new MultipartFile[0]);
 
         assertThat(productCreateRequest.getStoreId())
                 .isEqualTo(productCreateResponse.getData().getStoreId());
@@ -48,7 +50,7 @@ public class ProductTest {
         productCreateRequest.setSalesTypeId("SA01");
         productCreateRequest.setLocation("서울시 강남구");
 
-        RsData<ProductCreateResponse> productCreateResponse = productService.createProduct(productCreateRequest);
+        RsData<ProductCreateResponse> productCreateResponse = productService.createProduct(productCreateRequest, new MultipartFile[0]);
 
         assertThat(productCreateRequest.getStoreId())
                 .isEqualTo(productCreateResponse.getData().getStoreId());
@@ -87,7 +89,7 @@ public class ProductTest {
         productUpdateRequest.setCoolPrice(20000L);
         productUpdateRequest.setEndDays(2);
 
-        RsData<ProductUpdateResponse> productUpdateResponse = productService.updateProduct(productUpdateRequest);
+        RsData<ProductUpdateResponse> productUpdateResponse = productService.updateProduct(productUpdateRequest, new MultipartFile[0]);
 
         assertThat(productUpdateRequest.getProductTitle())
                 .isEqualTo(productUpdateResponse.getData().getProductTitle());
@@ -99,7 +101,7 @@ public class ProductTest {
         productUpdateRequest.setProductId(1L);
         productUpdateRequest.setStatusTypeId("ST05"); // 삭제코드
 
-        RsData<ProductUpdateResponse> productUpdateResponse = productService.updateProduct(productUpdateRequest);
+        RsData<ProductUpdateResponse> productUpdateResponse = productService.updateProduct(productUpdateRequest, new MultipartFile[0]);
 
         assertThat(productUpdateRequest.getStatusTypeId())
                 .isEqualTo(productUpdateResponse.getData().getStatusTypeId());

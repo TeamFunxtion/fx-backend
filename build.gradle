@@ -55,6 +55,10 @@ dependencies {
 
 	// iamport
 	implementation 'com.github.iamport:iamport-rest-client-java:0.2.21'
+
+	// aws s3
+	implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.0")
+	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
 }
 
 tasks.named('test') {

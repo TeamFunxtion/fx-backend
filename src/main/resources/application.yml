@@ -12,7 +12,8 @@ spring:
         use_sql_comments: true
   servlet:
     multipart:
-      maxFileSize: 1MB
+      max-file-size: 1MB # 최대 파일 사이즈
+      max-request-size: 1MB # 최대 요청 사이즈
 
 logging:
   level:

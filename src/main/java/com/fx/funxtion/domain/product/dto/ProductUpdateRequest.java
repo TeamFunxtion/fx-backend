@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
@@ -20,4 +22,5 @@ public class ProductUpdateRequest {
     private String location;
     private Long coolPrice;
     private int endDays;
+    private List<Long> removeImgIds;
 }

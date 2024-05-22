@@ -15,11 +15,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-
 import static com.fx.funxtion.domain.product.service.ProductService.getPageableSort;
 
 /**
@@ -38,60 +33,59 @@ public class ApiV1ProductController {
     private final ReportService reportService;
 
     /**
-     * 상품 등록
-     *
-     * @param productCreateRequest
+     * 상품 등록 with MultipartFiles
+     * @param multipartFiles
+     * @param newProduct
      * @return RsData<ProductCreateResponse>
      */
     @PostMapping("")
-    public RsData<ProductCreateResponse> createProduct(@RequestBody ProductCreateRequest productCreateRequest) {
-        System.out.println(productCreateRequest);
-
-        RsData<ProductCreateResponse> productCreateResponse = productService.createProduct(productCreateRequest);
-
-        // todo. 파일 업로드...
-
-        return RsData.of(productCreateResponse.getResultCode(), productCreateResponse.getMsg(), productCreateResponse.getData());
-    }
-
-    /**
-     * 상품 등록 with MultipartFiles
-     * @param multipartFiles
-     * @param stringFoodDto
-     */
-    @PostMapping("/uploadFiles")
-    public void uploadFiles(@RequestParam(value="file", required = false)MultipartFile[] multipartFiles, @RequestParam(value="productRequestDto", required = false) String stringFoodDto) { // 파라미터의 이름은 client의 formData key값과 동일해야함
-        String UPLOAD_PATH = "C:\\funxtionUpload"; // 업로드 할 위치
+    public RsData<ProductCreateResponse> createProduct(@RequestParam(value="file", required = false) MultipartFile[] multipartFiles, @RequestParam(value="newProduct", required = false) String newProduct) { // 파라미터의 이름은 client의 formData key값과 동일해야함
+        RsData<ProductCreateResponse> productCreateResponse;
 
         try {
             // 객체는 client에서 직렬화를 하여 전달
-            ProductCreateRequest foodDto = new ObjectMapper().readValue(stringFoodDto, ProductCreateRequest.class); // String to Object
-            System.out.println("foodDto= " + foodDto);
+            ProductCreateRequest productCreateRequest = new ObjectMapper().readValue(newProduct, ProductCreateRequest.class); // String to Object
+            System.out.println("productCreateRequest= " + productCreateRequest);
 
-            for(int i=0; i<multipartFiles.length; i++) {
-                MultipartFile file = multipartFiles[i];
+            productCreateResponse = productService.createProduct(productCreateRequest, multipartFiles);
+            return RsData.of(productCreateResponse.getResultCode(), productCreateResponse.getMsg(), productCreateResponse.getData());
 
-                String fileId = (new Date().getTime()) + "" + (new Random().ints(1000, 9999).findAny().getAsInt()); // 현재 날짜와 랜덤 정수값으로 새로운 파일명 만들기
-                String originName = file.getOriginalFilename(); // ex) 파일.jpg
-                String fileExtension = originName.substring(originName.lastIndexOf(".") + 1); // ex) jpg
-                originName = originName.substring(0, originName.lastIndexOf(".")); // ex) 파일
-                long fileSize = file.getSize(); // 파일 사이즈
-
-                File fileSave = new File(UPLOAD_PATH, fileId + "." + fileExtension); // ex) fileId.jpg
-                if(!fileSave.exists()) { // 폴더가 없을 경우 폴더 만들기
-                    fileSave.mkdirs();
-                }
-
-                file.transferTo(fileSave); // fileSave의 형태로 파일 저장
-
-                System.out.println("fileId= " + fileId);
-                System.out.println("originName= " + originName);
-                System.out.println("fileExtension= " + fileExtension);
-                System.out.println("fileSize= " + fileSize);
-            }
         } catch(Exception e) {
-            throw new RuntimeException(e);
+            return RsData.of("500", "잘못된 Product 정보입력입니다.");
         }
+    }
+
+    /**
+     * 상품 정보 수정 (기본정보)
+     * @param multipartFiles
+     * @param newProduct
+     * @return RsData<ProductUpdateResponse>
+     */
+    @PatchMapping("")
+    public RsData<ProductUpdateResponse> updateProduct(@RequestParam(value="file", required = false) MultipartFile[] multipartFiles, @RequestParam(value="newProduct", required = false) String newProduct) {
+        try {
+            // 객체는 client에서 직렬화를 하여 전달
+            ProductUpdateRequest productUpdateRequest = new ObjectMapper().readValue(newProduct, ProductUpdateRequest.class); // String to Object
+            System.out.println("productUpdateRequest= " + productUpdateRequest);
+
+            RsData<ProductUpdateResponse> productUpdateResponse = productService.updateProduct(productUpdateRequest, multipartFiles);
+            return RsData.of(productUpdateResponse.getResultCode(), productUpdateResponse.getMsg(), productUpdateResponse.getData());
+
+        } catch(Exception e) {
+            return RsData.of("500", "잘못된 Product 정보입력입니다.");
+        }
+    }
+
+    /**
+     * 상품 정보 수정 (상태변경 )
+     *
+     * @param productUpdateRequest
+     * @return RsData<ProductUpdateResponse>
+     */
+    @PatchMapping("/status")
+    public RsData<ProductUpdateResponse> changeProductStatus(@RequestBody ProductUpdateRequest productUpdateRequest) {
+        RsData<ProductUpdateResponse> productUpdateResponse = productService.changeProductStatus(productUpdateRequest);
+        return RsData.of(productUpdateResponse.getResultCode(), productUpdateResponse.getMsg(), productUpdateResponse.getData());
     }
 
     /**
@@ -156,18 +150,6 @@ public class ApiV1ProductController {
     public RsData<Void> increaseViews(@PathVariable(name="id") Long id) {
         productService.increaseViews(id); // 조회수 증가
         return RsData.of("200", "조회수 증가", null);
-    }
-
-    /**
-     * 상품 정보 수정 (기본정보 / 상태변경 )
-     *
-     * @param productUpdateRequest
-     * @return RsData<ProductUpdateResponse>
-     */
-    @PatchMapping("")
-    public RsData<ProductUpdateResponse> updateProduct(@RequestBody ProductUpdateRequest productUpdateRequest) {
-        RsData<ProductUpdateResponse> productUpdateResponse = productService.updateProduct(productUpdateRequest);
-        return RsData.of(productUpdateResponse.getResultCode(), productUpdateResponse.getMsg(), productUpdateResponse.getData());
     }
 
     /**
