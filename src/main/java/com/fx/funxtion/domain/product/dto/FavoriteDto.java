@@ -1,6 +1,8 @@
 package com.fx.funxtion.domain.product.dto;
 import com.fx.funxtion.domain.product.entity.Favorite;
 import com.fx.funxtion.domain.product.entity.Product;
+import com.fx.funxtion.domain.product.entity.ProductImage;
+import com.fx.funxtion.domain.product.repository.ProductImageRepository;
 import lombok.*;
 import java.time.LocalDateTime;
 
@@ -13,13 +15,15 @@ public class FavoriteDto {
 
     private Long id;
     private Long userId;
-    private Product product;
     private LocalDateTime createDate;
+    private ProductDto product;
+
 
     public FavoriteDto(Favorite favorite) {
         this.id = favorite.getId();
         this.userId = favorite.getUserId();
-        this.product = favorite.getProduct();
         this.createDate = favorite.getCreateDate();
+        this.product = new ProductDto(favorite.getProduct());
+
     }
 }

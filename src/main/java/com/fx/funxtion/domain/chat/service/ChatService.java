@@ -14,7 +14,6 @@ import com.fx.funxtion.domain.safepayment.entity.SafePayments;
 import com.fx.funxtion.domain.safepayment.repository.SafePaymentsRepository;
 import com.fx.funxtion.global.RsData.RsData;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +35,7 @@ public class ChatService {
     private final ProductRepository productRepository;
 
     private final SafePaymentsRepository safePaymentsRepository;
+
     // 채팅 메시지 입력
     public ChatMessageDto insertChatMessage(ChatMessageDto chatMessageDto) {
         ChatMessage chatMessage = ChatMessage.builder()
@@ -79,6 +79,7 @@ public class ChatService {
 
         for(ChatRoom chatRoom : chatRooms) {
             List<ChatMessage> messages = chatMessageRepository.findTopByRoomIdOrderByCreateDateDesc(chatRoom.getId());
+
             chatRoomListResponse.add(new ChatRoomWithMessagesDto(chatRoom, messages));
         }
         return chatRoomListResponse;
