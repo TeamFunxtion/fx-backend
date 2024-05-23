@@ -31,6 +31,8 @@ public class MemberService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MailUtils mailUtils;
 
+    private final String USER_IMAGE_DEFAULT = "https://funxtion-image.s3.amazonaws.com/funxtion/user_default.png";
+
     enum Roles {
         NOTHING,
         ROLE_USER,
@@ -51,9 +53,15 @@ public class MemberService {
             return RsData.of("500", "이미 사용중인 이메일 입니다!");
         }
 
+        String nickname = memberJoinRequest.getEmail().substring(0, memberJoinRequest.getEmail().indexOf("@"));
+
         Member member = Member.builder()
                 .email(memberJoinRequest.getEmail())
                 .password(passwordEncoder.encode(memberJoinRequest.getPassword()))
+                .profileImageUrl(USER_IMAGE_DEFAULT)
+                .nickname(nickname)
+                .name(nickname)
+                .intro(nickname + "의 소개글입니다.")
                 .roleId(Long.valueOf(Roles.ROLE_USER.ordinal()))
                 .point(0)
                 .deleteYn("N")
@@ -150,12 +158,15 @@ public class MemberService {
 
         if(findMember.isEmpty()) {
             // 회원가입
+            String profileImageUrl = !kakaoLoginRequest.getProfileImageUrl().isEmpty() ? kakaoLoginRequest.getProfileImageUrl() : USER_IMAGE_DEFAULT;
+
             Member newMember = Member.builder()
                     .email(kakaoLoginRequest.getEmail())
                     .password(passwordEncoder.encode("passwordTemp#!$#$13"))
-                    .profileImageUrl(kakaoLoginRequest.getProfileImageUrl())
+                    .profileImageUrl(profileImageUrl)
                     .nickname(kakaoLoginRequest.getNickname())
                     .name(kakaoLoginRequest.getNickname())
+                    .intro(kakaoLoginRequest.getNickname() + "의 소개글입니다.")
                     .socialId(kakaoLoginRequest.getId())
                     .socialProvider("kakao")
                     .roleId(Long.valueOf(Roles.ROLE_USER.ordinal()))
