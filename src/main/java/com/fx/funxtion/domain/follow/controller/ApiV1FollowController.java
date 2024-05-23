@@ -47,6 +47,7 @@ public class ApiV1FollowController {
     }
 
 
+
     // 팔로우 추가 or 해제
     @PostMapping("follower")
     public RsData<Long> updateFollow(@RequestBody FollowUpdateRequest followUpdateRequest) {

@@ -35,12 +35,14 @@ public class ProductDetailResponse {
     private List<BidDto> bids = new ArrayList<>();
     private int favorites;
     private boolean isFavorite = false;
+    private boolean isFollow = false;
 
-    public ProductDetailResponse(Product p) {
+    public ProductDetailResponse(Product p, Boolean isFollow) {
         BeanUtils.copyProperties(p, this);
         this.seller = new MemberDto(p.getMember());
         this.images = p.getImages().stream().map(ProductImageDto::new).toList();
         this.bids  = p.getBids().stream().map(BidDto::new).toList();
         this.favorites = p.getFavorites().size();
+        this.isFollow = isFollow;
     }
 }

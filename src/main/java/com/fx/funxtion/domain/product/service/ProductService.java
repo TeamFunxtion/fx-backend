@@ -1,5 +1,6 @@
 package com.fx.funxtion.domain.product.service;
 
+import com.fx.funxtion.domain.follow.repository.FollowRepository;
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
 import com.fx.funxtion.domain.product.dto.*;
@@ -34,6 +35,7 @@ public class ProductService {
     private final BidRepository bidRepository;
     private final ProductImageRepository productImageRepository;
     private final ImageService imageService;
+    private final FollowRepository followRepository;
 
     public RsData<ProductCreateResponse> createProduct(ProductCreateRequest productCreateRequest, MultipartFile[] multipartFiles) {
         Member member = memberRepository.findById(productCreateRequest.getStoreId())
@@ -245,12 +247,20 @@ public class ProductService {
         if (optionalProduct.isEmpty()) {
             return RsData.of("500", "상품 조회 실패!");
         }
+        boolean isFollowing = followRepository.existsByFromMemberIdAndToMemberId(userId, optionalProduct.get().getMember().getId());
+        ProductDetailResponse productDetailResponse;
 
-        ProductDetailResponse productDetailResponse = new ProductDetailResponse(optionalProduct.get());
+        if(isFollowing == true) {
+            productDetailResponse = new ProductDetailResponse(optionalProduct.get(), isFollowing);
+        } else {
+            productDetailResponse = new ProductDetailResponse(optionalProduct.get(), false);
+        }
+
         if (userId != null) {
             Favorite favor = favoriteRepository.findByUserIdAndProductId(userId, productId);
             productDetailResponse.setFavorite(favor != null);
         }
+
 
         return RsData.of("200", "상품 조회 성공!", productDetailResponse);
     }
