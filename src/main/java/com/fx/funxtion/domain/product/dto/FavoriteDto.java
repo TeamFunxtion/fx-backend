@@ -15,15 +15,15 @@ public class FavoriteDto {
 
     private Long id;
     private Long userId;
-    private ProductDto product;
     private LocalDateTime createDate;
+    private ProductDto product;
 
 
     public FavoriteDto(Favorite favorite) {
         this.id = favorite.getId();
         this.userId = favorite.getUserId();
-        this.product = new ProductDto(favorite.getProduct());
         this.createDate = favorite.getCreateDate();
+        this.product = new ProductDto(favorite.getProduct());
 
     }
 }

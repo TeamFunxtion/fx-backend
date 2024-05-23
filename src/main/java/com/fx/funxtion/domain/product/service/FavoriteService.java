@@ -37,7 +37,7 @@ public class FavoriteService {
         for (Favorite userFavorites : userFavoritesPage) {
             Optional<Product> product = productRepository.findById(userFavorites.getProduct().getId());
             if (product.isPresent()) {
-                FavoriteDto dto = new FavoriteDto(userFavorites.getId(), userFavorites.getUserId(), new ProductDto(product.get()), userFavorites.getCreateDate());
+                FavoriteDto dto = new FavoriteDto(userFavorites);
                 favoriteDtoList.add(dto);
             }
         }
