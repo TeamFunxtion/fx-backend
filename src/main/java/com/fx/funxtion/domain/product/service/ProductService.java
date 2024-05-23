@@ -1,5 +1,6 @@
 package com.fx.funxtion.domain.product.service;
 
+import com.fx.funxtion.domain.follow.repository.FollowRepository;
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
 import com.fx.funxtion.domain.product.dto.*;
@@ -10,6 +11,7 @@ import com.fx.funxtion.domain.product.repository.ProductImageRepository;
 import com.fx.funxtion.domain.product.repository.ProductRepository;
 import com.fx.funxtion.global.RsData.RsData;
 import com.fx.funxtion.global.util.image.service.ImageService;
+import kotlin.collections.ArrayDeque;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,6 +35,7 @@ public class ProductService {
     private final BidRepository bidRepository;
     private final ProductImageRepository productImageRepository;
     private final ImageService imageService;
+    private final FollowRepository followRepository;
 
     public RsData<ProductCreateResponse> createProduct(ProductCreateRequest productCreateRequest, MultipartFile[] multipartFiles) {
         Member member = memberRepository.findById(productCreateRequest.getStoreId())
@@ -243,12 +247,14 @@ public class ProductService {
         if (optionalProduct.isEmpty()) {
             return RsData.of("500", "상품 조회 실패!");
         }
+        boolean isFollowing = followRepository.existsByFromMemberIdAndToMemberId(userId, optionalProduct.get().getMember().getId());
+        ProductDetailResponse productDetailResponse = new ProductDetailResponse(optionalProduct.get(), isFollowing);
 
-        ProductDetailResponse productDetailResponse = new ProductDetailResponse(optionalProduct.get());
         if (userId != null) {
             Favorite favor = favoriteRepository.findByUserIdAndProductId(userId, productId);
             productDetailResponse.setFavorite(favor != null);
         }
+
 
         return RsData.of("200", "상품 조회 성공!", productDetailResponse);
     }
@@ -303,18 +309,16 @@ public class ProductService {
     }
     public Page<ProductDto> getBidProducts(Long userId, Pageable pageable) {
         Optional<Member> member = memberRepository.findById(userId);
-
         if (member.isEmpty()) {
             throw new IllegalArgumentException("유저가 존재하지 않습니다.");
         }
 
-        Page<ProductDto> results = bidRepository.findWithProductUsingJoinByMember(member.get().getId(), pageable);
+        List<Long> results = bidRepository.findWithProductUsingJoinByMember(member.get().getId());
 
+        Page<ProductDto> products = productRepository.findByIdInAndStatusTypeId(results, "ST01", pageable)
+                .map(ProductDto::new);
 
-        System.out.println("------------------------------------");
-
-
-        return results;
+        return products;
 
     }
 }

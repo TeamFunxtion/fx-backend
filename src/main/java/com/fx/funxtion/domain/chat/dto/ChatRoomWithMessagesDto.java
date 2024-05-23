@@ -25,6 +25,7 @@ public class ChatRoomWithMessagesDto {
     private LocalDateTime updateDate;
     private List<ChatMessage> chatMessages;
 
+
     public ChatRoomWithMessagesDto(ChatRoom chatRoom, List<ChatMessage> chatMessages) {
         this.id = chatRoom.getId();
         this.store = new MemberDto(chatRoom.getMember());
@@ -33,5 +34,6 @@ public class ChatRoomWithMessagesDto {
         this.createDate = chatRoom.getCreateDate();
         this.updateDate = chatRoom.getUpdateDate();
         this.chatMessages = chatMessages;
+
     }
 }

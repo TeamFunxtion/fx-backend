@@ -1,6 +1,5 @@
 package com.fx.funxtion.domain.chat.dto;
 
-import com.fx.funxtion.domain.chat.entity.ChatMessage;
 import com.fx.funxtion.domain.chat.entity.ChatRoom;
 import com.fx.funxtion.domain.member.dto.MemberDto;
 import com.fx.funxtion.domain.product.dto.ProductDto;
@@ -27,6 +26,7 @@ public class ChatRoomDetailResponse {
     private List<ChatMessageDto> chatMessages;
 
 
+
     public ChatRoomDetailResponse(ChatRoom chatRoom, List<ChatMessageDto> chatMessages) {
         this.id = chatRoom.getId();
         this.store = new MemberDto(chatRoom.getMember());
@@ -35,6 +35,7 @@ public class ChatRoomDetailResponse {
         this.createDate = chatRoom.getCreateDate();
         this.updateDate = chatRoom.getUpdateDate();
         this.chatMessages = chatMessages;
+
 
     }
 }
