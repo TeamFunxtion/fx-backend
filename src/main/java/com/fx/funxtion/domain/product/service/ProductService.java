@@ -10,6 +10,7 @@ import com.fx.funxtion.domain.product.repository.ProductImageRepository;
 import com.fx.funxtion.domain.product.repository.ProductRepository;
 import com.fx.funxtion.global.RsData.RsData;
 import com.fx.funxtion.global.util.image.service.ImageService;
+import kotlin.collections.ArrayDeque;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -303,18 +305,16 @@ public class ProductService {
     }
     public Page<ProductDto> getBidProducts(Long userId, Pageable pageable) {
         Optional<Member> member = memberRepository.findById(userId);
-
         if (member.isEmpty()) {
             throw new IllegalArgumentException("유저가 존재하지 않습니다.");
         }
 
-        Page<ProductDto> results = bidRepository.findWithProductUsingJoinByMember(member.get().getId(), pageable);
+        List<Long> results = bidRepository.findWithProductUsingJoinByMember(member.get().getId());
 
+        Page<ProductDto> products = productRepository.findByIdInAndStatusTypeId(results, "ST01", pageable)
+                .map(ProductDto::new);
 
-        System.out.println("------------------------------------");
-
-
-        return results;
+        return products;
 
     }
 }

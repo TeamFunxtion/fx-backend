@@ -32,6 +32,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Page<Product> findByMemberAndSalesTypeIdNotAndStatusTypeId(Member member, String salesTypeId, String statusTypeId, Pageable pageable);
 
+    Page<Product> findByIdInAndStatusTypeId(List<Long> id, String statusTypeId, Pageable pageable);
 
     Long countByMemberId(Long memberId);
 }
