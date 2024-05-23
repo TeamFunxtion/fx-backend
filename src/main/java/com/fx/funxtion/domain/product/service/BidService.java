@@ -2,6 +2,7 @@ package com.fx.funxtion.domain.product.service;
 
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
+import com.fx.funxtion.domain.notification.service.NotificationService;
 import com.fx.funxtion.domain.product.dto.BidCreateRequest;
 import com.fx.funxtion.domain.product.dto.BidCreateResponse;
 import com.fx.funxtion.domain.product.entity.Bid;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BidService {
 
+    private final NotificationService notificationService;
     private final BidRepository bidRepository;
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
@@ -52,6 +54,9 @@ public class BidService {
                 Member oldWinner = memberRepository.findById(product.getAuctionWinnerId())
                         .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
                 oldWinner.setPoint(oldWinner.getPoint() + product.getCurrentPrice().intValue());
+
+                // 알림 전송
+                notificationService.notifyUser(oldWinner.getId().toString(), "큰일났어요 낙찰 기회를 빼앗겼어요!!!");
             }
 
         } else { // 블라인드 경매일 때

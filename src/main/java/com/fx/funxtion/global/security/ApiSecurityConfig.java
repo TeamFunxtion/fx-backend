@@ -47,6 +47,8 @@ public class ApiSecurityConfig {
                                 .requestMatchers("/api/*/payments/*").permitAll()
                                 .requestMatchers("/api/*/payments/*/**").permitAll()
                                 .requestMatchers("/api/*/favorites").permitAll()
+                                .requestMatchers("/api/*/notify/*").permitAll()
+                                .requestMatchers("/api/*/notify/*/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .csrf(
