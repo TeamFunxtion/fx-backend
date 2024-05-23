@@ -16,6 +16,6 @@ public class NotificationScheduler {
     public void scheduleNotification() {
         String userId = "2"; // 예시로 특정 사용자 ID를 설정
         String message = "맙소사 낙찰됐어요";
-        notificationService.notifyUser(userId, message);
+//        notificationService.notifyUser(userId, message);
     }
 }

@@ -1,5 +1,6 @@
 package com.fx.funxtion.domain.notification.controller;
 
+import com.fx.funxtion.domain.notification.dto.NotificationMessage;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ public class ApiV1NotificationController {
         return emitter;
     }
 
-    public void sendEventToUser(String userId, String message) throws IOException {
+    public void sendEventToUser(String userId, NotificationMessage message) throws IOException {
         SseEmitter emitter = emitters.get(userId);
         if (emitter != null) {
             emitter.send(SseEmitter.event().name("message").data(message));

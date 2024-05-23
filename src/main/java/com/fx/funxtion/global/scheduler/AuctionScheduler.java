@@ -4,7 +4,9 @@ import com.fx.funxtion.domain.chat.entity.ChatRoom;
 import com.fx.funxtion.domain.chat.repository.ChatRoomRepository;
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
+import com.fx.funxtion.domain.notification.dto.NotificationMessage;
 import com.fx.funxtion.domain.notification.service.NotificationService;
+import com.fx.funxtion.domain.product.dto.ProductDto;
 import com.fx.funxtion.domain.product.entity.Bid;
 import com.fx.funxtion.domain.product.entity.Product;
 import com.fx.funxtion.domain.product.entity.ProductStatusType;
@@ -92,8 +94,13 @@ public class AuctionScheduler {
                     }
 
                     // SSE로 낙찰 알림 전송
-                    String message = winner.get().getNickname() + "님! 방금 경매 상품이 낙찰되었어요!";
-                    notificationService.notifyUser(winner.get().getId().toString(), message);
+                    NotificationMessage notificationMessage = NotificationMessage.builder()
+                            .type("auction_winner")
+                            .message(winner.get().getNickname() + "님! 방금 경매 상품이 낙찰되었어요!")
+                            .data(new ProductDto(product))
+                            .build();
+
+                    notificationService.notifyUser(winner.get().getId().toString(), notificationMessage);
                 }
             }
 
