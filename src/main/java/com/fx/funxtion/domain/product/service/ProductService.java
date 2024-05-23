@@ -305,14 +305,11 @@ public class ProductService {
     }
     public Page<ProductDto> getBidProducts(Long userId, Pageable pageable) {
         Optional<Member> member = memberRepository.findById(userId);
-
         if (member.isEmpty()) {
             throw new IllegalArgumentException("유저가 존재하지 않습니다.");
         }
 
         List<Long> results = bidRepository.findWithProductUsingJoinByMember(member.get().getId());
-        // 현재 모든 입찰 내역이 있어
-        System.out.println(results);
 
         Page<ProductDto> products = productRepository.findByIdInAndStatusTypeId(results, "ST01", pageable)
                 .map(ProductDto::new);

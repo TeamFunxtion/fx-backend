@@ -8,13 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface BidRepository extends JpaRepository<Bid, Long> {
-
-    List<Bid> findAllByProductId(Long productId);
-
-//    @Query("SELECT DISTINCT b.product.id FROM Bid b join fetch b.member m where m.id = :id")
-//    List<Long> findWithProductUsingJoinByMember(@Param("id") Long id);
-
     @Query("SELECT DISTINCT b.product.id FROM Bid b WHERE b.member.id = :id")
     List<Long> findWithProductUsingJoinByMember(@Param("id") Long id);
-
 }
