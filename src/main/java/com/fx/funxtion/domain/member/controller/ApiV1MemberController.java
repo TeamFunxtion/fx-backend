@@ -96,6 +96,11 @@ public class ApiV1MemberController {
         memberService.updateMember(memberUpdateDto);
         return RsData.of("200", "회원 정보가 성공적으로 수정되었습니다.");
     }
+    @DeleteMapping("/delete/{id}") // DELETE 요청을 받음
+    public RsData<Void> deleteMember(@PathVariable("id") Long memberId) {
+        // MemberService를 통해 회원 탈퇴 기능 수행
+        return memberService.deleteMember(memberId);
+    }
 }
 
 

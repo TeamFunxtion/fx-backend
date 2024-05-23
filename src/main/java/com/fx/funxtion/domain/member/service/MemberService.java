@@ -3,6 +3,7 @@ package com.fx.funxtion.domain.member.service;
 import com.fx.funxtion.domain.member.dto.*;
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
+import com.fx.funxtion.domain.product.repository.ProductRepository;
 import com.fx.funxtion.global.RsData.RsData;
 import com.fx.funxtion.global.jwt.JwtProvider;
 import com.fx.funxtion.global.security.SecurityUser;
@@ -30,6 +31,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MailUtils mailUtils;
+    private final ProductRepository productRepository;
 
     private final String USER_IMAGE_DEFAULT = "https://funxtion-image.s3.amazonaws.com/funxtion/user_default.png";
 
@@ -207,6 +209,14 @@ public class MemberService {
 
             }
 
+            // 현재 비밀번호와 신규 비밀번호가 같은지 확인합니다.
+            if (memberUpdateDto.getPassword().equals(memberUpdateDto.getNewPassword())) {
+                return RsData.of("400", "현재 비밀번호와 신규 비밀번호는 같을수 없습니다");
+            }
+            // 신규 비밀번호가 비어있는지 확인합니다.
+            if (memberUpdateDto.getNewPassword().isEmpty()) {
+                return RsData.of("400", "신규 비밀번호를 입력해주세요.");
+            }
             // 새로운 비밀번호를 설정합니다.
             if (!memberUpdateDto.getNewPassword().isEmpty()) {
                 // 비밀번호 암호화
@@ -226,6 +236,22 @@ public class MemberService {
         } catch (Exception e) {
             // 예외가 발생하면 예외 메시지를 반환합니다.
             return RsData.of("500", "회원 정보 수정 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+    @Transactional
+    public RsData<Void> deleteMember(Long memberId) {
+        try {
+            Optional<Member> optionalMember = memberRepository.findById(memberId);
+            if (optionalMember.isPresent()) {
+                Member member = optionalMember.get();
+                member.setDeleteYn("Y"); // 삭제 여부를 'Y'로 설정
+                memberRepository.save(member);
+                return RsData.of("200", "회원 탈퇴가 성공적으로 처리되었습니다.");
+            } else {
+                return RsData.of("404", "회원을 찾을 수 없습니다.");
+            }
+        } catch (Exception e) {
+            return RsData.of("500", "회원 탈퇴 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
 }
