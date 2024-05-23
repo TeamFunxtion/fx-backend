@@ -4,8 +4,6 @@ import com.fx.funxtion.domain.chat.entity.ChatMessage;
 import com.fx.funxtion.domain.chat.entity.ChatRoom;
 import com.fx.funxtion.domain.member.dto.MemberDto;
 import com.fx.funxtion.domain.product.dto.ProductDto;
-import com.fx.funxtion.domain.product.dto.ProductImageDto;
-import com.fx.funxtion.domain.product.entity.ProductImage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

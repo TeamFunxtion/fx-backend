@@ -8,15 +8,12 @@ import com.fx.funxtion.domain.chat.repository.ChatRoomRepository;
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
 import com.fx.funxtion.domain.product.entity.Product;
-import com.fx.funxtion.domain.product.entity.ProductImage;
-import com.fx.funxtion.domain.product.repository.ProductImageRepository;
 import com.fx.funxtion.domain.product.repository.ProductRepository;
 import com.fx.funxtion.domain.safepayment.entity.SafePaymentStatus;
 import com.fx.funxtion.domain.safepayment.entity.SafePayments;
 import com.fx.funxtion.domain.safepayment.repository.SafePaymentsRepository;
 import com.fx.funxtion.global.RsData.RsData;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
