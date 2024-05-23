@@ -3,9 +3,11 @@ package com.fx.funxtion.domain.product.service;
 
 import com.fx.funxtion.domain.product.dto.FavoriteDto;
 import com.fx.funxtion.domain.product.dto.FavoriteUpdateRequest;
+import com.fx.funxtion.domain.product.dto.ProductDto;
 import com.fx.funxtion.domain.product.entity.Favorite;
 import com.fx.funxtion.domain.product.entity.Product;
 import com.fx.funxtion.domain.product.repository.FavoriteRepository;
+import com.fx.funxtion.domain.product.repository.ProductImageRepository;
 import com.fx.funxtion.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,7 +37,7 @@ public class FavoriteService {
         for (Favorite userFavorites : userFavoritesPage) {
             Optional<Product> product = productRepository.findById(userFavorites.getProduct().getId());
             if (product.isPresent()) {
-                FavoriteDto dto = new FavoriteDto(userFavorites.getId(), userFavorites.getUserId(), product.get(), userFavorites.getCreateDate());
+                FavoriteDto dto = new FavoriteDto(userFavorites.getId(), userFavorites.getUserId(), new ProductDto(product.get()), userFavorites.getCreateDate());
                 favoriteDtoList.add(dto);
             }
         }

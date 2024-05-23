@@ -4,6 +4,8 @@ import com.fx.funxtion.domain.chat.entity.ChatMessage;
 import com.fx.funxtion.domain.chat.entity.ChatRoom;
 import com.fx.funxtion.domain.member.dto.MemberDto;
 import com.fx.funxtion.domain.product.dto.ProductDto;
+import com.fx.funxtion.domain.product.dto.ProductImageDto;
+import com.fx.funxtion.domain.product.entity.ProductImage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,6 +27,7 @@ public class ChatRoomWithMessagesDto {
     private LocalDateTime updateDate;
     private List<ChatMessage> chatMessages;
 
+
     public ChatRoomWithMessagesDto(ChatRoom chatRoom, List<ChatMessage> chatMessages) {
         this.id = chatRoom.getId();
         this.store = new MemberDto(chatRoom.getMember());
@@ -33,5 +36,6 @@ public class ChatRoomWithMessagesDto {
         this.createDate = chatRoom.getCreateDate();
         this.updateDate = chatRoom.getUpdateDate();
         this.chatMessages = chatMessages;
+
     }
 }

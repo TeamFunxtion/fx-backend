@@ -8,6 +8,8 @@ import com.fx.funxtion.domain.chat.repository.ChatRoomRepository;
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
 import com.fx.funxtion.domain.product.entity.Product;
+import com.fx.funxtion.domain.product.entity.ProductImage;
+import com.fx.funxtion.domain.product.repository.ProductImageRepository;
 import com.fx.funxtion.domain.product.repository.ProductRepository;
 import com.fx.funxtion.domain.safepayment.entity.SafePaymentStatus;
 import com.fx.funxtion.domain.safepayment.entity.SafePayments;
@@ -36,6 +38,7 @@ public class ChatService {
     private final ProductRepository productRepository;
 
     private final SafePaymentsRepository safePaymentsRepository;
+
     // 채팅 메시지 입력
     public ChatMessageDto insertChatMessage(ChatMessageDto chatMessageDto) {
         ChatMessage chatMessage = ChatMessage.builder()
@@ -79,6 +82,7 @@ public class ChatService {
 
         for(ChatRoom chatRoom : chatRooms) {
             List<ChatMessage> messages = chatMessageRepository.findTopByRoomIdOrderByCreateDateDesc(chatRoom.getId());
+
             chatRoomListResponse.add(new ChatRoomWithMessagesDto(chatRoom, messages));
         }
         return chatRoomListResponse;
