@@ -248,13 +248,7 @@ public class ProductService {
             return RsData.of("500", "상품 조회 실패!");
         }
         boolean isFollowing = followRepository.existsByFromMemberIdAndToMemberId(userId, optionalProduct.get().getMember().getId());
-        ProductDetailResponse productDetailResponse;
-
-        if(isFollowing == true) {
-            productDetailResponse = new ProductDetailResponse(optionalProduct.get(), isFollowing);
-        } else {
-            productDetailResponse = new ProductDetailResponse(optionalProduct.get(), false);
-        }
+        ProductDetailResponse productDetailResponse = new ProductDetailResponse(optionalProduct.get(), isFollowing);
 
         if (userId != null) {
             Favorite favor = favoriteRepository.findByUserIdAndProductId(userId, productId);
