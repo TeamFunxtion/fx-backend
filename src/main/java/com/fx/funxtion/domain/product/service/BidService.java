@@ -2,8 +2,11 @@ package com.fx.funxtion.domain.product.service;
 
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
+import com.fx.funxtion.domain.notification.dto.NotificationMessage;
+import com.fx.funxtion.domain.notification.service.NotificationService;
 import com.fx.funxtion.domain.product.dto.BidCreateRequest;
 import com.fx.funxtion.domain.product.dto.BidCreateResponse;
+import com.fx.funxtion.domain.product.dto.ProductDto;
 import com.fx.funxtion.domain.product.entity.Bid;
 import com.fx.funxtion.domain.product.entity.Product;
 import com.fx.funxtion.domain.product.entity.ProductStatusType;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BidService {
 
+    private final NotificationService notificationService;
     private final BidRepository bidRepository;
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
@@ -52,6 +56,17 @@ public class BidService {
                 Member oldWinner = memberRepository.findById(product.getAuctionWinnerId())
                         .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
                 oldWinner.setPoint(oldWinner.getPoint() + product.getCurrentPrice().intValue());
+
+                // 알림 전송
+                if(oldWinner.getId() != bidCreateRequest.getBidderId()) { // 기존 낙찰자랑 입찰자가 다를때
+                    NotificationMessage notificationMessage = NotificationMessage.builder()
+                            .type("auction_miss")
+                            .message("이런, 다른 구매자에게 낙찰 기회를 빼앗겼어요..!")
+                            .data(new ProductDto(product))
+                            .build();
+
+                    notificationService.notifyUser(oldWinner.getId().toString(), notificationMessage);
+                }
             }
 
         } else { // 블라인드 경매일 때
