@@ -40,7 +40,9 @@ public class ProductDetailResponse {
     public ProductDetailResponse(Product p, Boolean isFollow) {
         BeanUtils.copyProperties(p, this);
         this.seller = new MemberDto(p.getMember());
-        this.images = p.getImages().stream().map(ProductImageDto::new).toList();
+        this.images = p.getImages().stream()
+                .sorted((img1, img2) -> Math.toIntExact(img1.getId() - img2.getId()))
+                .map(ProductImageDto::new).toList();
         this.bids  = p.getBids().stream().map(BidDto::new).toList();
         this.favorites = p.getFavorites().size();
         this.isFollow = isFollow;

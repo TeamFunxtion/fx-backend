@@ -3,6 +3,7 @@ package com.fx.funxtion.domain.product.dto;
 import com.fx.funxtion.domain.member.dto.MemberDto;
 import com.fx.funxtion.domain.product.entity.Bid;
 import com.fx.funxtion.domain.product.entity.Product;
+import com.fx.funxtion.domain.product.entity.ProductImage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -41,7 +42,7 @@ public class ProductDto {
         this.creator = new MemberDto(p.getMember());
         this.bidCount = p.getBids().size();
         if(p.getImages().size() > 0) {
-            this.thumbnailUrl = p.getImages().get(0).getImageUrl();
+            this.thumbnailUrl = findProductThumbnail(p.getImages()).getImageUrl();
         }
     }
 
@@ -49,7 +50,15 @@ public class ProductDto {
         BeanUtils.copyProperties(b.getProduct(), this);
         this.creator = new MemberDto(b.getMember());
         if(b.getProduct().getImages().size() > 0) {
-            this.thumbnailUrl = b.getProduct().getImages().get(0).getImageUrl();
+            this.thumbnailUrl = findProductThumbnail(b.getProduct().getImages()).getImageUrl();
         }
+    }
+
+    private ProductImage findProductThumbnail(List<ProductImage> images) {
+        Comparator<ProductImage> comparatorById = Comparator.comparingLong(ProductImage::getId);
+        ProductImage productImageWithMinId = images.stream()
+                .min(comparatorById)
+                .orElseThrow(NoSuchElementException::new);
+        return productImageWithMinId;
     }
 }
