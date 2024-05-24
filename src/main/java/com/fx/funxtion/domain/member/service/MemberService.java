@@ -206,19 +206,21 @@ public class MemberService {
             // 현재 비밀번호와 DB에 저장된 비밀번호를 비교합니다.
             if (!passwordEncoder.matches(memberUpdateDto.getPassword(), findMember.getPassword())) {
                 return RsData.of("400", "현재 비밀번호가 일치하지 않습니다.");
-
             }
 
-            // 현재 비밀번호와 신규 비밀번호가 같은지 확인합니다.
-            if (memberUpdateDto.getPassword().equals(memberUpdateDto.getNewPassword())) {
-                return RsData.of("400", "현재 비밀번호와 신규 비밀번호는 같을수 없습니다");
-            }
-            // 신규 비밀번호가 비어있는지 확인합니다.
-            if (memberUpdateDto.getNewPassword().isEmpty()) {
-                return RsData.of("400", "신규 비밀번호를 입력해주세요.");
-            }
-            // 새로운 비밀번호를 설정합니다.
+            // 새 비밀번호가 비어 있지 않은 경우에만 비밀번호를 변경합니다.
             if (!memberUpdateDto.getNewPassword().isEmpty()) {
+                // 현재 비밀번호와 신규 비밀번호가 같은지 확인합니다.
+                if (memberUpdateDto.getPassword().equals(memberUpdateDto.getNewPassword())) {
+                    return RsData.of("400", "현재 비밀번호와 신규 비밀번호는 같을 수 없습니다");
+                }
+
+                // 신규 비밀번호와 새 비밀번호 확인이 일치하는지 확인합니다.
+                if (!memberUpdateDto.getNewPassword().equals(memberUpdateDto.getConfirmNewPassword())) {
+                    return RsData.of("400", "새 비밀번호와 새 비밀번호 확인이 일치하지 않습니다.");
+                }
+
+                // 새로운 비밀번호를 설정합니다.
                 // 비밀번호 암호화
                 String newPasswordEncoded = passwordEncoder.encode(memberUpdateDto.getNewPassword());
                 findMember.setPassword(newPasswordEncoded);

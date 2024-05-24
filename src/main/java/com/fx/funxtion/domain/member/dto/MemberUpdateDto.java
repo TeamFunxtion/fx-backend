@@ -11,22 +11,25 @@ public class MemberUpdateDto{
     private String nickname;
     private String intro;
     private String password;
-    private String confirmPassword;
     private String newPassword; // 새로운 비밀번호(newpassword)의 getter 메서드 추가
     private String phoneNumber;
+    private String confirmNewPassword;
 
     public MemberUpdateDto(Member member){
         this.email = member.getEmail();
         this.nickname = member.getNickname();
         this.intro = member.getIntro();
         this.password = member.getPassword();
-        this.confirmPassword = member.getPassword();
         this.newPassword = member.getPassword();
+        this.confirmNewPassword = member.getPassword();
         this.phoneNumber = member.getPhoneNumber();
     }
 
     public CharSequence getNewPassword() {
         return newPassword;
+    }
+    public CharSequence getConfirmNewPassword() {
+        return confirmNewPassword;
     }
 }
 
