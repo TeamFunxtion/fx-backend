@@ -12,4 +12,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByRefreshToken(String refreshToken);
     void deleteByEmail(String email);
     List<Member> findByDeleteYn(String deleteYn);
+    Optional<Member> findByIdAndDeleteYn(Long id, String deleteYn);
 }

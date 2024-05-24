@@ -40,12 +40,12 @@ public class MemberService {
         ROLE_USER,
         ROLE_ADMIN
     }
-
     public RsData<MemberDto> getUser(Long userId) {
-        Optional<Member> findMember = memberRepository.findById(userId);
+        Optional<Member> findMember = memberRepository.findByIdAndDeleteYn(userId, "N");
 
         return findMember.map(member -> RsData.of("200", "조회 성공!", new MemberDto(member)))
                 .orElseGet(() -> RsData.of("500", "조회 실패!"));
+
 
     }
 
