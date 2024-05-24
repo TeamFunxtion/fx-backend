@@ -19,10 +19,8 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 @Slf4j
 @Component
@@ -72,7 +70,7 @@ public class SocketHandler extends TextWebSocketHandler {
 
             if (obj.get("type").getAsString().equals("message")) {
                 ChatMessage chatMessage;
-                if(temp.keySet().size() >= 3) {
+                if (temp.keySet().size() >= 3) {
                     chatMessage = ChatMessage.builder()
                             .userId(obj.get("userId").getAsLong())
                             .roomId(obj.get("roomNumber").getAsLong())
@@ -86,6 +84,7 @@ public class SocketHandler extends TextWebSocketHandler {
                             .message(obj.get("msg").getAsString())
                             .build();
                 }
+
                 chatMessageRepository.save(chatMessage);
                 System.out.println(obj.get("productId").getAsLong());
                 System.out.println(obj.get("sellerId").getAsLong());
@@ -95,7 +94,7 @@ public class SocketHandler extends TextWebSocketHandler {
                 // 안전거래 버튼 클릭 시 DB 저장.
                 SafePayments safePaymentsEx = safePaymentsRepository.findByProductIdAndSellerIdAndBuyerId(obj.get("productId").getAsLong(), obj.get("sellerId").getAsLong(), obj.get("buyerId").getAsLong());
                 SafePayments safePayments;
-                if(safePaymentsEx == null && temp.keySet().size() >= 2 && obj.get("safe").getAsString() == "true") {
+                if (safePaymentsEx == null && temp.keySet().size() >= 2 && obj.get("safe").getAsString() == "true") {
                     safePayments = SafePayments.builder()
                             .productId(obj.get("productId").getAsLong())
                             .sellerId(obj.get("sellerId").getAsLong())
@@ -105,7 +104,7 @@ public class SocketHandler extends TextWebSocketHandler {
                     safePaymentsRepository.save(safePayments);
                 }
                 // 판매자가 안전거래 수락 시 DB status 컬럼 값 변경
-                if(temp.keySet().size() >=2 && obj.get("msg").getAsString().equals("상품의 안전거래가 수락되었습니다.") ) {
+                if (temp.keySet().size() >= 2 && obj.get("msg").getAsString().equals("상품의 안전거래가 수락되었습니다.")) {
                     safePaymentsEx.setStatus(SafePaymentStatus.SP02);
                     safePaymentsRepository.save(safePaymentsEx);
                 }
@@ -157,8 +156,26 @@ public class SocketHandler extends TextWebSocketHandler {
             ]
          */
 
+        log.info("flag-----> {}", flag);
+
         if (flag) {
             Map<String, Object> map = roomSessionList.get(idx);
+
+            String[] otherKeys = Arrays.stream(map.keySet().stream().toArray())
+                                            .filter(key->!key.equals("roomNumber"))
+                                            .toArray(String[]::new);
+
+            for (String key : otherKeys) {
+                log.info("key- ----> {}", key);
+            }
+            if (otherKeys.length > 0) {
+                String otherSessionId = otherKeys[0];
+                WebSocketSession otherSession = (WebSocketSession) map.get(otherSessionId);
+                JsonObject obj = new JsonObject();
+                obj.addProperty("type", "enter");
+                obj.addProperty("sessionId", session.getId());
+                otherSession.sendMessage(new TextMessage(obj.toString()));
+            }
             map.put(session.getId(), session);
         } else {
             Map<String, Object> map = new HashMap<>();
@@ -171,6 +188,7 @@ public class SocketHandler extends TextWebSocketHandler {
         obj.addProperty("type", "getId");
         obj.addProperty("sessionId", session.getId());
 
+        log.info("send message ---> {}", obj.toString());
         session.sendMessage(new TextMessage(obj.toString()));
     }
 
