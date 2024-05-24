@@ -2,6 +2,7 @@ package com.fx.funxtion.domain.safepayment.controller;
 
 import com.fx.funxtion.domain.chat.dto.ChatMessageDto;
 import com.fx.funxtion.domain.chat.dto.ChatMessageUpdateRequest;
+import com.fx.funxtion.domain.safepayment.dto.SafePaymentsDeleteRequest;
 import com.fx.funxtion.domain.safepayment.dto.SafePaymentsDetailResponse;
 import com.fx.funxtion.domain.safepayment.dto.SafePaymentsUpdateRequest;
 import com.fx.funxtion.domain.safepayment.service.SafePaymentsService;
@@ -47,5 +48,12 @@ public class ApiV1safePaymentController {
         }
     }
 
+    // 안전거래 삭제
+    @PostMapping("/delete")
+    public RsData<String> deleteSafePayment(@RequestBody SafePaymentsDeleteRequest safePaymentsDeleteRequest) {
+        System.out.println("삭제 들어옴!!!!");
+        safePaymentsService.deleteSafePayment(safePaymentsDeleteRequest);
+        return RsData.of("200", "안전거래 삭제 성공!", "삭제 성공!");
+    }
 
 }

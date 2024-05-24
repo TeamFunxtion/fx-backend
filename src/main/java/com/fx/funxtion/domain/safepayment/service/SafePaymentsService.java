@@ -7,6 +7,7 @@ import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
 import com.fx.funxtion.domain.product.entity.Product;
 import com.fx.funxtion.domain.product.repository.ProductRepository;
+import com.fx.funxtion.domain.safepayment.dto.SafePaymentsDeleteRequest;
 import com.fx.funxtion.domain.safepayment.dto.SafePaymentsDetailResponse;
 import com.fx.funxtion.domain.safepayment.dto.SafePaymentsUpdateRequest;
 import com.fx.funxtion.domain.safepayment.entity.SafePaymentStatus;
@@ -136,5 +137,14 @@ public class SafePaymentsService {
                 }
             }
         }
+    }
+
+    public void deleteSafePayment(SafePaymentsDeleteRequest safePaymentsDeleteRequest) {
+        SafePayments sp = safePaymentsRepository
+                        .findByProductIdAndSellerIdAndBuyerId(safePaymentsDeleteRequest.getProductId(),
+                                safePaymentsDeleteRequest.getSellerId(), safePaymentsDeleteRequest.getBuyerId());
+        System.out.println("삭제 들어왔다고 2222222222222");
+        safePaymentsRepository.delete(sp);
+        System.out.println("삭제 했다고 333333333333333333");
     }
 }
