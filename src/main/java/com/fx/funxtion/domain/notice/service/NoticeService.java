@@ -40,7 +40,7 @@ public class NoticeService {
         noticeRepository.save(notice);
         Optional<Notice> optionalNotice = noticeRepository.findById(notice.getId());
 
-        return optionalNotice.map(q ->RsData.of("200","1:1 문의 등록 성공",new NoticeCreateResponse(q))).orElseGet(() -> RsData.of("500","1:1 문의 등록 실패"));
+        return optionalNotice.map(q ->RsData.of("200","공지 등록 성공",new NoticeCreateResponse(q))).orElseGet(() -> RsData.of("500","1:1 문의 등록 실패"));
     }
 
     public RsData<NoticeCreateResponse> getNoticeDetail(Long noticeId){
