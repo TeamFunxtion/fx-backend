@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-//@ToString(callSuper = true)
+@ToString(callSuper = true)
 @Table(name="products")
 public class Product extends BaseEntity {
     @ManyToOne

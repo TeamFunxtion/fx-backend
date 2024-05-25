@@ -59,13 +59,17 @@ public class BidService {
 
                 // 알림 전송
                 if(oldWinner.getId() != bidCreateRequest.getBidderId()) { // 기존 낙찰자랑 입찰자가 다를때
+                    String message = oldWinner.getNickname() + "님 다른 구매자에게 낙찰 기회를 뺏겼습니다!";
                     NotificationMessage notificationMessage = NotificationMessage.builder()
                             .type("auction_miss")
-                            .message("이런, 다른 구매자에게 낙찰 기회를 빼앗겼어요..!")
+                            .message(message)
                             .data(new ProductDto(product))
                             .build();
 
                     notificationService.notifyUser(oldWinner.getId().toString(), notificationMessage);
+
+                    // 알림 내역 저장
+                    notificationService.createNotification(oldWinner.getId(), product.getId(), message);
                 }
             }
 

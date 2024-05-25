@@ -19,12 +19,13 @@ import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-//@Component
+@Component
 @RequiredArgsConstructor
 @Slf4j
 public class AuctionScheduler {
@@ -38,6 +39,7 @@ public class AuctionScheduler {
 
     @Scheduled(cron = "0 * * * * ?") // 1분마다
 //    @Scheduled(cron = "0 0/5 * * * ?") // 5분마다
+    @Transactional
     public void run() {
         try {
             List<Product> list = productRepository.findAllAfterAuctionEndTime();
@@ -94,18 +96,23 @@ public class AuctionScheduler {
                     }
 
                     // SSE로 낙찰 알림 전송
+                    String message = winner.get().getNickname() + "님 축하해요! 상품이 낙찰되었습니다!";
                     NotificationMessage notificationMessage = NotificationMessage.builder()
                             .type("auction_winner")
-                            .message(winner.get().getNickname() + "님! 방금 경매 상품이 낙찰되었어요!")
+                            .message(message)
                             .data(new ProductDto(product))
                             .build();
-
+                    // Client에 알림 전송
                     notificationService.notifyUser(winner.get().getId().toString(), notificationMessage);
+
+                    // 알림 내역 저장
+                    notificationService.createNotification(winner.get().getId(), product.getId(), message);
                 }
             }
 
         } catch (Exception e) {
             System.out.println("* Batch 시스템이 예기치 않게 종료되었습니다.");
+            e.printStackTrace();
         }
     }
 }
