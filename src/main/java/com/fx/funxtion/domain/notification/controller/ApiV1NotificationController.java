@@ -1,21 +1,28 @@
 package com.fx.funxtion.domain.notification.controller;
 
+import com.fx.funxtion.domain.notification.dto.NotificationDto;
 import com.fx.funxtion.domain.notification.dto.NotificationMessage;
+import com.fx.funxtion.domain.notification.service.NotificationService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.concurrent.*;
 
-@Controller
+@RestController
 @RequestMapping("/api/v1/notify")
+@RequiredArgsConstructor
 public class ApiV1NotificationController {
 
-    private final ConcurrentMap<String, SseEmitter> emitters = new ConcurrentHashMap<>();
+    private final NotificationService notificationService;
+    private static final ConcurrentMap<String, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     @GetMapping(value = "/events/{userId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter streamEvents(@PathVariable(name="userId") String userId) {
@@ -29,10 +36,27 @@ public class ApiV1NotificationController {
         return emitter;
     }
 
-    public void sendEventToUser(String userId, NotificationMessage message) throws IOException {
+    public static void sendEventToUser(String userId, NotificationMessage message) throws IOException {
         SseEmitter emitter = emitters.get(userId);
         if (emitter != null) {
             emitter.send(SseEmitter.event().name("message").data(message));
         }
+    }
+
+    @GetMapping("")
+    public Page<NotificationDto> selectUserNotifications(
+            @RequestParam(name="id") Long userId,
+            @PageableDefault(size = 2, sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        int pageNo = pageable.getPageNumber();
+        pageNo = pageNo == 0 ? pageNo : pageNo -1;
+        pageable = PageRequest.of(pageNo, pageable.getPageSize(), pageable.getSort());
+
+        return notificationService.selectUserNotifications(userId, pageable);
+    }
+
+    @DeleteMapping("")
+    public boolean deleteNotifications(@RequestParam(name="id") Long userId) {
+        return notificationService.deleteAllNotifications(userId);
     }
 }
