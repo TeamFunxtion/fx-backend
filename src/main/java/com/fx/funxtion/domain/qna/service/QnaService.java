@@ -1,7 +1,10 @@
 package com.fx.funxtion.domain.qna.service;
 
+import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
 
+import com.fx.funxtion.domain.product.dto.ProductDto;
+import com.fx.funxtion.domain.product.repository.ProductRepository;
 import com.fx.funxtion.domain.qna.dto.*;
 import com.fx.funxtion.domain.qna.entity.Qna;
 import com.fx.funxtion.domain.qna.repository.QnaRepository;
@@ -15,6 +18,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -22,11 +27,17 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class QnaService {
     private final QnaRepository qnaRepository;
+    private final MemberRepository memberRepository;
 
     public RsData<QnaCreateResponse> createQna(QnaCreateRequest qnaCreateRequest) {
+        Optional<Member> optionalMember = memberRepository.findById(qnaCreateRequest.getUserId());
+        if (optionalMember.isEmpty()) {
+            return RsData.of("500", "유효하지 않은 사용자입니다");
+        }
+        Member member = optionalMember.get();
 
         Qna qna = Qna.builder()
-                .userId(qnaCreateRequest.getUserId())
+                .member(member)
                 .categoryId(qnaCreateRequest.getCategoryId())
                 .qnaTitle(qnaCreateRequest.getQnaTitle())
                 .qnaContent(qnaCreateRequest.getQnaContent())
@@ -43,16 +54,20 @@ public class QnaService {
 
     @Transactional
     public Page<QnaDto> getSelectPage(Long userId,Pageable pageable, int pageNo, int pageSize){
+        Optional<Member> member = memberRepository.findById(userId);
         pageable = PageRequest.of(pageNo,pageSize, Sort.by(Sort.Direction.DESC,"id"));
-        Page<QnaDto> list = qnaRepository.findByUserId(userId,pageable).map(QnaDto::new);
+        Page<QnaDto> list = qnaRepository.findByMember(member.get(),pageable).map(QnaDto::new);
 
         return list;
     }
 
     @Transactional
-    public Page<QnaDto> getSelectManagerPage(Pageable pageable, int pageNo, int pageSize){
+    public Page<QnaDto> getSelectManagerPage( Pageable pageable, int pageNo, int pageSize){
         pageable = PageRequest.of(pageNo,pageSize, Sort.by(Sort.Direction.DESC,"id"));
-        Page<QnaDto> list = qnaRepository.findAll(pageable).map(QnaDto::new);
+
+
+        Page<QnaDto> list = qnaRepository.findAllBy(pageable).map(QnaDto::new);
+
 
         return list;
     }
