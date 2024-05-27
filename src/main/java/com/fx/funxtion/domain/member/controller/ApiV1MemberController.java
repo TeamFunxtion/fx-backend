@@ -7,6 +7,7 @@ import com.fx.funxtion.global.rq.Rq;
 import groovy.util.logging.Slf4j;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -92,9 +93,13 @@ public class ApiV1MemberController {
         return RsData.of(authAndMakeTokensRs.getResultCode(),authAndMakeTokensRs.getMsg(), new MemberDto(authAndMakeTokensRs.getData().getMember()));
     }
     @PutMapping("/update")
-    public RsData<Void> putUpdateMember(@RequestBody MemberUpdateDto memberUpdateDto) {
-        memberService.updateMember(memberUpdateDto);
-        return RsData.of("200", "회원 정보가 성공적으로 수정되었습니다.");
+    public ResponseEntity<RsData<Void>> putUpdateMember(@RequestBody MemberUpdateDto memberUpdateDto) {
+        RsData<Void> response = memberService.updateMember(memberUpdateDto);
+        return ResponseEntity.ok(response);
+    }
+    @DeleteMapping("/delete/{id}") // DELETE 요청을 받음
+    public RsData<Void> deleteMember(@PathVariable("id") Long memberId) {
+        return memberService.deleteMember(memberId);
     }
 }
 
