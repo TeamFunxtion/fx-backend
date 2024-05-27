@@ -13,7 +13,7 @@ public class SellSelectResponse {
 
     private Long id;
     private String productTitle;
-    private Long productPrice;
+    private Long coolPrice;
     private String nickname;
     private String salesTypeId;
     private LocalDateTime createDate;

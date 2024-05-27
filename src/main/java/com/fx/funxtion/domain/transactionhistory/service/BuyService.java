@@ -43,7 +43,7 @@ public class BuyService {
                        payments.getId(),
                        payments.getBuyerId(),
                        product.getProductTitle(),
-                       product.getProductPrice(),
+                       product.getCoolPrice(),
                        product.getMember().getNickname(),
                        product.getSalesTypeId(),
                        payments.getCreateDate(),

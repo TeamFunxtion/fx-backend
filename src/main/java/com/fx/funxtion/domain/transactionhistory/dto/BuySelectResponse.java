@@ -14,7 +14,7 @@ public class BuySelectResponse {
     private Long id;
     private Long buyerId;
     private String productTitle;
-    private Long productPrice;
+    private Long coolPrice;
     private String nickname;
     private String salesTypeId;
     private LocalDateTime createDate;
