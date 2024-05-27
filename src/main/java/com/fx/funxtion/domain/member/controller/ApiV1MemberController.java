@@ -98,7 +98,7 @@ public class ApiV1MemberController {
         return ResponseEntity.ok(response);
     }
     @DeleteMapping("/delete/{id}") // DELETE 요청을 받음
-    public RsData<Void> deleteMember(@PathVariable("id") Long memberId) {
+    public ResponseEntity<RsData<Void>> deleteMember(@PathVariable("id") Long memberId) {
         return memberService.deleteMember(memberId);
     }
 }

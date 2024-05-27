@@ -13,6 +13,8 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -231,19 +233,19 @@ public class MemberService {
         }
     }
     @Transactional
-    public RsData<Void> deleteMember(Long memberId) {
+    public ResponseEntity<RsData<Void>> deleteMember(Long memberId) {
         try {
             Optional<Member> optionalMember = memberRepository.findById(memberId);
             if (optionalMember.isPresent()) {
                 Member member = optionalMember.get();
                 member.setDeleteYn("Y"); // 삭제 여부를 'Y'로 설정
                 memberRepository.save(member);
-                return RsData.of("200", "회원 탈퇴가 성공적으로 처리되었습니다.");
+                return ResponseEntity.ok(RsData.of("200", "회원 탈퇴가 성공적으로 처리되었습니다."));
             } else {
-                return RsData.of("404", "회원을 찾을 수 없습니다.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(RsData.of("404", "회원을 찾을 수 없습니다."));
             }
         } catch (Exception e) {
-            return RsData.of("500", "회원 탈퇴 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(RsData.of("500", "회원 탈퇴 중 오류가 발생했습니다: " + e.getMessage()));
         }
     }
 }
