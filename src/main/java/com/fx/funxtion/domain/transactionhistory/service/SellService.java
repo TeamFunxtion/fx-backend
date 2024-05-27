@@ -44,7 +44,7 @@ public class SellService {
                SellSelectResponse response = new SellSelectResponse(
                        payments.getId(),
                        product.getProductTitle(),
-                       product.getCoolPrice(),
+                       product.getCurrentPrice(),
                        member.getNickname(),
                        product.getSalesTypeId(),
                        payments.getCreateDate(),
