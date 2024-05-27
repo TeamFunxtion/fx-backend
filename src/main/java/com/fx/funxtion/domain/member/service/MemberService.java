@@ -199,44 +199,34 @@ public class MemberService {
     @Transactional
     public RsData<Void> updateMember(@RequestBody MemberUpdateDto memberUpdateDto) {
         try {
-            // 이메일을 기반으로 회원을 찾습니다.
             Member findMember = memberRepository.findByEmail(memberUpdateDto.getEmail())
                     .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 회원이 존재하지 않습니다."));
 
-            // 현재 비밀번호와 DB에 저장된 비밀번호를 비교합니다.
             if (!passwordEncoder.matches(memberUpdateDto.getPassword(), findMember.getPassword())) {
                 return RsData.of("400", "현재 비밀번호가 일치하지 않습니다.");
             }
 
-            // 새 비밀번호가 비어 있지 않은 경우에만 비밀번호를 변경합니다.
             if (!memberUpdateDto.getNewPassword().isEmpty()) {
-                // 현재 비밀번호와 신규 비밀번호가 같은지 확인합니다.
                 if (memberUpdateDto.getPassword().equals(memberUpdateDto.getNewPassword())) {
                     return RsData.of("400", "현재 비밀번호와 신규 비밀번호는 같을 수 없습니다");
                 }
 
-                // 신규 비밀번호와 새 비밀번호 확인이 일치하는지 확인합니다.
                 if (!memberUpdateDto.getNewPassword().equals(memberUpdateDto.getConfirmNewPassword())) {
                     return RsData.of("400", "새 비밀번호와 새 비밀번호 확인이 일치하지 않습니다.");
                 }
 
-                // 새로운 비밀번호를 설정합니다.
-                // 비밀번호 암호화
                 String newPasswordEncoded = passwordEncoder.encode(memberUpdateDto.getNewPassword());
                 findMember.setPassword(newPasswordEncoded);
             }
 
-            // 닉네임, 소개글, 전화번호 등의 정보를 업데이트합니다.
             findMember.setNickname(memberUpdateDto.getNickname());
             findMember.setIntro(memberUpdateDto.getIntro());
             findMember.setPhoneNumber(memberUpdateDto.getPhoneNumber());
 
-            // 변경된 회원 정보를 저장합니다.
             memberRepository.save(findMember);
 
             return RsData.of("200", "회원 정보가 성공적으로 수정되었습니다.");
         } catch (Exception e) {
-            // 예외가 발생하면 예외 메시지를 반환합니다.
             return RsData.of("500", "회원 정보 수정 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
