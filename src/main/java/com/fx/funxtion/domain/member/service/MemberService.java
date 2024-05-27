@@ -110,7 +110,6 @@ public class MemberService {
         private Member member;
         private String accessToken;
         private String refreshToken;
-
     }
 
     @Transactional
@@ -130,6 +129,8 @@ public class MemberService {
         String accessToken = jwtProvider.genAccessToken(member.get());
         // Refresh Token 생성
         String refreshToken = jwtProvider.genRefreshToken(member.get());
+        member.get().setRefreshToken(refreshToken);
+        memberRepository.save(member.get());
 
         System.out.println("accessToken : " + accessToken);
 
