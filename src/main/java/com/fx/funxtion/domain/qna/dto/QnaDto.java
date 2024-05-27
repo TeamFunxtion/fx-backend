@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @ToString
 public class QnaDto {
     private Long id;
-    private Long userId;
+    private String email;
     private String qnaTitle;
     private String categoryId;
     private String qnaContent;
@@ -25,6 +25,6 @@ public class QnaDto {
 
     public QnaDto(Qna qna) {
         BeanUtils.copyProperties(qna, this);
-
+        this.email = qna.getMember().getEmail();
     }
 }
