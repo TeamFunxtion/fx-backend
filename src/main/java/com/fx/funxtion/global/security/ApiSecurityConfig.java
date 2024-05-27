@@ -50,6 +50,7 @@ public class ApiSecurityConfig {
                                 .requestMatchers("/api/*/notify").permitAll()
                                 .requestMatchers("/api/*/notify/*").permitAll()
                                 .requestMatchers("/api/*/notify/*/**").permitAll()
+                                .requestMatchers("/api/*/reviews").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .csrf(
