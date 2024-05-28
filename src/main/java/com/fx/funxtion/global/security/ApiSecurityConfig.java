@@ -51,6 +51,8 @@ public class ApiSecurityConfig {
                                 .requestMatchers("/api/*/notify/*").permitAll()
                                 .requestMatchers("/api/*/notify/*/**").permitAll()
                                 .requestMatchers("/api/*/reviews").permitAll()
+                                .requestMatchers("/api/*/follow").permitAll()
+                                .requestMatchers("/api/*/follow/*").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .csrf(

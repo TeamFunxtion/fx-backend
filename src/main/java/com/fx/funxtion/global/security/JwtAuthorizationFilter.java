@@ -38,6 +38,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 || request.getRequestURI().equals("/api/v1/faqs")
                 || request.getRequestURI().startsWith("/api/v1/products")
                 || request.getRequestURI().startsWith("/api/v1/notify")
+                || request.getRequestURI().equals("/api/v1/reviews")
+                || request.getRequestURI().startsWith("/api/v1/follow/sellerfollower")
+                || request.getRequestURI().startsWith("/api/v1/follow/sellerfollowing")
         ) {
             filterChain.doFilter(request, response);
             return;

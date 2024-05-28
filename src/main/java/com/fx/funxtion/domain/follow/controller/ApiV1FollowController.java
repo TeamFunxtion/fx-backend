@@ -3,12 +3,11 @@ package com.fx.funxtion.domain.follow.controller;
 
 import com.fx.funxtion.domain.chat.dto.ChatRoomCreateRequest;
 import com.fx.funxtion.domain.chat.dto.ChatRoomWithMessagesDto;
-import com.fx.funxtion.domain.follow.dto.FollowUpdateRequest;
-import com.fx.funxtion.domain.follow.dto.FollowerListResponse;
-import com.fx.funxtion.domain.follow.dto.FollowingListResponse;
+import com.fx.funxtion.domain.follow.dto.*;
 import com.fx.funxtion.domain.follow.service.FollowService;
 import com.fx.funxtion.global.RsData.RsData;
 import groovy.util.logging.Slf4j;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,7 +31,7 @@ public class ApiV1FollowController {
         Long toId = Long.parseLong(userId);
         Page<FollowerListResponse> list = followService.getFollowerList(toId, page, size);
 
-        return RsData.of("200", "채팅방 조회 성공!", list);
+        return RsData.of("200", "팔로우 목록 조회 성공!", list);
     }
 
     // 팔로잉 목록 조회
@@ -46,6 +45,43 @@ public class ApiV1FollowController {
         return RsData.of("200", "팔로잉 목록 조회 성공!", list);
     }
 
+    // 판매자 팔로워 목록 조회
+    @GetMapping("/sellerfollower")
+    public RsData<Page<SellerFollowerListResponse>> getSellerFollowerList(@RequestParam(name="userId", defaultValue="") String userId,
+                                                                          @RequestParam("storeId") String storeId,
+                                                                          @RequestParam(value= "page", defaultValue = "0")int page,
+                                                                          @RequestParam(value="size", defaultValue = "10")int size) {
+        Long toId = Long.parseLong(storeId);
+        Long user = 0L;
+        if(userId.equals("")) {
+            user = 0L;
+        } else {
+            user = Long.parseLong(userId);
+        }
+//        Long user = Long.parseLong(userId);
+        Page<SellerFollowerListResponse> list = followService.getSellerFollowerList(toId, user, page, size);
+
+        return RsData.of("200", "팔로우 목록 조회 성공!", list);
+    }
+
+    // 판매자 팔로잉 목록 조회
+    @GetMapping("sellerfollowing")
+    public RsData<Page<SellerFollowingListResponse>> getSellerFollowingList(@RequestParam(name = "userId", defaultValue = "") String userId ,
+                                                                      @RequestParam("storeId") String storeId,
+                                                                      @RequestParam(value= "page", defaultValue = "0")int page,
+                                                                      @RequestParam(value="size", defaultValue = "10")int size) {
+        Long fromId = Long.parseLong(storeId);
+        Long user = 0L;
+        if(userId.equals("")) {
+            user = 0L;
+        } else {
+            user = Long.parseLong(userId);
+        }
+//        Long user = Long.parseLong(userId);
+        Page<SellerFollowingListResponse> list = followService.getSellerFollowingList(fromId, user, page, size);
+
+        return RsData.of("200", "팔로잉 목록 조회 성공!", list);
+    }
 
 
     // 팔로우 추가 or 해제
