@@ -3,12 +3,11 @@ package com.fx.funxtion.domain.member.service;
 import com.fx.funxtion.domain.member.dto.*;
 import com.fx.funxtion.domain.member.entity.Member;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
-import com.fx.funxtion.domain.product.repository.ProductRepository;
 import com.fx.funxtion.global.RsData.RsData;
 import com.fx.funxtion.global.jwt.JwtProvider;
 import com.fx.funxtion.global.security.SecurityUser;
+import com.fx.funxtion.global.util.image.service.ImageService;
 import com.fx.funxtion.global.util.mail.MailUtils;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MailUtils mailUtils;
-    private final ProductRepository productRepository;
+    private final ImageService imageService;
 
     private final String USER_IMAGE_DEFAULT = "https://funxtion-image.s3.amazonaws.com/funxtion/user_default.png";
 
@@ -198,7 +198,7 @@ public class MemberService {
         }
     }
     @Transactional
-    public RsData<Void> updateMember(@RequestBody MemberUpdateDto memberUpdateDto) {
+    public RsData<MemberDto> updateMember(MultipartFile file, MemberUpdateDto memberUpdateDto) {
         try {
             Member findMember = memberRepository.findByEmail(memberUpdateDto.getEmail())
                     .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 회원이 존재하지 않습니다."));
@@ -220,13 +220,17 @@ public class MemberService {
                 findMember.setPassword(newPasswordEncoded);
             }
 
+            if(file != null && !file.isEmpty()) {
+                findMember.setProfileImageUrl(imageService.uploadImage(file));
+            }
+
             findMember.setNickname(memberUpdateDto.getNickname());
             findMember.setIntro(memberUpdateDto.getIntro());
             findMember.setPhoneNumber(memberUpdateDto.getPhoneNumber());
 
             memberRepository.save(findMember);
 
-            return RsData.of("200", "회원 정보가 성공적으로 수정되었습니다.");
+            return RsData.of("200", "회원 정보가 성공적으로 수정되었습니다.", new MemberDto(findMember));
         } catch (Exception e) {
             return RsData.of("500", "회원 정보 수정 중 오류가 발생했습니다: " + e.getMessage());
         }

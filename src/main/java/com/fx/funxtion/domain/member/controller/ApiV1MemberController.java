@@ -1,5 +1,6 @@
 package com.fx.funxtion.domain.member.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fx.funxtion.domain.member.dto.*;
 import com.fx.funxtion.domain.member.service.MemberService;
 import com.fx.funxtion.global.RsData.RsData;
@@ -7,8 +8,8 @@ import com.fx.funxtion.global.rq.Rq;
 import groovy.util.logging.Slf4j;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
@@ -92,11 +93,23 @@ public class ApiV1MemberController {
 
         return RsData.of(authAndMakeTokensRs.getResultCode(),authAndMakeTokensRs.getMsg(), new MemberDto(authAndMakeTokensRs.getData().getMember()));
     }
+
     @PutMapping("/update")
-    public ResponseEntity<RsData<Void>> putUpdateMember(@RequestBody MemberUpdateDto memberUpdateDto) {
-        RsData<Void> response = memberService.updateMember(memberUpdateDto);
-        return ResponseEntity.ok(response);
+    public RsData<MemberDto> putUpdateMember(@RequestParam(value="file", required = false) MultipartFile multipartFile, @RequestParam(value="updateUser", required = true) String updateUser) {
+        System.out.println(multipartFile);
+        try {
+            // 객체는 client에서 직렬화를 하여 전달
+            MemberUpdateDto memberUpdateDto = new ObjectMapper().readValue(updateUser, MemberUpdateDto.class); // String to Object
+            System.out.println("memberUpdateDto= " + memberUpdateDto);
+
+            RsData<MemberDto> updateMemberRs = memberService.updateMember(multipartFile, memberUpdateDto);
+            return RsData.of(updateMemberRs.getResultCode(), updateMemberRs.getMsg(), updateMemberRs.getData());
+
+        } catch(Exception e) {
+            return RsData.of("500", "잘못된 회원 정보입력입니다.");
+        }
     }
+
     @DeleteMapping("/delete/{id}") // DELETE 요청을 받음
     public RsData<Void> deleteMember(@PathVariable("id") Long memberId) {
         return memberService.deleteMember(memberId);
