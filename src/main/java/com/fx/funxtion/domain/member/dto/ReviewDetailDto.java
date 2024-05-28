@@ -17,6 +17,7 @@ public class ReviewDetailDto {
 
     private Long buyerId;
     private String buyerName;
+    private String buyerProfileImage;
 
     private Long sellerId;
 
@@ -36,6 +37,7 @@ public class ReviewDetailDto {
         BeanUtils.copyProperties(review, this);
         this.buyerId = review.getBuyer().getId();
         this.buyerName = review.getBuyer().getNickname();
+        this.buyerProfileImage = review.getBuyer().getProfileImageUrl();
         this.sellerId = review.getProduct().getMember().getId();
         this.productId = review.getProduct().getId();
         this.productTitle = review.getProduct().getProductTitle();
