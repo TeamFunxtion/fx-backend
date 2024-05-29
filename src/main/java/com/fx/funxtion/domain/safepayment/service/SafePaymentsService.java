@@ -13,6 +13,7 @@ import com.fx.funxtion.domain.safepayment.dto.SafePaymentsUpdateRequest;
 import com.fx.funxtion.domain.safepayment.entity.SafePaymentStatus;
 import com.fx.funxtion.domain.safepayment.entity.SafePayments;
 import com.fx.funxtion.domain.safepayment.repository.SafePaymentsRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SafePaymentsService {
 
     private final SafePaymentsRepository safePaymentsRepository;

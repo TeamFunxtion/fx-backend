@@ -13,6 +13,7 @@ import com.fx.funxtion.domain.safepayment.entity.SafePaymentStatus;
 import com.fx.funxtion.domain.safepayment.entity.SafePayments;
 import com.fx.funxtion.domain.safepayment.repository.SafePaymentsRepository;
 import com.fx.funxtion.global.RsData.RsData;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ChatService {
 
     private final ChatRoomRepository chatRoomRepository;

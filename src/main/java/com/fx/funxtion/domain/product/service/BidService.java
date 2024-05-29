@@ -20,6 +20,8 @@ import com.fx.funxtion.domain.safepayment.repository.SafePaymentsRepository;
 import com.fx.funxtion.global.RsData.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Optional;
 
 @Service
@@ -33,6 +35,7 @@ public class BidService {
     private final ChatRoomRepository chatRoomRepository;
     private final SafePaymentsRepository safePaymentsRepository;
 
+    @Transactional
     public RsData<BidCreateResponse> createBid(BidCreateRequest bidCreateRequest) {
         Product product = productRepository.findById(bidCreateRequest.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
@@ -155,13 +158,6 @@ public class BidService {
             return RsData.of("200", !isCoolEnded ? "입찰 등록 성공!" : "바로구매 성공! 판매자와 거래를 진행하시기 바랍니다.", new BidCreateResponse(bid, isCoolEnded));
         } else {
             return RsData.of("500", !isCoolEnded ? "입찰 등록 실패!" : "바로구매 실패!");
-        }
-    }
-
-    public void makeChatroomAndSafePaymentForWinner(Long winnerId, Long productId) {
-        Optional<Member> winner = memberRepository.findById(winnerId);
-        if(winner.isPresent()) { // 낙찰자가 존재할 때
-
         }
     }
 }

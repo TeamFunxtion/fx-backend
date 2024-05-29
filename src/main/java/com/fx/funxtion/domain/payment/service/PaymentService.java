@@ -10,6 +10,7 @@ import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ public class PaymentService {
         this.memberRepository = memberRepository;
     }
 
+    @Transactional
     public PaymentDto verifyPayment(String imp_uid) throws IamportResponseException, IOException {
         IamportClient iamportClient = new IamportClient(iamportApiKey, iamportSecretKey);
         IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(imp_uid); // 결제 검증

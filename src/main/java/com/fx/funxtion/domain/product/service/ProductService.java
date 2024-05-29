@@ -37,6 +37,7 @@ public class ProductService {
     private final ImageService imageService;
     private final FollowRepository followRepository;
 
+    @Transactional
     public RsData<ProductCreateResponse> createProduct(ProductCreateRequest productCreateRequest, MultipartFile[] multipartFiles) {
         Member member = memberRepository.findById(productCreateRequest.getStoreId())
                 .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
@@ -85,6 +86,7 @@ public class ProductService {
     }
 
 
+    @Transactional
     public RsData<ProductUpdateResponse> updateProduct(ProductUpdateRequest productUpdateRequest, MultipartFile[] multipartFiles) {
         Optional<Product> optionalProduct = productRepository.findById(productUpdateRequest.getProductId());
         System.out.println(optionalProduct.isEmpty());

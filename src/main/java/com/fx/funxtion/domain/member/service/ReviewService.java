@@ -9,6 +9,7 @@ import com.fx.funxtion.domain.member.repository.ReviewRepository;
 import com.fx.funxtion.domain.product.entity.Product;
 import com.fx.funxtion.domain.product.repository.ProductRepository;
 import com.fx.funxtion.global.RsData.RsData;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,7 @@ public class ReviewService {
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
 
+    @Transactional
     public RsData<ReviewDto> enrollReview(ReviewCreateRequest reviewCreateRequest) {
         Optional<Member> buyer = memberRepository.findById(reviewCreateRequest.getBuyerId());
         Optional<Product> product = productRepository.findById(reviewCreateRequest.getProductId());

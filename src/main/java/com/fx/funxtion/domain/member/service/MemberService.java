@@ -49,6 +49,7 @@ public class MemberService {
 
     }
 
+    @Transactional
     public RsData<MemberDto> join(MemberJoinRequest memberJoinRequest) {
 
         if(memberRepository.findByEmail(memberJoinRequest.getEmail()).isPresent()) {
@@ -156,6 +157,7 @@ public class MemberService {
         return (member.getPoint() - memberHasMoneyRequest.getPoint()) >= 0;
     }
 
+    @Transactional
     public RsData<AuthAndMakeTokensResponseBody> kakaoLogin(KakaoLoginRequest kakaoLoginRequest) {
         Optional<Member> findMember = memberRepository.findByEmail(kakaoLoginRequest.getEmail());
 
