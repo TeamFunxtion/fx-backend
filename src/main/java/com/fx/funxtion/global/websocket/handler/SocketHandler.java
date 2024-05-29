@@ -2,13 +2,12 @@ package com.fx.funxtion.global.websocket.handler;
 
 
 import com.fx.funxtion.domain.chat.entity.ChatMessage;
-import com.fx.funxtion.domain.chat.entity.ChatRoom;
 import com.fx.funxtion.domain.chat.repository.ChatMessageRepository;
 import com.fx.funxtion.domain.chat.service.ChatService;
-import com.fx.funxtion.domain.safepayment.entity.SafePaymentStatus;
-import com.fx.funxtion.domain.safepayment.entity.SafePayments;
-import com.fx.funxtion.domain.safepayment.repository.SafePaymentsRepository;
-import com.fx.funxtion.domain.safepayment.service.SafePaymentsService;
+import com.fx.funxtion.domain.payments.safepayment.entity.SafePaymentStatus;
+import com.fx.funxtion.domain.payments.safepayment.entity.SafePayments;
+import com.fx.funxtion.domain.payments.safepayment.repository.SafePaymentsRepository;
+import com.fx.funxtion.domain.payments.safepayment.service.SafePaymentsService;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;

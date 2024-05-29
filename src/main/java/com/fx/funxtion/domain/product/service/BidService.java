@@ -14,15 +14,13 @@ import com.fx.funxtion.domain.product.entity.Product;
 import com.fx.funxtion.domain.product.entity.ProductStatusType;
 import com.fx.funxtion.domain.product.repository.BidRepository;
 import com.fx.funxtion.domain.product.repository.ProductRepository;
-import com.fx.funxtion.domain.safepayment.entity.SafePaymentStatus;
-import com.fx.funxtion.domain.safepayment.entity.SafePayments;
-import com.fx.funxtion.domain.safepayment.repository.SafePaymentsRepository;
+import com.fx.funxtion.domain.payments.safepayment.entity.SafePaymentStatus;
+import com.fx.funxtion.domain.payments.safepayment.entity.SafePayments;
+import com.fx.funxtion.domain.payments.safepayment.repository.SafePaymentsRepository;
 import com.fx.funxtion.global.RsData.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

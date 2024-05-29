@@ -1,7 +1,7 @@
 package com.fx.funxtion.domain.product.service;
 
-import com.fx.funxtion.domain.follow.repository.FollowRepository;
 import com.fx.funxtion.domain.member.entity.Member;
+import com.fx.funxtion.domain.member.repository.FollowRepository;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
 import com.fx.funxtion.domain.product.dto.*;
 import com.fx.funxtion.domain.product.entity.*;

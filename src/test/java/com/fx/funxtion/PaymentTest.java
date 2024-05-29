@@ -1,7 +1,7 @@
 package com.fx.funxtion;
 
-import com.fx.funxtion.domain.payment.dto.PaymentDto;
-import com.fx.funxtion.domain.payment.service.PaymentService;
+import com.fx.funxtion.domain.payments.payment.dto.PaymentDto;
+import com.fx.funxtion.domain.payments.payment.service.PaymentService;
 import com.fx.funxtion.global.RsData.RsData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

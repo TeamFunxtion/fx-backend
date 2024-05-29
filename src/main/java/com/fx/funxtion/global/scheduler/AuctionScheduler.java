@@ -12,13 +12,12 @@ import com.fx.funxtion.domain.product.entity.Product;
 import com.fx.funxtion.domain.product.entity.ProductStatusType;
 import com.fx.funxtion.domain.product.repository.BidRepository;
 import com.fx.funxtion.domain.product.repository.ProductRepository;
-import com.fx.funxtion.domain.safepayment.entity.SafePaymentStatus;
-import com.fx.funxtion.domain.safepayment.entity.SafePayments;
-import com.fx.funxtion.domain.safepayment.repository.SafePaymentsRepository;
+import com.fx.funxtion.domain.payments.safepayment.entity.SafePaymentStatus;
+import com.fx.funxtion.domain.payments.safepayment.entity.SafePayments;
+import com.fx.funxtion.domain.payments.safepayment.repository.SafePaymentsRepository;
 import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
