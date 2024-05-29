@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -97,6 +98,15 @@ public class BidService {
             if((isFirst && product.getProductPrice() > bidCreateRequest.getBidPrice())
                     || (!isFirst && product.getProductPrice() >= bidCreateRequest.getBidPrice())) {
                 return RsData.of("500", "입찰할 수 없는 금액입니다!");
+            }
+
+            if(bidRepository.findByProductAndMemberAndBidPrice(product, member, bidCreateRequest.getBidPrice()).isPresent()) {
+                throw new IllegalArgumentException("같은 입찰가로 입찰한 내역이 존재합니다!");
+            }
+
+            Optional<Bid> maxPriceBid = bidRepository.findByProductAndMemberAndBidPriceGreaterThan(product, member, bidCreateRequest.getBidPrice());
+            if(maxPriceBid.isPresent()) {
+                throw new IllegalArgumentException("이미 " + maxPriceBid.get().getBidPrice() + "원으로 입찰한 내역이 존재합니다!");
             }
 
             if(bidCreateRequest.getBidPrice() > product.getCurrentPrice()) { // 입찰자가 현재가보다 클 때만 낙찰자를 갱신
