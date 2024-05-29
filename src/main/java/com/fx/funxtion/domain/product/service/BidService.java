@@ -22,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class BidService {
@@ -42,6 +44,11 @@ public class BidService {
 
         if(member.getPoint() - bidCreateRequest.getBidPrice().intValue() <= 0) {
             return RsData.of("500", "포인트 부족으로 입찰할 수 없습니다.");
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        if(now.isEqual(product.getEndTime()) || now.isAfter(product.getEndTime())) {
+            throw new IllegalArgumentException("경매가 종료되어 입찰이 불가합니다!");
         }
 
         boolean isCoolEnded = false; // 즉시구매로 경매종료 여부
@@ -83,16 +90,21 @@ public class BidService {
                     notificationService.createNotification(oldWinner.getId(), product.getId(), message);
                 }
             }
+            product.setCurrentPrice(bidCreateRequest.getBidPrice()); // 현재가 갱신
+            product.setAuctionWinnerId(bidCreateRequest.getBidderId()); // 낙찰자 갱신
 
         } else { // 블라인드 경매일 때
             if((isFirst && product.getProductPrice() > bidCreateRequest.getBidPrice())
                     || (!isFirst && product.getProductPrice() >= bidCreateRequest.getBidPrice())) {
                 return RsData.of("500", "입찰할 수 없는 금액입니다!");
             }
+
+            if(bidCreateRequest.getBidPrice() > product.getCurrentPrice()) { // 입찰자가 현재가보다 클 때만 낙찰자를 갱신
+                product.setCurrentPrice(bidCreateRequest.getBidPrice()); // 현재가 갱신
+                product.setAuctionWinnerId(bidCreateRequest.getBidderId()); // 낙찰자 갱신
+            }
         }
 
-        product.setCurrentPrice(bidCreateRequest.getBidPrice()); // 현재가 갱신
-        product.setAuctionWinnerId(bidCreateRequest.getBidderId()); // 낙찰자 갱신
         member.setPoint(member.getPoint() - bidPrice); // 입찰자 포인트 차감
 
         if(isCoolEnded) { // 즉시구매시 경매종료(거래중으로 상태변경)
@@ -114,6 +126,11 @@ public class BidService {
             } else { // 판매자와의 채팅방이 존재 && SP03 상황이 존재할때
                 SafePayments safePayments = safePaymentsRepository.findBySellerIdAndBuyerIdAndStatus(product.getMember().getId(), bidCreateRequest.getBidderId(), SafePaymentStatus.SP03);
                 existSafePaymentsSP03 = safePayments != null;
+
+                if(!existSafePaymentsSP03) { // 현재 안전결제 최종 진행중인 내역이 없으면
+                    chatRoom.setProduct(product);
+                    chatRoomRepository.save(chatRoom);
+                }
             }
 
             // 안전결제 생성 (구매자가 결제완료한 상태로 초기화 -> SP03)
