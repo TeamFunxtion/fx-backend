@@ -25,7 +25,7 @@ public class ReviewService {
     private final ProductRepository productRepository;
 
     @Transactional
-    public RsData<ReviewDto> enrollReview(ReviewCreateRequest reviewCreateRequest) {
+    public RsData<ReviewDto> enrollReview(ReviewCreateRequest reviewCreateRequest) throws Exception {
         Optional<Member> buyer = memberRepository.findById(reviewCreateRequest.getBuyerId());
         Optional<Product> product = productRepository.findById(reviewCreateRequest.getProductId());
 
@@ -42,16 +42,13 @@ public class ReviewService {
                 .content(reviewCreateRequest.getContent())
                 .rating(reviewCreateRequest.getRating())
                 .build();
-
         reviewRepository.save(review);
-
         return RsData.of("200", "리뷰가 작성되었습니다!", new ReviewDto(review));
     }
 
-    public RsData<Page<ReviewDetailDto>> selectReviewListWithPageable(Long sellerId, Pageable pageable) {
+    public RsData<Page<ReviewDetailDto>> selectReviewListWithPageable(Long sellerId, Pageable pageable) throws Exception {
         Page<ReviewDetailDto> list = reviewRepository.findAllBySellerId(sellerId, pageable)
                 .map(ReviewDetailDto::new);
         return RsData.of("200", "조회 성공!", list);
     }
-
 }

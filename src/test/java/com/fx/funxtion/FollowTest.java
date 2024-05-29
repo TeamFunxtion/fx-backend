@@ -2,10 +2,8 @@ package com.fx.funxtion;
 
 
 import com.fx.funxtion.domain.chat.dto.ChatRoomWithMessagesDto;
-import com.fx.funxtion.domain.follow.dto.FollowerListResponse;
-import com.fx.funxtion.domain.follow.dto.FollowingListResponse;
-import com.fx.funxtion.domain.follow.repository.FollowRepository;
-import com.fx.funxtion.domain.follow.service.FollowService;
+import com.fx.funxtion.domain.member.repository.FollowRepository;
+import com.fx.funxtion.domain.member.service.FollowService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

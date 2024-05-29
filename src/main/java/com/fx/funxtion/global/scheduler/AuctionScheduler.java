@@ -18,13 +18,14 @@ import com.fx.funxtion.domain.payments.safepayment.repository.SafePaymentsReposi
 import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-//@Component
+@Component
 @RequiredArgsConstructor
 @Slf4j
 public class AuctionScheduler {

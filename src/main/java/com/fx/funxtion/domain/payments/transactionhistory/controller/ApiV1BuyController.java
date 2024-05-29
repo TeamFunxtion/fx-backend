@@ -20,9 +20,11 @@ public class ApiV1BuyController {
 
     @GetMapping("")
     public RsData<List<BuySelectResponse>> selectBuyList(@RequestParam(name="buyerId") Long buyerId){
-
-        RsData<List<BuySelectResponse>> listRs = buyService.selectBuyList(buyerId);
-        return RsData.of(listRs.getResultCode(), listRs.getMsg(), listRs.getData());
-
+        try {
+            RsData<List<BuySelectResponse>> listRs = buyService.selectBuyList(buyerId);
+            return RsData.of(listRs.getResultCode(), listRs.getMsg(), listRs.getData());
+        } catch (Exception e) {
+            return RsData.of("500", e.getMessage());
+        }
     }
 }

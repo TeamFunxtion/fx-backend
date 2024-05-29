@@ -43,6 +43,12 @@ public class ApiV1NotificationController {
         }
     }
 
+    /**
+     * 알림 목록 조회
+     * @param userId
+     * @param pageable
+     * @return Page<NotificationDto>
+     */
     @GetMapping("")
     public Page<NotificationDto> selectUserNotifications(
             @RequestParam(name="id") Long userId,
@@ -51,12 +57,26 @@ public class ApiV1NotificationController {
         int pageNo = pageable.getPageNumber();
         pageNo = pageNo == 0 ? pageNo : pageNo -1;
         pageable = PageRequest.of(pageNo, pageable.getPageSize(), pageable.getSort());
-
-        return notificationService.selectUserNotifications(userId, pageable);
+        Page<NotificationDto> result = null;
+        try {
+            result = notificationService.selectUserNotifications(userId, pageable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
+    /**
+     * 알림 전체 삭제
+     * @param userId
+     * @return boolean
+     */
     @DeleteMapping("")
     public boolean deleteNotifications(@RequestParam(name="id") Long userId) {
-        return notificationService.deleteAllNotifications(userId);
+        try {
+            return notificationService.deleteAllNotifications(userId);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

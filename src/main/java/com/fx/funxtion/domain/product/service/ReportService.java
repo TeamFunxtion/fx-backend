@@ -13,20 +13,17 @@ import java.util.Optional;
 public class ReportService {
     private final ReportRepository reportRepository;
 
-    public RsData<Long> report(Long userId, Long productId, String reportTypeCode) {
+    public RsData<Long> report(Long userId, Long productId, String reportTypeCode) throws Exception {
         Optional<Report> findReport = reportRepository.findByUserIdAndProductId(userId, productId);
         if(findReport.isPresent()) {
             return RsData.of("500", "이미 신고 접수된 상품입니다.");
         }
-
         Report r = Report.builder()
                 .reportType(reportTypeCode)
                 .userId(userId)
                 .productId(productId)
                 .build();
-
         reportRepository.save(r);
-
         return RsData.of("200", "신고 접수 되었습니다!", r.getId());
     }
 }

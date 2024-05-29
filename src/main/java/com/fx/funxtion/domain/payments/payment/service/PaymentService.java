@@ -31,7 +31,6 @@ public class PaymentService {
     @Value("${custom.iamport.secretKey}")
     private String iamportSecretKey;
 
-
     public PaymentService(PaymentRepository paymentRepository, MemberRepository memberRepository) {
         this.paymentRepository = paymentRepository;
         this.memberRepository = memberRepository;

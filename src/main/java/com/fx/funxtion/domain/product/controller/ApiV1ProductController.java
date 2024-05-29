@@ -77,20 +77,22 @@ public class ApiV1ProductController {
     }
 
     /**
-     * 상품 정보 수정 (상태변경 )
-     *
+     * 상품 상태 변경
      * @param productUpdateRequest
      * @return RsData<ProductUpdateResponse>
      */
     @PatchMapping("/status")
     public RsData<ProductUpdateResponse> changeProductStatus(@RequestBody ProductUpdateRequest productUpdateRequest) {
-        RsData<ProductUpdateResponse> productUpdateResponse = productService.changeProductStatus(productUpdateRequest);
-        return RsData.of(productUpdateResponse.getResultCode(), productUpdateResponse.getMsg(), productUpdateResponse.getData());
+        try {
+            RsData<ProductUpdateResponse> productUpdateResponse = productService.changeProductStatus(productUpdateRequest);
+            return RsData.of(productUpdateResponse.getResultCode(), productUpdateResponse.getMsg(), productUpdateResponse.getData());
+        } catch (Exception e) {
+            return RsData.of("500", e.getMessage());
+        }
     }
 
     /**
      * 상품 목록 조회
-     *
      * @param
      * @return RsData<ProductListResponse>
      */
@@ -101,21 +103,29 @@ public class ApiV1ProductController {
                                    @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
                                    @PageableDefault(size = 10, sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
         pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
-
         pageable = PageRequest.of(pageNo, pageable.getPageSize(), getPageableSort(sort));
+        Page<ProductDto> pageList = null;
 
-        Page<ProductDto> pageList;
-
-        if(category != null && !category.equals("")) {
-            pageList = productService.searchByCategory(category, pageable);
-        } else {
-            pageList = productService.searchByKeyword(keyword, pageable);
+        try {
+            if(category != null && !category.equals("")) {
+                pageList = productService.searchByCategory(category, pageable);
+            } else {
+                pageList = productService.searchByKeyword(keyword, pageable);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return pageList;
     }
 
     /**
-     * 마이페이지 > 내 상품 목록 조회
+     * 내 상품 목록 조회
+     * @param userId
+     * @param statusTypeId
+     * @param sort
+     * @param pageNo
+     * @param pageable
+     * @return Page<ProductDto>
      */
     @GetMapping("/my")
     public Page<ProductDto> getMyProducts(@RequestParam(required = true, value = "userId") Long userId,
@@ -123,72 +133,90 @@ public class ApiV1ProductController {
                                           @RequestParam(required = false, defaultValue = "id", value = "sort") String sort,
                                           @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
                                           @PageableDefault(size = 10, sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
+
         pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
         pageable = PageRequest.of(pageNo, pageable.getPageSize(), getPageableSort(sort));
-        Page<ProductDto> pageList = productService.getMyProducts(userId, statusTypeId, pageable);
+        Page<ProductDto> pageList = null;
+        try {
+            pageList = productService.getMyProducts(userId, statusTypeId, pageable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return pageList;
     }
     /**
      * 상품 상세 정보 조회
-     *  
      * @param id
      * @return RsData<ProductDetailResponse>
      */
     @GetMapping("/{id}")
     public RsData<ProductDetailResponse> getProductDetail(@PathVariable(name="id") Long id, @RequestParam(value = "u", defaultValue = "") Long userId) {
-        RsData<ProductDetailResponse> productDetailResponse = productService.getProductDetail(id, userId);
-        return RsData.of(productDetailResponse.getResultCode(), productDetailResponse.getMsg(), productDetailResponse.getData());
+        try {
+            RsData<ProductDetailResponse> productDetailResponse = productService.getProductDetail(id, userId);
+            return RsData.of(productDetailResponse.getResultCode(), productDetailResponse.getMsg(), productDetailResponse.getData());
+        } catch (Exception e) {
+            return RsData.of("500", e.getMessage());
+        }
     }
 
     /**
      * 상품 조회수 증가
-     *
      * @param id
      * @return RsData<Void>
      */
     @GetMapping("/{id}/views")
     public RsData<Void> increaseViews(@PathVariable(name="id") Long id) {
-        productService.increaseViews(id); // 조회수 증가
-        return RsData.of("200", "조회수 증가", null);
+        try {
+            productService.increaseViews(id); // 조회수 증가
+            return RsData.of("200", "조회수 증가", null);
+        } catch (Exception e) {
+            return RsData.of("500", e.getMessage());
+        }
     }
 
     /**
-     * 경매 입찰하기
-     *
+     * 입찰
      * @param bidCreateRequest
      * @return RsData<BidCreateResponse>
      */
     @PostMapping("/bid")
     public RsData<BidCreateResponse> createBid(@RequestBody BidCreateRequest bidCreateRequest) {
-        System.out.println(bidCreateRequest);
-
-        RsData<BidCreateResponse> bidCreateResponseRsData = bidService.createBid(bidCreateRequest);
-
-        return RsData.of(bidCreateResponseRsData.getResultCode(), bidCreateResponseRsData.getMsg(), bidCreateResponseRsData.getData());
+        try {
+            RsData<BidCreateResponse> bidCreateResponseRsData = bidService.createBid(bidCreateRequest);
+            return RsData.of(bidCreateResponseRsData.getResultCode(), bidCreateResponseRsData.getMsg(), bidCreateResponseRsData.getData());
+        } catch (Exception e) {
+            return RsData.of("500", e.getMessage());
+        }
     }
 
     /**
      * 관심상품 등록/해제
-     *
      * @param favoriteUpdateRequest
      * @return RsData<Long>
      */
     @PutMapping("/favorite")
     public RsData<String> favorite(@RequestBody FavoriteUpdateRequest favoriteUpdateRequest) {
-        boolean result = productService.updateFavorite(favoriteUpdateRequest.getUserId(), favoriteUpdateRequest.getProductId());
-
-        return RsData.of("200", "성공", result ? "Y" : "N");
+        try {
+            boolean result = productService.updateFavorite(favoriteUpdateRequest.getUserId(), favoriteUpdateRequest.getProductId());
+            return RsData.of("200", "성공", result ? "Y" : "N");
+        } catch (Exception e) {
+            return RsData.of("500", e.getMessage());
+        }
     }
 
     /**
-     * 신고하기
+     * 신고
      * @param productReportRequest
      * @return RsData<Long>
      */
     @PostMapping("/reports")
     public RsData<Long> reports(@RequestBody ProductReportRequest productReportRequest) {
-        RsData<Long> reportRs = reportService.report(productReportRequest.getUserId(), productReportRequest.getProductId(), productReportRequest.getReportTypeCode());
-        return RsData.of(reportRs.getResultCode(), reportRs.getMsg(), reportRs.getData());
+        try {
+            RsData<Long> reportRs = reportService.report(productReportRequest.getUserId(), productReportRequest.getProductId(), productReportRequest.getReportTypeCode());
+            return RsData.of(reportRs.getResultCode(), reportRs.getMsg(), reportRs.getData());
+        } catch (Exception e) {
+            return RsData.of("500", e.getMessage());
+        }
     }
 
     /**
@@ -204,7 +232,12 @@ public class ApiV1ProductController {
                                                @PageableDefault(size = 10, sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
         pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
         pageable = PageRequest.of(pageNo, pageable.getPageSize(), getPageableSort(sort));
-        Page<ProductDto> pageList = productService.getAuctionProducts(userId, statusTypeId, pageable);
+        Page<ProductDto> pageList = null;
+        try {
+            pageList = productService.getAuctionProducts(userId, statusTypeId, pageable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return pageList;
     }
 
@@ -220,8 +253,12 @@ public class ApiV1ProductController {
                                                @PageableDefault(size = 10, sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
         pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
         pageable = PageRequest.of(pageNo, pageable.getPageSize(), getPageableSort(sort));
-        Page<ProductDto> pageList = productService.getBidProducts(userId, pageable);
+        Page<ProductDto> pageList = null;
+        try {
+            pageList = productService.getBidProducts(userId, pageable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return pageList;
-
     }
 }

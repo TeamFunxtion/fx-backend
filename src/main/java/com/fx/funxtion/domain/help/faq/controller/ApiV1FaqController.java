@@ -18,8 +18,13 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class ApiV1FaqController {
     private final FaqService faqService;
-    private final FaqRepository faqRepository;
 
+    /**
+     * FAQ 목록 조회
+     * @param pageNo
+     * @param pageable
+     * @return Page<FaqDto>
+     */
     @GetMapping("")
     public Page<FaqDto> getFaqs(
             @RequestParam(required = false, defaultValue = "0", value = "page")int pageNo,
@@ -27,35 +32,74 @@ public class ApiV1FaqController {
         pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
         int pageSize = 10;
 
-        Page<FaqDto> pageFaq;
+        Page<FaqDto> pageFaq = null;
 
-        pageFaq = faqService.findFaq(pageable, pageNo, pageSize);
-
+        try {
+            pageFaq = faqService.findFaq(pageable, pageNo, pageSize);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return pageFaq;
     }
-   @PostMapping("")
+
+    /**
+     * FAQ 생성
+     * @param faqCreateRequest
+     * @return RsData<FaqCreateResponse>
+     */
+    @PostMapping("")
     public RsData<FaqCreateResponse> createFaq(@RequestBody FaqCreateRequest faqCreateRequest) {
-        System.out.println(faqCreateRequest);
+        try {
+            RsData<FaqCreateResponse> faqCreateResponse = faqService.createFaq(faqCreateRequest);
+            return RsData.of(faqCreateResponse.getResultCode(),faqCreateResponse.getMsg(),faqCreateResponse.getData());
+        } catch (Exception e) {
+            return RsData.of("500", e.getMessage());
+        }
+    }
 
-        RsData<FaqCreateResponse> faqCreateResponse = faqService.createFaq(faqCreateRequest);
-
-        return RsData.of(faqCreateResponse.getResultCode(),faqCreateResponse.getMsg(),faqCreateResponse.getData());
-   }
+    /**
+     * FAQ 수정
+     * @param id
+     * @param faqUpdateRequest
+     * @return RsData<FaqUpdateResponse>
+     */
     @PatchMapping("/{id}")
     public RsData<FaqUpdateResponse> updateFaq(@PathVariable(name="id") Long id, @RequestBody FaqUpdateRequest faqUpdateRequest) {
-        faqUpdateRequest.setId(id);
-        return faqService.updateFaq(faqUpdateRequest);
+        try {
+            faqUpdateRequest.setId(id);
+            return faqService.updateFaq(faqUpdateRequest);
+        } catch (Exception e) {
+            return RsData.of("500", e.getMessage());
+        }
     }
+
+    /**
+     * FAQ 상세 조회
+     * @param id
+     * @return RsData<FaqCreateResponse>
+     */
     @GetMapping("/{id}")
     public RsData<FaqCreateResponse> getFaq(@PathVariable(name="id") Long id) {
-        RsData<FaqCreateResponse> faqCreateResponse = faqService.getFaqDetail(id);
-        return RsData.of(faqCreateResponse.getResultCode(), faqCreateResponse.getMsg(),faqCreateResponse.getData());
-
+        try {
+            RsData<FaqCreateResponse> faqCreateResponse = faqService.getFaqDetail(id);
+            return RsData.of(faqCreateResponse.getResultCode(), faqCreateResponse.getMsg(),faqCreateResponse.getData());
+        } catch (Exception e) {
+            return RsData.of("500", e.getMessage());
+        }
     }
+
+    /**
+     * FAQ 삭제
+     * @param id
+     * @return RsData<FaqDto>
+     */
     @DeleteMapping("/{id}")
     public RsData<FaqDto> FaqDelete(@PathVariable(name="id") Long id){
-        RsData<FaqDto> faqDto = faqService.deleteFaq(id);
-
-        return RsData.of(faqDto.getResultCode(),faqDto.getMsg());
+        try {
+            RsData<FaqDto> faqDto = faqService.deleteFaq(id);
+            return RsData.of(faqDto.getResultCode(),faqDto.getMsg());
+        } catch (Exception e) {
+            return RsData.of("500", e.getMessage());
+        }
     }
 }

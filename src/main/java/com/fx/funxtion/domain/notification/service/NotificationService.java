@@ -32,7 +32,6 @@ public class NotificationService {
     }
 
     public Long createNotification(Long receiverId, Long productId, String message) {
-
         Member member = memberRepository.findById(receiverId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         Product product = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
 
@@ -41,25 +40,21 @@ public class NotificationService {
                 .member(member)
                 .product(product)
                 .build();
-
         notificationRepository.save(notification);
 
         return notification.getId();
     }
 
-    public Page<NotificationDto> selectUserNotifications(Long userId, Pageable pageable) {
+    public Page<NotificationDto> selectUserNotifications(Long userId, Pageable pageable) throws Exception {
         Member member = memberRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-
         return notificationRepository.findByMember(member, pageable)
                 .map(NotificationDto::new);
     }
 
-    public boolean deleteAllNotifications(Long userId) {
+    public boolean deleteAllNotifications(Long userId) throws Exception {
         Member member = memberRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         notificationRepository.deleteAllByMember(member);
-
         Long count = notificationRepository.countAllByMember(member);
-
         return count == 0;
     }
 }

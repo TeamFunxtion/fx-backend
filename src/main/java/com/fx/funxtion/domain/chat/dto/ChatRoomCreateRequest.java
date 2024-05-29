@@ -15,11 +15,7 @@ import java.util.List;
 @ToString
 @Setter
 public class ChatRoomCreateRequest {
-
     private Long storeId;
     private Long customerId;
     private Long productId;
-
-
-
 }

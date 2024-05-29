@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class BidService {
-
     private final NotificationService notificationService;
     private final BidRepository bidRepository;
     private final ProductRepository productRepository;
@@ -34,7 +33,7 @@ public class BidService {
     private final SafePaymentsRepository safePaymentsRepository;
 
     @Transactional
-    public RsData<BidCreateResponse> createBid(BidCreateRequest bidCreateRequest) {
+    public RsData<BidCreateResponse> createBid(BidCreateRequest bidCreateRequest) throws Exception {
         Product product = productRepository.findById(bidCreateRequest.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
         
@@ -141,7 +140,6 @@ public class BidService {
             // 알림 내역 저장
             notificationService.createNotification(member.getId(), product.getId(), message);
         }
-
 
         Bid bid = Bid.builder()
                 .product(product)

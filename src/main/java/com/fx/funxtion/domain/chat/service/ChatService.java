@@ -39,7 +39,7 @@ public class ChatService {
     private final SafePaymentsRepository safePaymentsRepository;
 
     // 채팅 메시지 입력
-    public ChatMessageDto insertChatMessage(ChatMessageDto chatMessageDto) {
+    public ChatMessageDto insertChatMessage(ChatMessageDto chatMessageDto) throws Exception {
         ChatMessage chatMessage = ChatMessage.builder()
                 .userId(chatMessageDto.getUserId())
                 .roomId(chatMessageDto.getRoomId())
@@ -51,7 +51,7 @@ public class ChatService {
     }
 
     // 채팅 메시지 읽음 처리
-    public void updateChatMessage(ChatMessageUpdateRequest chatMessageUpdateRequest) {
+    public void updateChatMessage(ChatMessageUpdateRequest chatMessageUpdateRequest) throws Exception {
         Long roomId = chatMessageUpdateRequest.getRoomId();
         Long userId = chatMessageUpdateRequest.getUserId();
         List<ChatMessage> list = chatMessageRepository.findAllReadMessages(roomId, userId);
@@ -65,7 +65,7 @@ public class ChatService {
     }
 
     // 채팅 내역 조회
-    public List<ChatMessageDto> getChatList(long roomId) {
+    public List<ChatMessageDto> getChatList(long roomId) throws Exception {
         Sort sort = Sort.by(Sort.Direction.ASC, "id");
         List<ChatMessageDto> list = chatMessageRepository.findAllByRoomId(roomId, sort)
                 .stream()
@@ -75,7 +75,7 @@ public class ChatService {
     }
 
     // 채팅방 목록 조회
-    public List<ChatRoomWithMessagesDto> getChatRoomList(Long customerId) {
+    public List<ChatRoomWithMessagesDto> getChatRoomList(Long customerId) throws Exception {
         List<ChatRoom> chatRooms = chatRoomRepository.findAllChatRoom(customerId, customerId);
         List<ChatRoomWithMessagesDto> chatRoomListResponse = new ArrayList<>();
 
@@ -90,7 +90,7 @@ public class ChatService {
 
 
     // 채팅방 생성
-    public Long insertChatRoom(ChatRoomCreateRequest chatRoomCreateRequest) {
+    public Long insertChatRoom(ChatRoomCreateRequest chatRoomCreateRequest) throws Exception {
         Member member = memberRepository.findById(chatRoomCreateRequest.getStoreId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 상점이 존재하지 않습니다."));
         Member customer = memberRepository.findById(chatRoomCreateRequest.getCustomerId())
@@ -136,7 +136,7 @@ public class ChatService {
 
 
     // 채팅방 상세정보 및 채팅메시지 조회
-    public RsData<ChatRoomDetailResponse> getChatRoomdetail(Long roomId) {
+    public RsData<ChatRoomDetailResponse> getChatRoomdetail(Long roomId) throws Exception {
         Long id = roomId;
         Optional<ChatRoom> optionalChatRoom = chatRoomRepository.findById(id);
         Sort sort = Sort.by(Sort.Direction.ASC, "id");

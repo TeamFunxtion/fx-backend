@@ -11,20 +11,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class FollowService {
-
-
     private final FollowRepository followRepository;
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
     private final ReviewRepository reviewRepository;
 
-    public Page<FollowerListResponse> getFollowerList(Long toMemberId, int page, int size) {
+    public Page<FollowerListResponse> getFollowerList(Long toMemberId, int page, int size) throws Exception {
         List<UserFollows> list = followRepository.findAllByToMemberId(toMemberId);
         Page<UserFollows> userFollowsPage = followRepository.findAllByToMemberId(toMemberId, PageRequest.of(page, size));
 
@@ -40,7 +37,7 @@ public class FollowService {
         });
     }
 
-    public Page<FollowingListResponse> getFollowingList(Long fromId, int page, int size) {
+    public Page<FollowingListResponse> getFollowingList(Long fromId, int page, int size) throws Exception {
         List<UserFollows> list = followRepository.findAllByFromMemberId(fromId);
         Page<UserFollows> userFollowsPage = followRepository.findAllByFromMemberId(fromId, PageRequest.of(page, size));
 
@@ -55,10 +52,9 @@ public class FollowService {
             long avgRating = Math.round(avg==null? 0: avg);
             return new FollowingListResponse(userFollows, productCnt, followerCnt, isFollowing, followCnt, avgRating);
         });
-
     }
 
-    public Page<SellerFollowerListResponse> getSellerFollowerList(Long toId, Long userId, int page, int size) {
+    public Page<SellerFollowerListResponse> getSellerFollowerList(Long toId, Long userId, int page, int size) throws Exception {
         List<UserFollows> list = followRepository.findAllByToMemberId(toId);
         Page<UserFollows> userFollowsPage = followRepository.findAllByToMemberId(toId, PageRequest.of(page, size));
 
@@ -74,7 +70,7 @@ public class FollowService {
         });
     }
 
-    public Page<SellerFollowingListResponse> getSellerFollowingList(Long fromId, Long userId, int page, int size) {
+    public Page<SellerFollowingListResponse> getSellerFollowingList(Long fromId, Long userId, int page, int size) throws Exception {
         List<UserFollows> list = followRepository.findAllByFromMemberId(fromId);
         Page<UserFollows> userFollowsPage = followRepository.findAllByFromMemberId(fromId, PageRequest.of(page, size));
 
@@ -88,10 +84,9 @@ public class FollowService {
             long avgRating = Math.round(avg==null? 0: avg);
             return new SellerFollowingListResponse(userFollows, productCnt, followerCnt, isFollowing, followCnt, avgRating);
         });
-
     }
 
-    public Long updateFollow(FollowUpdateRequest followUpdateRequest) {
+    public Long updateFollow(FollowUpdateRequest followUpdateRequest) throws Exception {
         Member toMember = memberRepository.findById(followUpdateRequest.getToId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 

@@ -21,26 +21,20 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class SellService {
-
-
     private final SafePaymentsRepository safePaymentsRepository;
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
 
-    public RsData<List<SellSelectResponse>> selectSellList(Long sellerId){
-
+    public RsData<List<SellSelectResponse>> selectSellList(Long sellerId) throws Exception {
         List<SafePayments>safePayments  = safePaymentsRepository.findBySellerId(sellerId);
-
         List<SellSelectResponse> buyDtos = new ArrayList<>();
 
-
-       for(SafePayments payments : safePayments) {
+        for(SafePayments payments : safePayments) {
           Optional<Product> productOptional = productRepository.findById(payments.getProductId());
           Optional<Member> memberOptional = memberRepository.findById(payments.getBuyerId());
            if (productOptional.isPresent()) {
                Product product = productOptional.get();
                Member member = memberOptional.get();
-               System.out.println(productOptional);
                SellSelectResponse response = new SellSelectResponse(
                        payments.getId(),
                        product.getProductTitle(),
@@ -52,12 +46,7 @@ public class SellService {
                );
                buyDtos.add(response);
            }
-
-       }
-
+        }
         return  RsData.of("200", "구매이력 조회 성공!",buyDtos);
-
     }
-
-
 }

@@ -22,22 +22,43 @@ public class ApiV1FavoriteController {
 
     private final FavoriteService favoriteService;
 
-    // 관심상품 목록 조회
+    /**
+     * 관심상품 목록 조회
+     * @param userId
+     * @param sort
+     * @param pageNo
+     * @param pageable
+     * @return Page<FavoriteDto>
+     */
     @GetMapping("")
     public Page<FavoriteDto> getMyFavorites(@RequestParam(required = true, value = "userId") Long userId,
                                             @RequestParam(required = false, defaultValue = "id", value = "sort") String sort,
                                             @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
                                             @PageableDefault(size = 10, sort="id", direction = Sort.Direction.DESC) Pageable pageable) {
+
         pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
         pageable = PageRequest.of(pageNo, pageable.getPageSize(), getPageableSort(sort));
-        Page<FavoriteDto> pageList = favoriteService.getMyFavorites(userId, pageable);
+        Page<FavoriteDto> pageList = null;
+        try {
+            pageList = favoriteService.getMyFavorites(userId, pageable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return pageList;
     }
 
-    // 관심상품 상태 업데이트
+    /**
+     * 관심상품 상태 업데이트
+     * @param favoriteUpdateRequest
+     * @return RsData<Long>
+     */
     @PostMapping("")
     public RsData<Long> updateFavorites(@RequestBody FavoriteUpdateRequest favoriteUpdateRequest) {
-        Long id = favoriteService.updateFavorites(favoriteUpdateRequest);
-        return RsData.of("200", "관심상품 추가|삭제 성공!", id);
+        try {
+            Long id = favoriteService.updateFavorites(favoriteUpdateRequest);
+            return RsData.of("200", "관심상품 추가|삭제 성공!", id);
+        } catch (Exception e) {
+            return RsData.of("500", e.getMessage());
+        }
     }
 }

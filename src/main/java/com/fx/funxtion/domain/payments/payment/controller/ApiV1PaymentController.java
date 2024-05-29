@@ -16,16 +16,34 @@ import java.util.List;
 public class ApiV1PaymentController {
     private final PaymentService paymentService;
 
+    /**
+     * 결제 검증
+     * @param imp_uid
+     * @return PaymentDto
+     */
     @GetMapping("/verify/{imp_uid}")
-    public PaymentDto verifyPaymentByImpUid(@PathVariable("imp_uid") String imp_uid) throws IamportResponseException, IOException {
-        return paymentService.verifyPayment(imp_uid);
+    public PaymentDto verifyPaymentByImpUid(@PathVariable("imp_uid") String imp_uid) {
+        PaymentDto paymentDto = null;
+        try {
+            paymentDto = paymentService.verifyPayment(imp_uid);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return paymentDto;
     }
 
+    /**
+     * 결제 내역 조회
+     * @param email
+     * @return RsData<List<PaymentDto>>
+     */
     @GetMapping("")
     public RsData<List<PaymentDto>> selectPaymentListByUserId(@RequestParam(name="email") String email) {
-        RsData<List<PaymentDto>> listRs = paymentService.selectPaymentListByUserId(email);
-        return RsData.of(listRs.getResultCode(), listRs.getMsg(), listRs.getData());
-
-
+        try {
+            RsData<List<PaymentDto>> listRs = paymentService.selectPaymentListByUserId(email);
+            return RsData.of(listRs.getResultCode(), listRs.getMsg(), listRs.getData());
+        } catch (Exception e) {
+            return RsData.of("500", e.getMessage());
+        }
     }
 }

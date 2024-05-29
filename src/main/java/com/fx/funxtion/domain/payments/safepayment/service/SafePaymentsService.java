@@ -28,7 +28,7 @@ public class SafePaymentsService {
     private final ProductRepository productRepository;
     private final ChatRoomRepository chatRoomRepository;
 
-    public SafePaymentsDetailResponse findSafePayments(Long productId, Long sellerId, Long buyerId) {
+    public SafePaymentsDetailResponse findSafePayments(Long productId, Long sellerId, Long buyerId) throws Exception {
         SafePayments sp = safePaymentsRepository.findByProductIdAndSellerIdAndBuyerId(productId, sellerId, buyerId);
 
         SafePaymentsDetailResponse spdr = null;
@@ -39,7 +39,7 @@ public class SafePaymentsService {
     }
 
     // 구매자가 결제를 하는 경우
-    public void updateSafePayment(SafePaymentsUpdateRequest safePaymentsUpdateRequest) {
+    public void updateSafePayment(SafePaymentsUpdateRequest safePaymentsUpdateRequest) throws Exception {
         SafePayments sp = safePaymentsRepository.findByProductIdAndSellerIdAndBuyerId(safePaymentsUpdateRequest.getProductId(), safePaymentsUpdateRequest.getSellerId(), safePaymentsUpdateRequest.getBuyerId());
         if(sp != null) {
             sp.setStatus(SafePaymentStatus.SP03);
@@ -64,7 +64,7 @@ public class SafePaymentsService {
     }
 
     // 판매자가 판매 확정 누른 경우
-    public void updateSellerOk(SafePaymentsUpdateRequest safePaymentsUpdateRequest) {
+    public void updateSellerOk(SafePaymentsUpdateRequest safePaymentsUpdateRequest) throws Exception {
         SafePayments sp = safePaymentsRepository.findByProductIdAndSellerIdAndBuyerId(safePaymentsUpdateRequest.getProductId(), safePaymentsUpdateRequest.getSellerId(), safePaymentsUpdateRequest.getBuyerId());
         Optional<Product> p = productRepository.findById(safePaymentsUpdateRequest.getProductId());
         Product product = p.get();
@@ -98,11 +98,10 @@ public class SafePaymentsService {
                 }
             }
         }
-
     }
 
     // 구매자가 구매 확정 누른 경우
-    public void updateBuyerOk(SafePaymentsUpdateRequest safePaymentsUpdateRequest) {
+    public void updateBuyerOk(SafePaymentsUpdateRequest safePaymentsUpdateRequest) throws Exception {
         SafePayments sp = safePaymentsRepository.findByProductIdAndSellerIdAndBuyerId(safePaymentsUpdateRequest.getProductId(), safePaymentsUpdateRequest.getSellerId(), safePaymentsUpdateRequest.getBuyerId());
         Optional<Product> p = productRepository.findById(safePaymentsUpdateRequest.getProductId());
         Product product = p.get();
@@ -138,12 +137,10 @@ public class SafePaymentsService {
         }
     }
 
-    public void deleteSafePayment(SafePaymentsDeleteRequest safePaymentsDeleteRequest) {
+    public void deleteSafePayment(SafePaymentsDeleteRequest safePaymentsDeleteRequest) throws Exception {
         SafePayments sp = safePaymentsRepository
                         .findByProductIdAndSellerIdAndBuyerId(safePaymentsDeleteRequest.getProductId(),
                                 safePaymentsDeleteRequest.getSellerId(), safePaymentsDeleteRequest.getBuyerId());
-        System.out.println("삭제 들어왔다고 2222222222222");
         safePaymentsRepository.delete(sp);
-        System.out.println("삭제 했다고 333333333333333333");
     }
 }

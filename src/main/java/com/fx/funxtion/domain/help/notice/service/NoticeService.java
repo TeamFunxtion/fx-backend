@@ -11,9 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Optional;
-
 
 @Service
 @RequiredArgsConstructor
@@ -21,68 +19,53 @@ public class NoticeService {
     private final NoticeRepository noticeRepository;
 
     @Transactional(readOnly = true)
-    public Page<NoticeDto> getSelectPage(Pageable pageable, int pageNo , int pageSize) {
+    public Page<NoticeDto> getSelectPage(Pageable pageable, int pageNo , int pageSize) throws Exception {
         pageable = PageRequest.of(pageNo,pageSize,Sort.by(Sort.Direction.DESC,"id"));
         Page<NoticeDto> list =noticeRepository.findAll(pageable).map(NoticeDto::new);
-
         return list;
     }
 
-    public RsData<NoticeCreateResponse> createNotice(NoticeCreateRequest noticeCreateRequest) {
-
-
+    public RsData<NoticeCreateResponse> createNotice(NoticeCreateRequest noticeCreateRequest) throws Exception  {
         Notice notice = Notice.builder()
                 .noticeContent(noticeCreateRequest.getNoticeContent())
                 .noticeTitle(noticeCreateRequest.getNoticeTitle())
-                .build()
-                ;
+                .build();
         noticeRepository.save(notice);
         Optional<Notice> optionalNotice = noticeRepository.findById(notice.getId());
-
         return optionalNotice.map(q ->RsData.of("200","공지 등록 성공",new NoticeCreateResponse(q))).orElseGet(() -> RsData.of("500","1:1 문의 등록 실패"));
     }
 
-    public RsData<NoticeCreateResponse> getNoticeDetail(Long noticeId){
+    public RsData<NoticeCreateResponse> getNoticeDetail(Long noticeId) throws Exception {
         Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
-
-
         NoticeCreateResponse noticeCreateResponse = new NoticeCreateResponse(optionalNotice.get());
-
         return RsData.of("200","조회성공",noticeCreateResponse);
     }
 
-    public RsData<NoticeUpdateResponse> updateNotice(NoticeUpdateRequest noticeUpdateRequest){
+    public RsData<NoticeUpdateResponse> updateNotice(NoticeUpdateRequest noticeUpdateRequest) throws Exception {
         Optional<Notice> optionalNotice = noticeRepository.findById(noticeUpdateRequest.getNoticeId());
         if(optionalNotice.isEmpty()){
             return RsData.of("500","공지가 존재하지 않습니다");
         }
-
-
         Notice n = optionalNotice.get();
 
         if(noticeUpdateRequest.getNoticeTitle() != null && !noticeUpdateRequest.getNoticeTitle().isEmpty()){
             n.setNoticeTitle(noticeUpdateRequest.getNoticeTitle());
-        }else{
+        } else {
             return RsData.of("500","타이틀이 없습니다");
         }
+
         if(noticeUpdateRequest.getNoticeContent() != null && !noticeUpdateRequest.getNoticeContent().isEmpty()) {
             n.setNoticeContent(noticeUpdateRequest.getNoticeContent());
-        }else {
+        } else {
             return RsData.of("500","내용이 없습니다");
         }
 
-            noticeRepository.save(n);
-
+        noticeRepository.save(n);
         return RsData.of("200","공지 수정 성공",new NoticeUpdateResponse(n));
-
-        }
-
-        public RsData<NoticeDto> deleteNotice (Long id){
-            noticeRepository.deleteById(id);
-
-            return RsData.of("200","삭제 성공");
-        }
     }
 
-
-
+    public RsData<NoticeDto> deleteNotice (Long id) throws Exception {
+        noticeRepository.deleteById(id);
+        return RsData.of("200","삭제 성공");
+    }
+}
