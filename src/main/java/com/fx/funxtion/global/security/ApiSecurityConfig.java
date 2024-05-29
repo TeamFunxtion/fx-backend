@@ -23,13 +23,9 @@ public class ApiSecurityConfig {
                 .securityMatcher("/api/**") // 이 url과 일치할때 검사하겠다는 의미
                 .authorizeHttpRequests(
                         authorizeRequests -> authorizeRequests
-                                .requestMatchers(HttpMethod.POST, "/api/*/members/login").permitAll() // 로그인은 누구나 가능, post요청만 허용
-                                .requestMatchers(HttpMethod.POST, "/api/*/members/logout").permitAll() // 로그아웃 누구나 가능, post요청만 허용
-                                .requestMatchers(HttpMethod.POST, "/api/*/members/join").permitAll() // 회원가입 누구나 가능, post요청만 허용
-                                .requestMatchers(HttpMethod.GET, "/api/*/members/auth").permitAll() // 이메일 인증 누구나 가능, get요청 허용
-                                .requestMatchers(HttpMethod.POST, "/api/*/members/kakao/login").permitAll()
-                                .requestMatchers(HttpMethod.PUT, "/api/*/members/update").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/*/members/*").permitAll()
+                                .requestMatchers("/api/*/members").permitAll()
+                                .requestMatchers("/api/*/members/*").permitAll()
+                                .requestMatchers("/api/*/members/*/**").permitAll()
                                 .requestMatchers("/api/*/notices").permitAll()
                                 .requestMatchers("/api/*/notices/*").permitAll()
                                 .requestMatchers("/api/*/notices/*/**").permitAll()

@@ -43,8 +43,8 @@ public class ApiV1MemberController {
         return RsData.of("200", "로그아웃 성공");
     }
 
-    @GetMapping("{id}")
-    public RsData<MemberDto> getUser(@PathVariable("id") Long userId) {
+    @GetMapping("")
+    public RsData<MemberDto> getUser(@RequestParam("id") Long userId) {
         return memberService.getUser(userId);
     }
 
