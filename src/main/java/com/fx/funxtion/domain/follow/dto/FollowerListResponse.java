@@ -23,13 +23,15 @@ public class FollowerListResponse {
     private Long followerCnt;
     private boolean isFollowing;
     private int followCnt;
+    private long rating;
 
-    public FollowerListResponse(UserFollows userFollows, Long productCnt, Long followerCnt, boolean isFollowing, int followCnt) {
+    public FollowerListResponse(UserFollows userFollows, Long productCnt, Long followerCnt, boolean isFollowing, int followCnt, long rating) {
         this.id = userFollows.getId();
         this.fromMember = new MemberDto(userFollows.getFromMember());
         this.productCnt = productCnt;
         this.followerCnt = followerCnt;
         this.isFollowing = isFollowing;
         this.followCnt = followCnt;
+        this.rating = rating;
     }
 }

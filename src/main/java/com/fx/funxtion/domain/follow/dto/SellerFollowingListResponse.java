@@ -11,7 +11,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @Setter
-public class FollowingListResponse {
+public class SellerFollowingListResponse {
     private Long id;
     private MemberDto toMember;
     private Long productCnt;
@@ -20,7 +20,7 @@ public class FollowingListResponse {
     private int followCnt;
     private long rating;
 
-    public FollowingListResponse(UserFollows userFollows, Long productCnt, Long followerCnt, boolean isFollowing, int followCnt, long rating) {
+    public SellerFollowingListResponse(UserFollows userFollows, Long productCnt, Long followerCnt, boolean isFollowing, int followCnt, long rating) {
         this.id = userFollows.getId();
         this.toMember = new MemberDto(userFollows.getToMember());
         this.productCnt = productCnt;

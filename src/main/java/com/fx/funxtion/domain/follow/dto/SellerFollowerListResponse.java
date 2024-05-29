@@ -11,18 +11,18 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @Setter
-public class FollowingListResponse {
+public class SellerFollowerListResponse {
     private Long id;
-    private MemberDto toMember;
+    private MemberDto fromMember;
     private Long productCnt;
     private Long followerCnt;
     private boolean isFollowing;
     private int followCnt;
     private long rating;
 
-    public FollowingListResponse(UserFollows userFollows, Long productCnt, Long followerCnt, boolean isFollowing, int followCnt, long rating) {
+    public SellerFollowerListResponse(UserFollows userFollows, Long productCnt, Long followerCnt, boolean isFollowing, int followCnt, long rating) {
         this.id = userFollows.getId();
-        this.toMember = new MemberDto(userFollows.getToMember());
+        this.fromMember = new MemberDto(userFollows.getFromMember());
         this.productCnt = productCnt;
         this.followerCnt = followerCnt;
         this.isFollowing = isFollowing;
