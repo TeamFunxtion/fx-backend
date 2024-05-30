@@ -19,4 +19,6 @@ public interface BidRepository extends JpaRepository<Bid, Long> {
     Optional<Bid> findByProductAndMemberAndBidPrice(Product product, Member member, Long bidPrice);
 
     Optional<Bid> findByProductAndMemberAndBidPriceGreaterThan(Product product, Member member, Long bidPrice);
+
+    Optional<List<Bid>> findDistinctByProductAndMemberNot(Product product, Member member);
 }

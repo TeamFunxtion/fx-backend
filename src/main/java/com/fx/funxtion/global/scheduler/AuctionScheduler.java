@@ -21,9 +21,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -100,6 +98,27 @@ public class AuctionScheduler {
                             }
                         }
 
+                        // todo. 낙찰 실패자들한테 알림 전송하기
+                        Optional<List<Bid>> bidLosers = bidRepository.findDistinctByProductAndMemberNot(product, winner.get());
+                        Set<Long> bidderIds = new HashSet<>();
+                        if(!bidLosers.isEmpty()) {
+                            for(Bid bid: bidLosers.get()) {
+                                if(bidderIds.contains(bid.getMember().getId())) {
+                                    continue;
+                                } else {
+                                    bidderIds.add(bid.getMember().getId());
+                                }
+                                String newMessage = "이런! " + bid.getMember().getNickname() + "님, 경매 낙찰에 실패했네요..!";
+                                NotificationMessage notificationMessage = NotificationMessage.builder()
+                                        .type("auction_miss")
+                                        .message(newMessage)
+                                        .data(new ProductDto(product))
+                                        .build();
+                                notificationService.notifyUser(bid.getMember().getId().toString(), notificationMessage);
+                                notificationService.createNotification(bid.getMember().getId(), product.getId(), newMessage);
+                            }
+                        }
+
                         // SSE로 낙찰 알림 전송
                         String message = winner.get().getNickname() + "님 축하해요! 상품이 낙찰되었습니다!";
                         NotificationMessage notificationMessage = NotificationMessage.builder()
@@ -109,9 +128,16 @@ public class AuctionScheduler {
                                 .build();
                         // Client에 알림 전송
                         notificationService.notifyUser(winner.get().getId().toString(), notificationMessage);
-
-                        // 알림 내역 저장
                         notificationService.createNotification(winner.get().getId(), product.getId(), message);
+
+                        // todo. 판매자에게 낙찰 알림 전송
+                        message = product.getMember().getNickname() + "님, 경매상품 낙찰자가 정해졌습니다! 1:1채팅을 통해서 거래를 진행하세요!";
+                        notificationService.notifyUser(product.getMember().getId().toString(), NotificationMessage.builder()
+                                .type("auction_winner")
+                                .message(message)
+                                .data(new ProductDto(product))
+                                .build());
+                        notificationService.createNotification(product.getMember().getId(), product.getId(), message);
                     }
                 }
             }
