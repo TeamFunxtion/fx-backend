@@ -139,16 +139,16 @@ public class AuctionScheduler {
                                 .build());
                         notificationService.createNotification(product.getMember().getId(), product.getId(), message);
 
-                    } else { // 낙찰자가 없을때
-                        // todo. 판매자에게 경매종료 알림 전송
-                        String message = product.getMember().getNickname() + "님, 아쉽게도 경매 상품의 낙찰자가 없습니다..!";
-                        notificationService.notifyUser(product.getMember().getId().toString(), NotificationMessage.builder()
-                                .type("auction_nowinner")
-                                .message(message)
-                                .data(new ProductDto(product))
-                                .build());
-                        notificationService.createNotification(product.getMember().getId(), product.getId(), message);
                     }
+                } else { // 낙찰자가 없을때
+                    // todo. 판매자에게 경매종료 알림 전송
+                    String message = product.getMember().getNickname() + "님, 아쉽게도 경매 상품의 낙찰자가 없습니다..!";
+                    notificationService.notifyUser(product.getMember().getId().toString(), NotificationMessage.builder()
+                            .type("auction_nowinner")
+                            .message(message)
+                            .data(new ProductDto(product))
+                            .build());
+                    notificationService.createNotification(product.getMember().getId(), product.getId(), message);
                 }
             }
 
