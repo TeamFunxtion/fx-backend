@@ -23,8 +23,7 @@ public interface SafePaymentsRepository extends JpaRepository<SafePayments, Long
   
     SafePayments findBySellerIdAndBuyerIdAndStatus(Long sellerId, Long buyerId, SafePaymentStatus status);
   
-    @Query("SELECT sp FROM SafePayments sp WHERE sp.sellerId = :sellerId AND sp.buyerId = :buyerId AND sp.status = :status ORDER BY sp.id ASC")
-    SafePayments findFirstBySellerIdAndBuyerIdAndStatusOrderByIdAsc(
+    SafePayments findTopBySellerIdAndBuyerIdAndStatusOrderByIdAsc(
             @Param("sellerId") Long sellerId,
             @Param("buyerId") Long buyerId,
             @Param("status") SafePaymentStatus status);

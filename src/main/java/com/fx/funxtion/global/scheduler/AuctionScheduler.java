@@ -52,7 +52,7 @@ public class AuctionScheduler {
 
                         boolean existSafePaymentsSP03 = false;
                         // 채팅방이 없을땐 ok
-                        if(chatRoom == null) {
+                        if (chatRoom == null) {
                             chatRoom = ChatRoom.builder()
                                     .customer(winner.get())
                                     .member(product.getMember())
@@ -64,7 +64,7 @@ public class AuctionScheduler {
                             SafePayments safePayments = safePaymentsRepository.findBySellerIdAndBuyerIdAndStatus(product.getMember().getId(), winner.get().getId(), SafePaymentStatus.SP03);
                             existSafePaymentsSP03 = safePayments != null;
 
-                            if(!existSafePaymentsSP03) { // 현재 안전결제 최종 진행중인 내역이 없으면
+                            if (!existSafePaymentsSP03) { // 현재 안전결제 최종 진행중인 내역이 없으면
                                 chatRoom.setProduct(product);
                                 chatRoomRepository.save(chatRoom);
                             }
@@ -82,11 +82,11 @@ public class AuctionScheduler {
                         safePaymentsRepository.save(newSafePayment);
 
                         // todo. 블라인드 경매일때는 낙찰자를 제외한 모든 입찰 포인트 반환해줘야함
-                        if(product.getSalesTypeId().equals("SA02")) { // 블라인드 경매
+                        if (product.getSalesTypeId().equals("SA02")) { // 블라인드 경매
                             List<Bid> bids = bidRepository.findAllByProductId(product.getId());
 
-                            for(Bid bid: bids) { // 낙찰되지 않은 입찰 포인트 반환하기
-                                if(!(bid.getMember().getId().equals(product.getAuctionWinnerId())
+                            for (Bid bid : bids) { // 낙찰되지 않은 입찰 포인트 반환하기
+                                if (!(bid.getMember().getId().equals(product.getAuctionWinnerId())
                                         && Objects.equals(bid.getBidPrice(), product.getCurrentPrice()))) {
                                     Member member = bid.getMember();
                                     member.setPoint(member.getPoint() + bid.getBidPrice().intValue());
@@ -101,9 +101,9 @@ public class AuctionScheduler {
                         // todo. 낙찰 실패자들한테 알림 전송하기
                         Optional<List<Bid>> bidLosers = bidRepository.findDistinctByProductAndMemberNot(product, winner.get());
                         Set<Long> bidderIds = new HashSet<>();
-                        if(!bidLosers.isEmpty()) {
-                            for(Bid bid: bidLosers.get()) {
-                                if(bidderIds.contains(bid.getMember().getId())) {
+                        if (!bidLosers.isEmpty()) {
+                            for (Bid bid : bidLosers.get()) {
+                                if (bidderIds.contains(bid.getMember().getId())) {
                                     continue;
                                 } else {
                                     bidderIds.add(bid.getMember().getId());
@@ -134,6 +134,16 @@ public class AuctionScheduler {
                         message = product.getMember().getNickname() + "님, 경매상품 낙찰자가 정해졌습니다! 1:1채팅을 통해서 거래를 진행하세요!";
                         notificationService.notifyUser(product.getMember().getId().toString(), NotificationMessage.builder()
                                 .type("auction_winner")
+                                .message(message)
+                                .data(new ProductDto(product))
+                                .build());
+                        notificationService.createNotification(product.getMember().getId(), product.getId(), message);
+
+                    } else { // 낙찰자가 없을때
+                        // todo. 판매자에게 경매종료 알림 전송
+                        String message = product.getMember().getNickname() + "님, 아쉽게도 경매 상품의 낙찰자가 없습니다..!";
+                        notificationService.notifyUser(product.getMember().getId().toString(), NotificationMessage.builder()
+                                .type("auction_nowinner")
                                 .message(message)
                                 .data(new ProductDto(product))
                                 .build());

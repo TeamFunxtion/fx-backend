@@ -85,7 +85,7 @@ public class SafePaymentsService {
             productRepository.save(product);
 
             SafePayments sp00 = safePaymentsRepository
-                    .findFirstBySellerIdAndBuyerIdAndStatusOrderByIdAsc(safePaymentsUpdateRequest.getSellerId(),
+                    .findTopBySellerIdAndBuyerIdAndStatusOrderByIdAsc(safePaymentsUpdateRequest.getSellerId(),
                                                 safePaymentsUpdateRequest.getBuyerId(), SafePaymentStatus.SP00);
             if(sp00 != null) {
                 sp00.setStatus(SafePaymentStatus.SP03);
@@ -122,7 +122,7 @@ public class SafePaymentsService {
             productRepository.save(product);
 
             SafePayments sp00 = safePaymentsRepository
-                    .findFirstBySellerIdAndBuyerIdAndStatusOrderByIdAsc(safePaymentsUpdateRequest.getSellerId(),
+                    .findTopBySellerIdAndBuyerIdAndStatusOrderByIdAsc(safePaymentsUpdateRequest.getSellerId(),
                             safePaymentsUpdateRequest.getBuyerId(), SafePaymentStatus.SP00);
             if(sp00 != null) {
                 sp00.setStatus(SafePaymentStatus.SP03);
