@@ -109,7 +109,9 @@ public class BidService {
                 throw new IllegalArgumentException("이미 " + maxPriceBid.get().getBidPrice() + "원으로 입찰한 내역이 존재합니다!");
             }
 
-            if(bidCreateRequest.getBidPrice() > product.getCurrentPrice()) { // 입찰자가 현재가보다 클 때만 낙찰자를 갱신
+            if((!isFirst && bidCreateRequest.getBidPrice() > product.getCurrentPrice()) // 최초 입찰이 아닐때는 >
+                || (isFirst && bidCreateRequest.getBidPrice() >= product.getCurrentPrice()) // 최초 입찰시에는 >=
+            ) { // 입찰자가 현재가보다 클 때만 낙찰자를 갱신
                 product.setCurrentPrice(bidCreateRequest.getBidPrice()); // 현재가 갱신
                 product.setAuctionWinnerId(bidCreateRequest.getBidderId()); // 낙찰자 갱신
             }
