@@ -93,7 +93,7 @@ public class SocketHandler extends TextWebSocketHandler {
                 // 안전거래 버튼 클릭 시 DB 저장.
                 SafePayments safePaymentsEx = safePaymentsRepository.findByProductIdAndSellerIdAndBuyerId(obj.get("productId").getAsLong(), obj.get("sellerId").getAsLong(), obj.get("buyerId").getAsLong());
                 SafePayments safePayments;
-                if (safePaymentsEx == null && temp.keySet().size() >= 2 && obj.get("safe").getAsString() == "true") {
+                if (safePaymentsEx == null && temp.keySet().size() >= 2 && obj.get("safe").getAsString() == "true" && obj.get("justWord").getAsString() == "false") {
                     safePayments = SafePayments.builder()
                             .productId(obj.get("productId").getAsLong())
                             .sellerId(obj.get("sellerId").getAsLong())

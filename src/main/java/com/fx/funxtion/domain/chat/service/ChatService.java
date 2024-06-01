@@ -149,5 +149,13 @@ public class ChatService {
                 .orElseGet(() -> RsData.of("500", "방 조회 실패!"));
     }
 
+    public RsData<ChatRoomReloadResponse> getChatRoomReload(Long roomId) throws Exception {
+        Long id = roomId;
+        Optional<ChatRoom> optionalChatRoom = chatRoomRepository.findById(id);
+
+        return optionalChatRoom.map(chatRoom -> RsData.of("200", roomId+"번방 새로고침 성공", new ChatRoomReloadResponse(chatRoom)))
+                .orElseGet(() -> RsData.of("500", "방 조회 실패"));
+    }
+
 
 }
