@@ -165,6 +165,12 @@ public class ProductService {
         if (p.getStatusTypeId().equals(ProductStatusType.ST01.name()) && !p.getBids().isEmpty()) { // 입찰내역이 있는 경매진행중인 상품이라면
             return RsData.of("500", "해당 상품은 입찰내역이 있는 경매가 진행중인 상품입니다.");
         }
+        
+        if (p.getStatusTypeId().equals(ProductStatusType.ST02.name())) { // 판매 완료
+            return RsData.of("500", "판매 완료된 상품입니다.");
+        } else if (p.getStatusTypeId().equals(ProductStatusType.ST04.name())) { // 거래 중
+            return RsData.of("500", "거래가 진행중인 상품입니다.");
+        }
 
         if (productUpdateRequest.getProductTitle() != null && !productUpdateRequest.getProductTitle().isEmpty()) { // 상품명
             p.setProductTitle(productUpdateRequest.getProductTitle());
