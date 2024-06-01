@@ -50,6 +50,24 @@ public class ApiV1chatRoomController {
     }
 
     /**
+     * 특정 채팅방 새로고침
+     * @param id
+     * @return RsData<ChatRoomReloadResponse><
+     */
+    @GetMapping("/reload/{id}")
+    public RsData<ChatRoomReloadResponse> reloadRoom(@RequestParam("id") String id) {
+        Long roomId = Long.parseLong(id);
+        try {
+            RsData<ChatRoomReloadResponse> chatRoomReloadResponse = chatService.getChatRoomReload(roomId);
+            return RsData.of(chatRoomReloadResponse.getResultCode(), chatRoomReloadResponse.getMsg(), chatRoomReloadResponse.getData());
+        } catch (Exception e) {
+            return RsData.of("500", e.getMessage());
+        }
+
+    }
+
+
+    /**
      * 채팅방 생성,변경
      * @param chatRoomCreateRequest
      * @return RsData<Long>
