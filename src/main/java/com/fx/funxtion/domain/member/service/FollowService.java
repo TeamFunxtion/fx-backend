@@ -42,8 +42,8 @@ public class FollowService {
         Page<UserFollows> userFollowsPage = followRepository.findAllByFromMemberId(fromId, PageRequest.of(page, size));
 
         return userFollowsPage.map(userFollows -> {
-            Long productCnt = productRepository.countByMemberId(userFollows.getFromMember().getId());
-            Long followerCnt = followRepository.countByToMemberId(userFollows.getFromMember().getId());
+            Long productCnt = productRepository.countByMemberId(userFollows.getToMember().getId());
+            Long followerCnt = followRepository.countByToMemberId(userFollows.getToMember().getId());
             boolean isFollowing = followRepository.existsByFromMemberIdAndToMemberId(fromId, userFollows.getToMember().getId());
             int followCnt = list.size();
 
