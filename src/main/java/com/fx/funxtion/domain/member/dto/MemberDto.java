@@ -19,6 +19,8 @@ public class MemberDto {
     private String phoneNumber;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
+    private int reviewCount;
+    private double reviewScore;
 
     public MemberDto(Member member) {
         this.id = member.getId();
@@ -31,6 +33,21 @@ public class MemberDto {
         this.phoneNumber = member.getPhoneNumber();
         this.createDate = member.getCreateDate();
         this.updateDate = member.getUpdateDate();
+    }
+
+    public MemberDto(Member member, int reviewCount, double reviewScore) {
+        this.id = member.getId();
+        this.email = member.getEmail();
+        this.roleId = member.getRoleId();
+        this.profileImageUrl = member.getProfileImageUrl();
+        this.nickname = member.getNickname();
+        this.intro = member.getIntro();
+        this.point = member.getPoint();
+        this.phoneNumber = member.getPhoneNumber();
+        this.createDate = member.getCreateDate();
+        this.updateDate = member.getUpdateDate();
+        this.reviewCount = reviewCount;
+        this.reviewScore = reviewScore;
     }
 
 

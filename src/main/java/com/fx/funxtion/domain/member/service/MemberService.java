@@ -2,7 +2,9 @@ package com.fx.funxtion.domain.member.service;
 
 import com.fx.funxtion.domain.member.dto.*;
 import com.fx.funxtion.domain.member.entity.Member;
+import com.fx.funxtion.domain.member.entity.Review;
 import com.fx.funxtion.domain.member.repository.MemberRepository;
+import com.fx.funxtion.domain.member.repository.ReviewRepository;
 import com.fx.funxtion.global.RsData.RsData;
 import com.fx.funxtion.global.jwt.JwtProvider;
 import com.fx.funxtion.global.security.SecurityUser;
@@ -32,6 +34,7 @@ public class MemberService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MailUtils mailUtils;
     private final ImageService imageService;
+    private final ReviewRepository reviewRepository;
 
     private final String USER_IMAGE_DEFAULT = "https://funxtion-image.s3.amazonaws.com/funxtion/user_default.png";
 
@@ -42,7 +45,19 @@ public class MemberService {
     }
     public RsData<MemberDto> getUser(Long userId) throws Exception {
         Optional<Member> findMember = memberRepository.findByIdAndDeleteYn(userId, "N");
-        return findMember.map(member -> RsData.of("200", "조회 성공!", new MemberDto(member)))
+        List<Review> reviews = reviewRepository.findAllBySellerId(userId);
+        int reviewCount = reviews.size();
+        int sum = 0;
+        for(int i=0; i<reviews.size(); i++) {
+            sum += reviews.get(i).getRating();
+        }
+        double average = 0.0;
+        if(reviewCount>0) {
+            average = (double) sum / reviews.size();
+        }
+        double reviewAverage = Math.round(average * 10) / 10.0;
+
+        return findMember.map(member -> RsData.of("200", "조회 성공!", new MemberDto(member, reviewCount, reviewAverage)))
                 .orElseGet(() -> RsData.of("500", "조회 실패!"));
     }
 
