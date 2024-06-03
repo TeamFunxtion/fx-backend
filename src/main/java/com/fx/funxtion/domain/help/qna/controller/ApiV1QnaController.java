@@ -7,10 +7,13 @@ import com.fx.funxtion.global.RsData.RsData;
 import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+
+import static com.fx.funxtion.domain.product.service.ProductService.getPageableSort;
 
 @RestController
 @RequestMapping("/api/v1/qnas")
@@ -52,12 +55,14 @@ public class ApiV1QnaController {
     @GetMapping("/manager")
     public Page<QnaDto> selectManagerPage(
             @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
+            @RequestParam(required = false, value="ch") String ch,
             @PageableDefault(size = 5,sort ="id",direction = Sort.Direction.DESC) Pageable pageable) {
         int pageSize = 5;
+        System.out.println(ch);
         pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
         Page<QnaDto> pageQna = null;
         try {
-            pageQna = qnaService.getSelectManagerPage(pageable, pageNo, pageSize);
+            pageQna = qnaService.getSelectManagerPage(pageable, pageNo, pageSize,ch);
         } catch (Exception e) {
             e.printStackTrace();
         }

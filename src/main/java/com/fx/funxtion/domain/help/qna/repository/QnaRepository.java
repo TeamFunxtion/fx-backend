@@ -14,5 +14,5 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
 
     Page<Qna> findByMember(Member member, Pageable pageable);
     Page<Qna> findAllBy(Pageable pageable);
-
+    Page<Qna> findByQnaAnswerNull(Pageable pageable);
 }
