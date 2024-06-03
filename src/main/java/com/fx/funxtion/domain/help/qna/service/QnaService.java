@@ -51,10 +51,16 @@ public class QnaService {
     }
 
     @Transactional
-    public Page<QnaDto> getSelectManagerPage( Pageable pageable, int pageNo, int pageSize) throws Exception {
-        pageable = PageRequest.of(pageNo,pageSize, Sort.by(Sort.Direction.DESC,"id"));
-        Page<QnaDto> list = qnaRepository.findAllBy(pageable).map(QnaDto::new);
-        return list;
+    public Page<QnaDto> getSelectManagerPage( Pageable pageable, int pageNo, int pageSize,String ch) throws Exception {
+        pageable = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+
+        if (ch.equals("all")) {
+            Page<QnaDto> list = qnaRepository.findAllBy(pageable).map(QnaDto::new);
+            return list;
+        } else {
+            Page<QnaDto> list = qnaRepository.findByQnaAnswerNull(pageable).map(QnaDto::new);
+            return list;
+        }
     }
 
     public RsData<QnaUpdateResponse> updateQna(QnaUpdateRequest qnaUpdateRequest) throws Exception {
