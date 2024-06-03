@@ -203,6 +203,13 @@ public class ProductService {
         if (productUpdateRequest.getSalesTypeId() != null && !productUpdateRequest.getSalesTypeId().isEmpty()) { // 판매방식
             p.setSalesTypeId(productUpdateRequest.getSalesTypeId());
         }
+
+        if ((p.getSalesTypeId().equals("SA01") || p.getSalesTypeId().equals("SA02")) &&
+                productUpdateRequest.getStatusTypeId().equals(ProductStatusType.ST01.name()) &&
+                p.getStatusTypeId().equals(ProductStatusType.ST03.name())) { // 경매 상품 판매대기 -> 판매중바꿀때 endTime 갱신
+            p.setEndTime(LocalDateTime.now().plusDays(3));
+        }
+
         if (productUpdateRequest.getStatusTypeId() != null && !productUpdateRequest.getStatusTypeId().isEmpty()) { // 상품상태
             p.setStatusTypeId(productUpdateRequest.getStatusTypeId());
         }
@@ -211,12 +218,6 @@ public class ProductService {
         }
         if (productUpdateRequest.getEndDays() > 0) { // 경매 종료일
             p.setEndTime(LocalDateTime.now().plusDays(productUpdateRequest.getEndDays()));
-        }
-
-        if ((p.getSalesTypeId().equals("SA01") || p.getSalesTypeId().equals("SA02")) &&
-                productUpdateRequest.getStatusTypeId().equals(ProductStatusType.ST01.name()) &&
-                p.getStatusTypeId().equals(ProductStatusType.ST03.name())) { // 경매 상품 판매대기 -> 판매중바꿀때 endTime 갱신
-            p.setEndTime(LocalDateTime.now().plusDays(3));
         }
 
         productRepository.save(p);
