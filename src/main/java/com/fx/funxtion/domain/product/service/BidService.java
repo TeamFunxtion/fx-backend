@@ -77,7 +77,7 @@ public class BidService {
                 oldWinner.setPoint(oldWinner.getPoint() + product.getCurrentPrice().intValue());
 
                 // 바로 구매가 아닐때 기존 낙찰자에게 알림 전송
-                if(!isCoolEnded && oldWinner.getId() != bidCreateRequest.getBidderId()) { // 기존 낙찰자랑 입찰자가 다를때
+                if(!isCoolEnded && !Objects.equals(oldWinner.getId(), bidCreateRequest.getBidderId())) { // 기존 낙찰자랑 입찰자가 다를때
                     String message = oldWinner.getNickname() + "님 다른 구매자에게 낙찰 기회를 뺏겼습니다!";
                     NotificationMessage notificationMessage = NotificationMessage.builder()
                             .type("auction_miss")
