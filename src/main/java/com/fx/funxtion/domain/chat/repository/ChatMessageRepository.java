@@ -19,4 +19,7 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
     List<ChatMessage> findAllReadMessages(Long roomId, Long userId);
 
     List<ChatMessage> findAllByRoomIdAndReadYn(Long roomId, String readYn);
+
+    @Query("SELECT COUNT(c) FROM ChatMessage c WHERE c.roomId = :roomId AND c.userId != :userId AND c.readYn = 'N'")
+    int countUnreadMessages(Long roomId, Long userId);
 }

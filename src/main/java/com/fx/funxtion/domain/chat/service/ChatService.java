@@ -81,8 +81,8 @@ public class ChatService {
 
         for(ChatRoom chatRoom : chatRooms) {
             List<ChatMessage> messages = chatMessageRepository.findTopByRoomIdOrderByCreateDateDesc(chatRoom.getId());
-
-            chatRoomListResponse.add(new ChatRoomWithMessagesDto(chatRoom, messages));
+            int notReadMessages = chatMessageRepository.countUnreadMessages(chatRoom.getId(), customerId);
+            chatRoomListResponse.add(new ChatRoomWithMessagesDto(chatRoom, messages, notReadMessages));
         }
         return chatRoomListResponse;
     }

@@ -24,9 +24,10 @@ public class ChatRoomWithMessagesDto {
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
     private List<ChatMessage> chatMessages;
+    private int notReadMessages;
 
 
-    public ChatRoomWithMessagesDto(ChatRoom chatRoom, List<ChatMessage> chatMessages) {
+    public ChatRoomWithMessagesDto(ChatRoom chatRoom, List<ChatMessage> chatMessages, int notReadMessages) {
         this.id = chatRoom.getId();
         this.store = new MemberDto(chatRoom.getMember());
         this.customer = new MemberDto(chatRoom.getCustomer());
@@ -34,6 +35,7 @@ public class ChatRoomWithMessagesDto {
         this.createDate = chatRoom.getCreateDate();
         this.updateDate = chatRoom.getUpdateDate();
         this.chatMessages = chatMessages;
+        this.notReadMessages = notReadMessages;
 
     }
 }
