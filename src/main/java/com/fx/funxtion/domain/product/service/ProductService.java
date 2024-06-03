@@ -135,6 +135,10 @@ public class ProductService {
         }
         productRepository.save(p);
 
+        if(!productUpdateRequest.getRemoveImgIds().isEmpty()) { // 삭제할 이미지가 있으면
+            productImageRepository.deleteAllByIdInBatch(productUpdateRequest.getRemoveImgIds());
+        }
+
         if(multipartFiles != null && multipartFiles.length > 0) { // 이미지가 있을때
             for(int i=0; i<multipartFiles.length; i++) {
                 MultipartFile file = multipartFiles[i];
@@ -154,9 +158,6 @@ public class ProductService {
                     e.printStackTrace();
                 }
             }
-        }
-        if(!productUpdateRequest.getRemoveImgIds().isEmpty()) { // 삭제할 이미지가 있으면
-            productImageRepository.deleteAllByIdInBatch(productUpdateRequest.getRemoveImgIds());
         }
         return RsData.of("200", "상품 수정 성공!", new ProductUpdateResponse(p));
     }
@@ -211,6 +212,13 @@ public class ProductService {
         if (productUpdateRequest.getEndDays() > 0) { // 경매 종료일
             p.setEndTime(LocalDateTime.now().plusDays(productUpdateRequest.getEndDays()));
         }
+
+        if ((p.getSalesTypeId().equals("SA01") || p.getSalesTypeId().equals("SA02")) &&
+                productUpdateRequest.getStatusTypeId().equals(ProductStatusType.ST01.name()) &&
+                p.getStatusTypeId().equals(ProductStatusType.ST03.name())) { // 경매 상품 판매대기 -> 판매중바꿀때 endTime 갱신
+            p.setEndTime(LocalDateTime.now().plusDays(3));
+        }
+
         productRepository.save(p);
         return RsData.of("200", "상품 상태 변경 성공!", new ProductUpdateResponse(p));
     }
