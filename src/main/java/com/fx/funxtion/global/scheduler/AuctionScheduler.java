@@ -36,7 +36,6 @@ public class AuctionScheduler {
     private final ChatRoomRepository chatRoomRepository;
 
     @Scheduled(cron = "0 * * * * ?") // 1분마다
-//    @Scheduled(cron = "0 0/5 * * * ?") // 5분마다
     @Transactional
     public void run() {
         try {
