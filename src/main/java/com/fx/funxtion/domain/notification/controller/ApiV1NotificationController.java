@@ -24,6 +24,11 @@ public class ApiV1NotificationController {
     private final NotificationService notificationService;
     private static final ConcurrentMap<String, SseEmitter> emitters = new ConcurrentHashMap<>();
 
+    /**
+     * 알림 구독 요청
+     * @param userId
+     * @return SseEmitter
+     */
     @GetMapping(value = "/events/{userId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter streamEvents(@PathVariable(name="userId") String userId) {
         SseEmitter emitter = new SseEmitter(0L);
