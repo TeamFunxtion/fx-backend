@@ -38,7 +38,7 @@ public class NoticeService {
     public RsData<NoticeCreateResponse> getNoticeDetail(Long noticeId) throws Exception {
         Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
         NoticeCreateResponse noticeCreateResponse = new NoticeCreateResponse(optionalNotice.get());
-        return RsData.of("200","조회성공",noticeCreateResponse);
+        return RsData.of("200","조회 성공",noticeCreateResponse);
     }
 
     public RsData<NoticeUpdateResponse> updateNotice(NoticeUpdateRequest noticeUpdateRequest) throws Exception {
