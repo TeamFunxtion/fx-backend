@@ -44,7 +44,7 @@ public class NoticeService {
     public RsData<NoticeUpdateResponse> updateNotice(NoticeUpdateRequest noticeUpdateRequest) throws Exception {
         Optional<Notice> optionalNotice = noticeRepository.findById(noticeUpdateRequest.getNoticeId());
         if(optionalNotice.isEmpty()){
-            return RsData.of("500","공지가 존재하지 않습니다");
+            return RsData.of("500","공지사항이 존재하지 않습니다");
         }
         Notice n = optionalNotice.get();
 
